@@ -17,9 +17,15 @@ public struct SplashWelcomeView: View {
     
     public var body: some View {
         GeometryReader { geo in
-            let topInset = max(geo.safeAreaInsets.top, 50)
             let screenHeight = geo.size.height
             let screenWidth = geo.size.width
+            
+            // Calculate exact position of the yellow bar in the background image
+            // In the 505x1024 artwork, the yellow bar starts at Y = 170.0
+            let yellowBarTopY = screenHeight * (170.0 / 1024.0)
+            let logoHeight: CGFloat = 30.0
+            let spacingToYellowBar: CGFloat = 4.0
+            let logoTopPadding = max(yellowBarTopY - logoHeight - spacingToYellowBar, 54)
             
             ZStack(alignment: .topLeading) {
                 // MARK: - Background Artwork
@@ -33,21 +39,22 @@ public struct SplashWelcomeView: View {
                 // MARK: - Foreground UI Overlay
                 VStack(alignment: .leading, spacing: 0) {
                     // 1. Top Brand Header: Flask Icon + "LabLearn"
-                    // Positioned safely below the status bar clock and notch/Dynamic Island
+                    // Positioned precisely 4pt above the background's yellow bar
                     HStack(spacing: 8) {
                         Image(systemName: "flask")
                             .font(.system(size: 20, weight: .bold))
                             .foregroundColor(.white)
                         
                         Text("LabLearn")
-                            .font(.system(size: 23, weight: .heavy))
+                            .font(.system(size: 24, weight: .heavy))
                             .foregroundColor(.white)
                     }
-                    .padding(.top, topInset + 10)
-                    .padding(.horizontal, 28)
+                    .frame(height: logoHeight, alignment: .bottom)
+                    .padding(.top, logoTopPadding)
+                    .padding(.horizontal, 24)
                     
                     // 2. Main Headline Text
-                    // Positioned cleanly below the yellow dash and well-proportioned above the dots
+                    // Begins cleanly below the yellow bar with elegant breathing room
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Your Virtual")
                             .font(.system(size: 28, weight: .heavy))
@@ -78,9 +85,9 @@ public struct SplashWelcomeView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .frame(maxWidth: screenWidth * 0.58, alignment: .leading)
-                    // Shifted further down as requested
-                    .padding(.top, screenHeight * 0.125)
-                    .padding(.horizontal, 28)
+                    // 20pt padding puts ~13pt space below the yellow bar
+                    .padding(.top, 22)
+                    .padding(.horizontal, 24)
                     
                     Spacer()
                     
