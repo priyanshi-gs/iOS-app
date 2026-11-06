@@ -3,6 +3,10 @@ import SwiftUI
 public enum AppScreen: Hashable {
     case splash
     case roleSelection
+    // School-linked flow
+    case connectSchool
+    case schoolConnected
+    // Independent learner flow
     case learningPlan
     case checkout(BillingCycle)
     case paymentSuccess(BillingCycle)
@@ -45,7 +49,41 @@ struct LabLearnApp: App {
                         },
                         onContinue: { option in
                             withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                                currentScreen = .learningPlan
+                                if option == .schoolLinked {
+                                    currentScreen = .connectSchool
+                                } else {
+                                    currentScreen = .learningPlan
+                                }
+                            }
+                        }
+                    )
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                    
+                case .connectSchool:
+                    ConnectSchoolView(
+                        onBack: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .roleSelection
+                            }
+                        },
+                        onVerificationSuccess: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .schoolConnected
+                            }
+                        }
+                    )
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                    
+                case .schoolConnected:
+                    SchoolConnectedSuccessView(
+                        onBack: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .connectSchool
+                            }
+                        },
+                        onGoToDashboard: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .splash
                             }
                         }
                     )

@@ -21,9 +21,11 @@
 		DE768676CE2958369003B81C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B4091ED3810C5803319CD1 /* Theme.swift */; };
 		480209AFDC8510AD3FA44EA0 /* WaveHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745BF17333D3F30DFA2EDB07 /* WaveHeader.swift */; };
 		35029FD3A200A1522FB0CA89 /* CheckoutPaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C857FC1776A814439D8582B8 /* CheckoutPaymentView.swift */; };
+		B8C7E3426F55550268AA6CC3 /* ConnectSchoolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB02FA090585E479714E5416 /* ConnectSchoolView.swift */; };
 		BB45E52034936A40CFE75164 /* LearningPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D4B7315697578B21D056A76 /* LearningPlanView.swift */; };
 		F4290E907A1A90EAC4097F70 /* PaymentSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BADED3AA5D52E978A1FDF /* PaymentSuccessView.swift */; };
 		F3879F4518C13EF7012AE87A /* RoleSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5580AD805F2B581B2D5C4B12 /* RoleSelectionView.swift */; };
+		7527C06CEBE9AC51B5469B61 /* SchoolConnectedSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7339115FD4CECC51DBBF8354 /* SchoolConnectedSuccessView.swift */; };
 		F1A147C69D2929989DCB0641 /* SplashWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71CB8E9CEC10723D3990F30 /* SplashWelcomeView.swift */; };
 		087090EFDDDF558907CB457B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB70C4B9B6C2471726FD4838 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
@@ -45,9 +47,11 @@
 		E9B4091ED3810C5803319CD1 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Theme.swift"; sourceTree = "<group>"; };
 		745BF17333D3F30DFA2EDB07 /* WaveHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaveHeader.swift"; sourceTree = "<group>"; };
 		C857FC1776A814439D8582B8 /* CheckoutPaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckoutPaymentView.swift"; sourceTree = "<group>"; };
+		DB02FA090585E479714E5416 /* ConnectSchoolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectSchoolView.swift"; sourceTree = "<group>"; };
 		1D4B7315697578B21D056A76 /* LearningPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LearningPlanView.swift"; sourceTree = "<group>"; };
 		D52BADED3AA5D52E978A1FDF /* PaymentSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PaymentSuccessView.swift"; sourceTree = "<group>"; };
 		5580AD805F2B581B2D5C4B12 /* RoleSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoleSelectionView.swift"; sourceTree = "<group>"; };
+		7339115FD4CECC51DBBF8354 /* SchoolConnectedSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SchoolConnectedSuccessView.swift"; sourceTree = "<group>"; };
 		A71CB8E9CEC10723D3990F30 /* SplashWelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplashWelcomeView.swift"; sourceTree = "<group>"; };
 		EB70C4B9B6C2471726FD4838 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AFFD1FE3000D7D4A25E7C6D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -147,9 +151,11 @@
 			isa = PBXGroup;
 			children = (
 				C857FC1776A814439D8582B8 /* CheckoutPaymentView.swift */,
+				DB02FA090585E479714E5416 /* ConnectSchoolView.swift */,
 				1D4B7315697578B21D056A76 /* LearningPlanView.swift */,
 				D52BADED3AA5D52E978A1FDF /* PaymentSuccessView.swift */,
 				5580AD805F2B581B2D5C4B12 /* RoleSelectionView.swift */,
+				7339115FD4CECC51DBBF8354 /* SchoolConnectedSuccessView.swift */,
 				A71CB8E9CEC10723D3990F30 /* SplashWelcomeView.swift */,
 			);
 			path = Screens;
@@ -247,9 +253,11 @@
 				DE768676CE2958369003B81C /* Theme.swift in Sources */,
 				480209AFDC8510AD3FA44EA0 /* WaveHeader.swift in Sources */,
 				35029FD3A200A1522FB0CA89 /* CheckoutPaymentView.swift in Sources */,
+				B8C7E3426F55550268AA6CC3 /* ConnectSchoolView.swift in Sources */,
 				BB45E52034936A40CFE75164 /* LearningPlanView.swift in Sources */,
 				F4290E907A1A90EAC4097F70 /* PaymentSuccessView.swift in Sources */,
 				F3879F4518C13EF7012AE87A /* RoleSelectionView.swift in Sources */,
+				7527C06CEBE9AC51B5469B61 /* SchoolConnectedSuccessView.swift in Sources */,
 				F1A147C69D2929989DCB0641 /* SplashWelcomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
