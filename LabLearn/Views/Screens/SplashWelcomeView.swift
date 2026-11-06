@@ -84,9 +84,9 @@ public struct SplashWelcomeView: View {
                             .padding(.top, 6)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    .frame(maxWidth: screenWidth * 0.58, alignment: .leading)
-                    // 20pt padding puts ~13pt space below the yellow bar
-                    .padding(.top, 22)
+                    .frame(maxWidth: screenWidth * 0.62, alignment: .leading)
+                    // Shifted down to provide comfortable spacing from the yellow bar and sit centered above the dots
+                    .padding(.top, 48)
                     .padding(.horizontal, 24)
                     
                     Spacer()
