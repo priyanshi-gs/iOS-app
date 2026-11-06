@@ -371,3 +371,4 @@ public struct PaymentMethodOptionRow: View {
 #Preview {
     CheckoutPaymentView()
 }
+

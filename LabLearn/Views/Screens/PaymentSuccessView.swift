@@ -217,3 +217,4 @@ public struct ReceiptDetailRow: View {
 #Preview {
     PaymentSuccessView()
 }
+
