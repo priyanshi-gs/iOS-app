@@ -78,3 +78,4 @@ public final class AppState: ObservableObject {
         navigate(to: .splash)
     }
 }
+

@@ -179,3 +179,4 @@ public struct MonthlyData: Identifiable, Codable {
     public let month: String
     public let hours: Double
 }
+

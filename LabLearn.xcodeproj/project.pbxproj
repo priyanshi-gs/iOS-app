@@ -14,25 +14,17 @@
 		C0DF431BA0C36E4EA20F5631 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995E6DE2B1250B1AC3D2D9E /* AppState.swift */; };
 		90C74DAFB0B204B177E7C346 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D1FC00CBFD0B235EAAE21B /* AuthViewModel.swift */; };
 		1E9DA1A391534F4AD3582789 /* LabsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC17FF7B46F844ED84BC56F /* LabsViewModel.swift */; };
+		6C6A9BF70CF0903904D529E4 /* OnboardingFlowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B655A7264CC1EBB2E6303DE /* OnboardingFlowViewModel.swift */; };
 		7FF2DB47B5A2C59E7F7F6BC2 /* PeriodicLabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0E3B61DDE08E4131D6C7DC /* PeriodicLabViewModel.swift */; };
 		7FF223B1A8BCEF8A65E5F229 /* SubscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262588623500B634B7FF42E9 /* SubscriptionViewModel.swift */; };
-		75CCEB3C5E1468BD67693F05 /* ConnectSchoolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6CBA151A280049030E9491C /* ConnectSchoolView.swift */; };
-		24E90C4F4A240CB765A7ADC2 /* RoleSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A5419A59C6F9C30440DEDE0E /* RoleSelectionView.swift */; };
-		2C2888A89DE9751388CD1EEE /* SplashLoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9989A79CB9BF1CD0688BDBED /* SplashLoginView.swift */; };
 		B13A2A61474CD6A9BC607CC1 /* CommonUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271E1AD5E15AAF2581A13935 /* CommonUI.swift */; };
 		DE768676CE2958369003B81C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B4091ED3810C5803319CD1 /* Theme.swift */; };
 		480209AFDC8510AD3FA44EA0 /* WaveHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745BF17333D3F30DFA2EDB07 /* WaveHeader.swift */; };
-		47F745AFD44B42A12FC57BC7 /* BrowseLabsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 36CBB1A28408400FA426F2EF /* BrowseLabsView.swift */; };
-		291CD065B7D8042343E18620 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3386C3ED2DF91D5E49D842B7 /* HomeView.swift */; };
-		29F98885E9B4FABECEDD545D /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E97D5D3D35C1DC564BB5020 /* MainTabView.swift */; };
-		102E2E3453310C3F0FC8CC28 /* StudentProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB8556D4D8120C9CFF886608 /* StudentProfileView.swift */; };
-		44B4C4C5F8E0CF8D547E2E35 /* BohrModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E2C16C9C6B7B2524B27F3ADE /* BohrModelView.swift */; };
-		9F28443A69450405515AE373 /* ElementDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F490C5DEC83B7A689E95184 /* ElementDetailView.swift */; };
-		13C80D8F8976037E60C53854 /* PeriodicLabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178B050F8B16CFC96A59106E /* PeriodicLabView.swift */; };
-		851DC80E74B73045C3E799F0 /* LearningStatisticsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482643757AC22DBF52CF8E9A /* LearningStatisticsView.swift */; };
-		93D32F5552A060A934E74414 /* MyBadgesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EED678A56BC7E8AA6DFD2DB4 /* MyBadgesView.swift */; };
-		45BE37FC0C9AA7012F28AA33 /* CheckoutPaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF9546F40DA1743EE44F5663 /* CheckoutPaymentView.swift */; };
-		2A2391EF1A9B4A71FDCD7B66 /* LearningPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D83F42EB4CBA4BEDB45BC93 /* LearningPlanView.swift */; };
+		35029FD3A200A1522FB0CA89 /* CheckoutPaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C857FC1776A814439D8582B8 /* CheckoutPaymentView.swift */; };
+		BB45E52034936A40CFE75164 /* LearningPlanView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D4B7315697578B21D056A76 /* LearningPlanView.swift */; };
+		F4290E907A1A90EAC4097F70 /* PaymentSuccessView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D52BADED3AA5D52E978A1FDF /* PaymentSuccessView.swift */; };
+		F3879F4518C13EF7012AE87A /* RoleSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5580AD805F2B581B2D5C4B12 /* RoleSelectionView.swift */; };
+		F1A147C69D2929989DCB0641 /* SplashWelcomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71CB8E9CEC10723D3990F30 /* SplashWelcomeView.swift */; };
 		087090EFDDDF558907CB457B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EB70C4B9B6C2471726FD4838 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -46,25 +38,17 @@
 		5995E6DE2B1250B1AC3D2D9E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState.swift"; sourceTree = "<group>"; };
 		84D1FC00CBFD0B235EAAE21B /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthViewModel.swift"; sourceTree = "<group>"; };
 		ACC17FF7B46F844ED84BC56F /* LabsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LabsViewModel.swift"; sourceTree = "<group>"; };
+		7B655A7264CC1EBB2E6303DE /* OnboardingFlowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingFlowViewModel.swift"; sourceTree = "<group>"; };
 		7E0E3B61DDE08E4131D6C7DC /* PeriodicLabViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeriodicLabViewModel.swift"; sourceTree = "<group>"; };
 		262588623500B634B7FF42E9 /* SubscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SubscriptionViewModel.swift"; sourceTree = "<group>"; };
-		C6CBA151A280049030E9491C /* ConnectSchoolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConnectSchoolView.swift"; sourceTree = "<group>"; };
-		A5419A59C6F9C30440DEDE0E /* RoleSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoleSelectionView.swift"; sourceTree = "<group>"; };
-		9989A79CB9BF1CD0688BDBED /* SplashLoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplashLoginView.swift"; sourceTree = "<group>"; };
 		271E1AD5E15AAF2581A13935 /* CommonUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommonUI.swift"; sourceTree = "<group>"; };
 		E9B4091ED3810C5803319CD1 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Theme.swift"; sourceTree = "<group>"; };
 		745BF17333D3F30DFA2EDB07 /* WaveHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaveHeader.swift"; sourceTree = "<group>"; };
-		36CBB1A28408400FA426F2EF /* BrowseLabsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BrowseLabsView.swift"; sourceTree = "<group>"; };
-		3386C3ED2DF91D5E49D842B7 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HomeView.swift"; sourceTree = "<group>"; };
-		3E97D5D3D35C1DC564BB5020 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainTabView.swift"; sourceTree = "<group>"; };
-		EB8556D4D8120C9CFF886608 /* StudentProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StudentProfileView.swift"; sourceTree = "<group>"; };
-		E2C16C9C6B7B2524B27F3ADE /* BohrModelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BohrModelView.swift"; sourceTree = "<group>"; };
-		4F490C5DEC83B7A689E95184 /* ElementDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ElementDetailView.swift"; sourceTree = "<group>"; };
-		178B050F8B16CFC96A59106E /* PeriodicLabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeriodicLabView.swift"; sourceTree = "<group>"; };
-		482643757AC22DBF52CF8E9A /* LearningStatisticsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LearningStatisticsView.swift"; sourceTree = "<group>"; };
-		EED678A56BC7E8AA6DFD2DB4 /* MyBadgesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MyBadgesView.swift"; sourceTree = "<group>"; };
-		EF9546F40DA1743EE44F5663 /* CheckoutPaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckoutPaymentView.swift"; sourceTree = "<group>"; };
-		3D83F42EB4CBA4BEDB45BC93 /* LearningPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LearningPlanView.swift"; sourceTree = "<group>"; };
+		C857FC1776A814439D8582B8 /* CheckoutPaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckoutPaymentView.swift"; sourceTree = "<group>"; };
+		1D4B7315697578B21D056A76 /* LearningPlanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LearningPlanView.swift"; sourceTree = "<group>"; };
+		D52BADED3AA5D52E978A1FDF /* PaymentSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PaymentSuccessView.swift"; sourceTree = "<group>"; };
+		5580AD805F2B581B2D5C4B12 /* RoleSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RoleSelectionView.swift"; sourceTree = "<group>"; };
+		A71CB8E9CEC10723D3990F30 /* SplashWelcomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SplashWelcomeView.swift"; sourceTree = "<group>"; };
 		EB70C4B9B6C2471726FD4838 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		AFFD1FE3000D7D4A25E7C6D6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -102,8 +86,8 @@
 				77C037C483DC6B00C463C5F9 /* App */,
 				BC8E6A5FDB0FEE50AF1B10E7 /* Models */,
 				F3533A2279EAD65233E99B38 /* ViewModels */,
-				F867080DDDCAA8CC74A91BE2 /* Views */,
 				B642DCC00EC1A184662227C2 /* Resources */,
+				F867080DDDCAA8CC74A91BE2 /* Views */,
 			);
 			path = LabLearn;
 			sourceTree = "<group>";
@@ -112,12 +96,7 @@
 			isa = PBXGroup;
 			children = (
 				899BAD5F8D7E43D5B2DF307A /* Common */,
-				660B0A024FB0ABBF54167C28 /* Auth */,
-				B42C39A81E165C06D871A59A /* Main */,
-				4AC4358753E9538F653C24E4 /* Simulation */,
-				65018BBC017D06D1A2755B94 /* Subscription */,
-				20C2A6006D4A6516499A94A8 /* Stats */,
-				AD175D30C8DBFF98D4C4A07F /* Profile */,
+				094136FA7C3594DF99A9654C /* Screens */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -147,6 +126,7 @@
 				5995E6DE2B1250B1AC3D2D9E /* AppState.swift */,
 				84D1FC00CBFD0B235EAAE21B /* AuthViewModel.swift */,
 				ACC17FF7B46F844ED84BC56F /* LabsViewModel.swift */,
+				7B655A7264CC1EBB2E6303DE /* OnboardingFlowViewModel.swift */,
 				7E0E3B61DDE08E4131D6C7DC /* PeriodicLabViewModel.swift */,
 				262588623500B634B7FF42E9 /* SubscriptionViewModel.swift */,
 			);
@@ -163,60 +143,16 @@
 			path = Common;
 			sourceTree = "<group>";
 		};
-		660B0A024FB0ABBF54167C28 /* Auth */ = {
+		094136FA7C3594DF99A9654C /* Screens */ = {
 			isa = PBXGroup;
 			children = (
-				C6CBA151A280049030E9491C /* ConnectSchoolView.swift */,
-				A5419A59C6F9C30440DEDE0E /* RoleSelectionView.swift */,
-				9989A79CB9BF1CD0688BDBED /* SplashLoginView.swift */,
+				C857FC1776A814439D8582B8 /* CheckoutPaymentView.swift */,
+				1D4B7315697578B21D056A76 /* LearningPlanView.swift */,
+				D52BADED3AA5D52E978A1FDF /* PaymentSuccessView.swift */,
+				5580AD805F2B581B2D5C4B12 /* RoleSelectionView.swift */,
+				A71CB8E9CEC10723D3990F30 /* SplashWelcomeView.swift */,
 			);
-			path = Auth;
-			sourceTree = "<group>";
-		};
-		B42C39A81E165C06D871A59A /* Main */ = {
-			isa = PBXGroup;
-			children = (
-				36CBB1A28408400FA426F2EF /* BrowseLabsView.swift */,
-				3386C3ED2DF91D5E49D842B7 /* HomeView.swift */,
-				3E97D5D3D35C1DC564BB5020 /* MainTabView.swift */,
-			);
-			path = Main;
-			sourceTree = "<group>";
-		};
-		4AC4358753E9538F653C24E4 /* Simulation */ = {
-			isa = PBXGroup;
-			children = (
-				E2C16C9C6B7B2524B27F3ADE /* BohrModelView.swift */,
-				4F490C5DEC83B7A689E95184 /* ElementDetailView.swift */,
-				178B050F8B16CFC96A59106E /* PeriodicLabView.swift */,
-			);
-			path = Simulation;
-			sourceTree = "<group>";
-		};
-		65018BBC017D06D1A2755B94 /* Subscription */ = {
-			isa = PBXGroup;
-			children = (
-				EF9546F40DA1743EE44F5663 /* CheckoutPaymentView.swift */,
-				3D83F42EB4CBA4BEDB45BC93 /* LearningPlanView.swift */,
-			);
-			path = Subscription;
-			sourceTree = "<group>";
-		};
-		20C2A6006D4A6516499A94A8 /* Stats */ = {
-			isa = PBXGroup;
-			children = (
-				482643757AC22DBF52CF8E9A /* LearningStatisticsView.swift */,
-				EED678A56BC7E8AA6DFD2DB4 /* MyBadgesView.swift */,
-			);
-			path = Stats;
-			sourceTree = "<group>";
-		};
-		AD175D30C8DBFF98D4C4A07F /* Profile */ = {
-			isa = PBXGroup;
-			children = (
-				EB8556D4D8120C9CFF886608 /* StudentProfileView.swift */,
-			);
-			path = Profile;
+			path = Screens;
 			sourceTree = "<group>";
 		};
 		B642DCC00EC1A184662227C2 /* Resources */ = {
@@ -304,25 +240,17 @@
 				C0DF431BA0C36E4EA20F5631 /* AppState.swift in Sources */,
 				90C74DAFB0B204B177E7C346 /* AuthViewModel.swift in Sources */,
 				1E9DA1A391534F4AD3582789 /* LabsViewModel.swift in Sources */,
+				6C6A9BF70CF0903904D529E4 /* OnboardingFlowViewModel.swift in Sources */,
 				7FF2DB47B5A2C59E7F7F6BC2 /* PeriodicLabViewModel.swift in Sources */,
 				7FF223B1A8BCEF8A65E5F229 /* SubscriptionViewModel.swift in Sources */,
-				75CCEB3C5E1468BD67693F05 /* ConnectSchoolView.swift in Sources */,
-				24E90C4F4A240CB765A7ADC2 /* RoleSelectionView.swift in Sources */,
-				2C2888A89DE9751388CD1EEE /* SplashLoginView.swift in Sources */,
 				B13A2A61474CD6A9BC607CC1 /* CommonUI.swift in Sources */,
 				DE768676CE2958369003B81C /* Theme.swift in Sources */,
 				480209AFDC8510AD3FA44EA0 /* WaveHeader.swift in Sources */,
-				47F745AFD44B42A12FC57BC7 /* BrowseLabsView.swift in Sources */,
-				291CD065B7D8042343E18620 /* HomeView.swift in Sources */,
-				29F98885E9B4FABECEDD545D /* MainTabView.swift in Sources */,
-				102E2E3453310C3F0FC8CC28 /* StudentProfileView.swift in Sources */,
-				44B4C4C5F8E0CF8D547E2E35 /* BohrModelView.swift in Sources */,
-				9F28443A69450405515AE373 /* ElementDetailView.swift in Sources */,
-				13C80D8F8976037E60C53854 /* PeriodicLabView.swift in Sources */,
-				851DC80E74B73045C3E799F0 /* LearningStatisticsView.swift in Sources */,
-				93D32F5552A060A934E74414 /* MyBadgesView.swift in Sources */,
-				45BE37FC0C9AA7012F28AA33 /* CheckoutPaymentView.swift in Sources */,
-				2A2391EF1A9B4A71FDCD7B66 /* LearningPlanView.swift in Sources */,
+				35029FD3A200A1522FB0CA89 /* CheckoutPaymentView.swift in Sources */,
+				BB45E52034936A40CFE75164 /* LearningPlanView.swift in Sources */,
+				F4290E907A1A90EAC4097F70 /* PaymentSuccessView.swift in Sources */,
+				F3879F4518C13EF7012AE87A /* RoleSelectionView.swift in Sources */,
+				F1A147C69D2929989DCB0641 /* SplashWelcomeView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

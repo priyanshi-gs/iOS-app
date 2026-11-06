@@ -75,3 +75,4 @@ public final class PeriodicLabViewModel: ObservableObject {
         speechSynthesizer.stopSpeaking(at: .immediate)
     }
 }
+

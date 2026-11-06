@@ -1,44 +1,105 @@
 import SwiftUI
 
+public enum AppScreen: Hashable {
+    case splash
+    case roleSelection
+    case learningPlan
+    case checkout(BillingCycle)
+    case paymentSuccess(BillingCycle)
+}
+
 @main
 struct LabLearnApp: App {
-    @StateObject private var appState = AppState.shared
+    @State private var currentScreen: AppScreen = .splash
     
     var body: some Scene {
         WindowGroup {
-            RootCoordinatorView()
-                .environmentObject(appState)
-                .preferredColorScheme(.light)
-        }
-    }
-}
-
-public struct RootCoordinatorView: View {
-    @EnvironmentObject private var appState: AppState
-    
-    public var body: some View {
-        Group {
-            switch appState.currentRoute {
-            case .splash:
-                SplashLoginView()
-            case .roleSelection:
-                RoleSelectionView()
-            case .connectSchool:
-                ConnectSchoolView()
-            case .schoolConnected:
-                SchoolConnectedSuccessView()
-            case .mainTabs:
-                MainTabView()
-            case .subscription:
-                LearningPlanView()
-            case .checkout:
-                CheckoutPaymentView()
-            case .paymentSuccess:
-                PaymentSuccessView()
-            case .simulation(let element):
-                PeriodicLabView()
+            ZStack {
+                switch currentScreen {
+                case .splash:
+                    SplashWelcomeView(
+                        onContinueWithApple: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .roleSelection
+                            }
+                        },
+                        onContinueWithEmail: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .roleSelection
+                            }
+                        },
+                        onCreateAccount: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .roleSelection
+                            }
+                        }
+                    )
+                    .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .leading)))
+                    
+                case .roleSelection:
+                    RoleSelectionView(
+                        onBack: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .splash
+                            }
+                        },
+                        onContinue: { option in
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .learningPlan
+                            }
+                        }
+                    )
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                    
+                case .learningPlan:
+                    LearningPlanView(
+                        onBack: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .roleSelection
+                            }
+                        },
+                        onContinue: { cycle, isPremium in
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .checkout(cycle)
+                            }
+                        }
+                    )
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                    
+                case .checkout(let cycle):
+                    CheckoutPaymentView(
+                        billingCycle: cycle,
+                        onBack: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .learningPlan
+                            }
+                        },
+                        onPaymentCompleted: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .paymentSuccess(cycle)
+                            }
+                        }
+                    )
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                    
+                case .paymentSuccess(let cycle):
+                    PaymentSuccessView(
+                        billingCycle: cycle,
+                        onBack: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .checkout(cycle)
+                            }
+                        },
+                        onExploreLabs: {
+                            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                                currentScreen = .splash
+                            }
+                        }
+                    )
+                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))
+                }
             }
+            .preferredColorScheme(.light)
         }
-        .animation(.easeInOut(duration: 0.25), value: appState.currentRoute)
     }
 }

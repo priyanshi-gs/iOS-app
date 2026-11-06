@@ -93,3 +93,4 @@ LabLearn/
    - Subject-wise progress bars (Physics, Chemistry, Biology).
    - Monthly activity bar chart and 7-day streak tracker.
    - 18 achievement badges with category filters and completion percentage ($12/18 = 67\%$).
+

@@ -1,102 +1,86 @@
 import SwiftUI
 
-public struct WaveHeader<TrailingContent: View>: View {
+public struct WaveHeader: View {
     public let title: String
-    public var subtitle: String? = nil
-    public var showBackButton: Bool = false
+    public var showBackButton: Bool = true
     public var onBack: (() -> Void)? = nil
-    public var height: CGFloat = 110
-    public var trailing: TrailingContent
+    public var height: CGFloat = 125
     
     public init(
         title: String,
-        subtitle: String? = nil,
-        showBackButton: Bool = false,
+        showBackButton: Bool = true,
         onBack: (() -> Void)? = nil,
-        height: CGFloat = 110,
-        @ViewBuilder trailing: () -> TrailingContent = { EmptyView() }
+        height: CGFloat = 125
     ) {
         self.title = title
-        self.subtitle = subtitle
         self.showBackButton = showBackButton
         self.onBack = onBack
         self.height = height
-        self.trailing = trailing()
     }
     
     public var body: some View {
         ZStack(alignment: .top) {
-            // Navy curved background
+            // Navy wave background
             Theme.navyBackground
-                .clipShape(CurvedHeaderShape())
+                .clipShape(OrganicWaveShape())
                 .ignoresSafeArea(edges: .top)
             
-            // Red accent arc on top right (signature Figma aesthetic)
+            // Signature Crimson Curved Arc on top-right
             GeometryReader { geo in
-                Circle()
-                    .fill(Theme.primaryRed)
-                    .frame(width: 90, height: 90)
-                    .offset(x: geo.size.width - 50, y: -30)
-                    .opacity(0.95)
+                ZStack {
+                    // Thick red arc
+                    Circle()
+                        .stroke(Theme.primaryRed, lineWidth: 14)
+                        .frame(width: 110, height: 110)
+                        .offset(x: geo.size.width - 45, y: -25)
+                }
             }
             .clipped()
             
-            // Header Content
-            VStack(spacing: 4) {
-                HStack(alignment: .center) {
-                    if showBackButton {
-                        Button(action: { onBack?() }) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.white)
-                                .frame(width: 36, height: 36)
-                                .background(Color.white.opacity(0.12))
-                                .clipShape(Circle())
-                        }
-                    } else {
-                        Spacer().frame(width: 36)
+            // Header Content: Back Button & Title
+            HStack {
+                if showBackButton {
+                    Button(action: { onBack?() }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(width: 40, height: 40, alignment: .leading)
                     }
-                    
-                    Spacer()
-                    
-                    Text(title)
-                        .font(.system(size: 17, weight: .bold))
-                        .foregroundColor(.white)
-                    
-                    Spacer()
-                    
-                    if TrailingContent.self != EmptyView.self {
-                        trailing
-                            .frame(width: 36, height: 36)
-                    } else {
-                        Spacer().frame(width: 36)
-                    }
+                } else {
+                    Spacer().frame(width: 40)
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 12)
                 
-                if let subtitle = subtitle {
-                    Text(subtitle)
-                        .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(Color.white.opacity(0.8))
-                        .padding(.top, 2)
-                }
+                Spacer()
+                
+                Text(title)
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundColor(.white)
+                
+                Spacer()
+                
+                // Balance space on trailing side
+                Spacer().frame(width: 40)
             }
+            .padding(.horizontal, 20)
+            .padding(.top, 14)
         }
         .frame(height: height)
     }
 }
 
-public struct CurvedHeaderShape: Shape {
+// Organic wave shape matching the Figma screen curve
+public struct OrganicWaveShape: Shape {
     public func path(in rect: CGRect) -> Path {
         var path = Path()
         path.move(to: CGPoint(x: 0, y: 0))
         path.addLine(to: CGPoint(x: rect.width, y: 0))
-        path.addLine(to: CGPoint(x: rect.width, y: rect.height - 24))
+        path.addLine(to: CGPoint(x: rect.width, y: rect.height - 28))
         
-        path.addQuadCurve(
+        // Smooth downward dipping wave curve
+        path.addCurve(
             to: CGPoint(x: 0, y: rect.height - 24),
-            control: CGPoint(x: rect.width / 2, y: rect.height + 12)
+            control1: CGPoint(x: rect.width * 0.65, y: rect.height + 14),
+            control2: CGPoint(x: rect.width * 0.35, y: rect.height - 48)
         )
         
         path.closeSubpath()

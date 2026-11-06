@@ -48,3 +48,4 @@ public struct Badge: Identifiable, Codable, Hashable {
         Badge(id: "b18", title: "Quantum Quest", subject: .physics, description: "Explained the photoelectric threshold frequency cutoff.", iconName: "sparkles", isEarned: false)
     ]
 }
+

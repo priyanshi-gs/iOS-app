@@ -62,3 +62,4 @@ public struct LabExperiment: Identifiable, Codable, Hashable {
         self.description = description
     }
 }
+

@@ -52,20 +52,20 @@ def main():
     info_plist_rel = "LabLearn/Resources/Info.plist"
     info_plist_file_uuid = uuid_for("FILE_" + info_plist_rel)
     
-    # Organize into subgroups
-    subgroups = {
-        "App": [],
-        "Models": [],
-        "ViewModels": [],
-        "Views/Common": [],
-        "Views/Auth": [],
-        "Views/Main": [],
-        "Views/Simulation": [],
-        "Views/Subscription": [],
-        "Views/Stats": [],
-        "Views/Profile": [],
-        "Resources": []
-    }
+    # Dynamically detect directories inside LabLearn
+    detected_subdirs = set()
+    for _, rel_path in swift_files:
+        parts = rel_path.split("/")
+        # LabLearn/<group>/...
+        if len(parts) >= 3 and parts[0] == "LabLearn":
+            # If parts[1] == "Views", it could be Views/Common or Views/<something>
+            if parts[1] == "Views" and len(parts) >= 4:
+                detected_subdirs.add(f"Views/{parts[2]}")
+            else:
+                detected_subdirs.add(parts[1])
+    
+    subgroups = {k: [] for k in sorted(detected_subdirs)}
+    subgroups["Resources"] = []
     
     file_objs = []
     build_objs = []
@@ -76,13 +76,11 @@ def main():
         file_objs.append((f_uuid, filename, rel_path))
         build_objs.append((b_uuid, f_uuid, filename))
         
-        # assign to subgroup
         for key in subgroups.keys():
             if f"LabLearn/{key}/" in rel_path or (key == "App" and "LabLearn/App" in rel_path):
                 subgroups[key].append((f_uuid, filename))
                 break
     
-    # Subgroup UUIDs
     subgroup_uuids = {k: uuid_for("GROUP_" + k) for k in subgroups.keys()}
     views_group_uuid = uuid_for("GROUP_Views")
     
@@ -146,31 +144,34 @@ def main():
     pbx.append("\t\t};")
     
     # App Group (LabLearn root folder)
+    top_level_subgroups = [k for k in subgroups.keys() if not k.startswith("Views/")]
+    has_views = any(k.startswith("Views/") for k in subgroups.keys())
+    
     pbx.append(f"\t\t{app_group_uuid} /* LabLearn */ = {{")
     pbx.append("\t\t\tisa = PBXGroup;")
     pbx.append("\t\t\tchildren = (")
-    pbx.append(f"\t\t\t\t{subgroup_uuids['App']} /* App */,")
-    pbx.append(f"\t\t\t\t{subgroup_uuids['Models']} /* Models */,")
-    pbx.append(f"\t\t\t\t{subgroup_uuids['ViewModels']} /* ViewModels */,")
-    pbx.append(f"\t\t\t\t{views_group_uuid} /* Views */,")
-    pbx.append(f"\t\t\t\t{subgroup_uuids['Resources']} /* Resources */,")
+    for k in top_level_subgroups:
+        pbx.append(f"\t\t\t\t{subgroup_uuids[k]} /* {k} */,")
+    if has_views:
+        pbx.append(f"\t\t\t\t{views_group_uuid} /* Views */,")
     pbx.append("\t\t\t);")
     pbx.append("\t\t\tpath = LabLearn;")
     pbx.append("\t\t\tsourceTree = \"<group>\";")
     pbx.append("\t\t};")
     
     # Views Group
-    view_subkeys = ["Views/Common", "Views/Auth", "Views/Main", "Views/Simulation", "Views/Subscription", "Views/Stats", "Views/Profile"]
-    pbx.append(f"\t\t{views_group_uuid} /* Views */ = {{")
-    pbx.append("\t\t\tisa = PBXGroup;")
-    pbx.append("\t\t\tchildren = (")
-    for vk in view_subkeys:
-        sub_name = vk.split("/")[1]
-        pbx.append(f"\t\t\t\t{subgroup_uuids[vk]} /* {sub_name} */,")
-    pbx.append("\t\t\t);")
-    pbx.append("\t\t\tpath = Views;")
-    pbx.append("\t\t\tsourceTree = \"<group>\";")
-    pbx.append("\t\t};")
+    if has_views:
+        view_subkeys = [k for k in subgroups.keys() if k.startswith("Views/")]
+        pbx.append(f"\t\t{views_group_uuid} /* Views */ = {{")
+        pbx.append("\t\t\tisa = PBXGroup;")
+        pbx.append("\t\t\tchildren = (")
+        for vk in view_subkeys:
+            sub_name = vk.split("/")[1]
+            pbx.append(f"\t\t\t\t{subgroup_uuids[vk]} /* {sub_name} */,")
+        pbx.append("\t\t\t);")
+        pbx.append("\t\t\tpath = Views;")
+        pbx.append("\t\t\tsourceTree = \"<group>\";")
+        pbx.append("\t\t};")
     
     # Subgroups
     for k, files in subgroups.items():
@@ -409,91 +410,6 @@ def main():
     with open(pbx_path, "w", encoding="utf-8") as f:
         f.write("\n".join(pbx) + "\n")
     print(f"Generated {pbx_path}")
-    
-    # Generate Scheme
-    scheme_xml = f"""<?xml version="1.0" encoding="UTF-8"?>
-<Scheme
-   LastUpgradeVersion = "1520"
-   version = "1.7">
-   <BuildAction
-      parallelizeBuildables = "YES"
-      buildImplicitDependencies = "YES">
-      <BuildActionEntries>
-         <BuildActionEntry
-            buildForTesting = "YES"
-            buildForRunning = "YES"
-            buildForProfiling = "YES"
-            buildForArchiving = "YES"
-            buildForAnalyzing = "YES">
-            <BuildableReference
-               BuildableIdentifier = "primary"
-               BlueprintIdentifier = "{target_uuid}"
-               BuildableName = "LabLearn.app"
-               BlueprintName = "LabLearn"
-               ReferencedContainer = "container:LabLearn.xcodeproj">
-            </BuildableReference>
-         </BuildActionEntry>
-      </BuildActionEntries>
-   </BuildAction>
-   <TestAction
-      buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      shouldUseLaunchSchemeArgsEnv = "YES">
-      <Testables>
-      </Testables>
-   </TestAction>
-   <LaunchAction
-      buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
-      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      launchStyle = "0"
-      useCustomWorkingDirectory = "NO"
-      ignoresPersistentStateOnLaunch = "NO"
-      debugDocumentVersioning = "YES"
-      debugServiceExtension = "internal"
-      allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "{target_uuid}"
-            BuildableName = "LabLearn.app"
-            BlueprintName = "LabLearn"
-            ReferencedContainer = "container:LabLearn.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
-   </LaunchAction>
-   <ProfileAction
-      buildConfiguration = "Release"
-      shouldUseLaunchSchemeArgsEnv = "YES"
-      savedToolIdentifier = ""
-      useCustomWorkingDirectory = "NO"
-      debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "{target_uuid}"
-            BuildableName = "LabLearn.app"
-            BlueprintName = "LabLearn"
-            ReferencedContainer = "container:LabLearn.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
-   </ProfileAction>
-   <AnalyzeAction
-      buildConfiguration = "Debug">
-   </AnalyzeAction>
-   <ArchiveAction
-      buildConfiguration = "Release"
-      revealArchiveInOrganizer = "YES">
-   </ArchiveAction>
-</Scheme>
-"""
-    scheme_file = scheme_dir / "LabLearn.xcscheme"
-    with open(scheme_file, "w", encoding="utf-8") as f:
-        f.write(scheme_xml)
-    print(f"Generated {scheme_file}")
 
 if __name__ == "__main__":
     main()
