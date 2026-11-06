@@ -17,39 +17,44 @@ public struct SplashWelcomeView: View {
     
     public var body: some View {
         GeometryReader { geo in
+            let topInset = max(geo.safeAreaInsets.top, 50)
+            let screenHeight = geo.size.height
+            let screenWidth = geo.size.width
+            
             ZStack(alignment: .topLeading) {
                 // MARK: - Background Artwork
-                // High-resolution artwork provided by user with flask, red arc, and glow
                 Image("splash_bg")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: geo.size.width, height: geo.size.height)
+                    .frame(width: screenWidth, height: screenHeight)
                     .clipped()
                     .ignoresSafeArea()
                 
                 // MARK: - Foreground UI Overlay
                 VStack(alignment: .leading, spacing: 0) {
-                    // 1. Top Brand Logo: Flask Icon + "LabLearn"
+                    // 1. Top Brand Header: Flask Icon + "LabLearn"
+                    // Positioned safely below the status bar clock and notch/Dynamic Island
                     HStack(spacing: 8) {
                         Image(systemName: "flask")
-                            .font(.system(size: 22, weight: .bold))
+                            .font(.system(size: 20, weight: .bold))
                             .foregroundColor(.white)
                         
                         Text("LabLearn")
-                            .font(.system(size: 24, weight: .heavy))
+                            .font(.system(size: 23, weight: .heavy))
                             .foregroundColor(.white)
                     }
-                    .padding(.top, 16)
-                    .padding(.horizontal, 26)
+                    .padding(.top, topInset + 6)
+                    .padding(.horizontal, 28)
                     
-                    // 2. Main Headline Text (Positioned to flow alongside the background graphic)
+                    // 2. Main Headline Text
+                    // Positioned cleanly BELOW the background's yellow dash so it never overlaps or collides
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Your Virtual")
-                            .font(.system(size: 30, weight: .heavy))
+                            .font(.system(size: 28, weight: .heavy))
                             .foregroundColor(.white)
                         
                         Text("Intelligent")
-                            .font(.system(size: 34, weight: .black))
+                            .font(.system(size: 32, weight: .black))
                             .foregroundStyle(
                                 LinearGradient(
                                     colors: [
@@ -62,26 +67,26 @@ public struct SplashWelcomeView: View {
                             )
                         
                         Text("Science Lab")
-                            .font(.system(size: 30, weight: .heavy))
+                            .font(.system(size: 28, weight: .heavy))
                             .foregroundColor(.white)
                         
                         Text("Interactive PCM labs, real experiments and guided learning for Classes 6 – 12.")
-                            .font(.system(size: 13.5, weight: .medium))
+                            .font(.system(size: 13, weight: .medium))
                             .foregroundColor(Color.white.opacity(0.82))
-                            .lineSpacing(4)
-                            .padding(.top, 8)
+                            .lineSpacing(3.5)
+                            .padding(.top, 6)
                             .fixedSize(horizontal: false, vertical: true)
                     }
-                    // Keep width bounded so it never overlaps the beaker on the right
-                    .frame(maxWidth: geo.size.width * 0.60, alignment: .leading)
-                    .padding(.top, geo.size.height * 0.05)
-                    .padding(.horizontal, 26)
+                    .frame(maxWidth: screenWidth * 0.58, alignment: .leading)
+                    // Offset down so the background's yellow dash sits above "Your Virtual"
+                    .padding(.top, screenHeight * 0.085)
+                    .padding(.horizontal, 28)
                     
                     Spacer()
                     
                     // 3. Bottom Action Buttons
-                    VStack(spacing: 13) {
-                        // Continue with Apple Button
+                    VStack(spacing: 12) {
+                        // Continue with Apple
                         Button(action: {
                             onContinueWithApple?()
                         }) {
@@ -96,10 +101,10 @@ public struct SplashWelcomeView: View {
                             .frame(height: 52)
                             .background(Color.white)
                             .clipShape(Capsule())
-                            .shadow(color: Color.black.opacity(0.2), radius: 8, x: 0, y: 4)
+                            .shadow(color: Color.black.opacity(0.25), radius: 8, x: 0, y: 4)
                         }
                         
-                        // Continue with Email Button
+                        // Continue with Email
                         Button(action: {
                             onContinueWithEmail?()
                         }) {
@@ -130,12 +135,12 @@ public struct SplashWelcomeView: View {
                                     .font(.system(size: 12, weight: .heavy))
                                     .foregroundColor(Theme.accentGold)
                             }
-                            .padding(.top, 6)
+                            .padding(.top, 4)
                         }
                         .frame(maxWidth: .infinity)
                     }
                     .padding(.horizontal, 22)
-                    .padding(.bottom, 28)
+                    .padding(.bottom, max(geo.safeAreaInsets.bottom, 24))
                 }
             }
         }
