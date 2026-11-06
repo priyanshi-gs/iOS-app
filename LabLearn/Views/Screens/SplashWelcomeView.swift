@@ -43,11 +43,11 @@ public struct SplashWelcomeView: View {
                             .font(.system(size: 23, weight: .heavy))
                             .foregroundColor(.white)
                     }
-                    .padding(.top, topInset + 6)
+                    .padding(.top, topInset + 10)
                     .padding(.horizontal, 28)
                     
                     // 2. Main Headline Text
-                    // Positioned cleanly BELOW the background's yellow dash so it never overlaps or collides
+                    // Positioned cleanly below the yellow dash and well-proportioned above the dots
                     VStack(alignment: .leading, spacing: 4) {
                         Text("Your Virtual")
                             .font(.system(size: 28, weight: .heavy))
@@ -78,8 +78,8 @@ public struct SplashWelcomeView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .frame(maxWidth: screenWidth * 0.58, alignment: .leading)
-                    // Offset down so the background's yellow dash sits above "Your Virtual"
-                    .padding(.top, screenHeight * 0.085)
+                    // Shifted further down as requested
+                    .padding(.top, screenHeight * 0.125)
                     .padding(.horizontal, 28)
                     
                     Spacer()
