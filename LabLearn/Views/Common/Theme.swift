@@ -8,6 +8,7 @@ public enum Theme {
     public static let primaryRedDark = Color(red: 0.73, green: 0.10, blue: 0.18)   // #BA1A2E
     
     // Accents
+    public static let primaryBlue = Color(red: 0.16, green: 0.45, blue: 0.95)     // #2973F2
     public static let accentGold = Color(red: 0.99, green: 0.75, blue: 0.12)      // #FDBF1E
     public static let accentGreen = Color(red: 0.11, green: 0.74, blue: 0.38)     // #1CBC61
     public static let accentPurple = Color(red: 0.75, green: 0.22, blue: 0.65)    // #BF38A6
