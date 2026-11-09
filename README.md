@@ -1,6 +1,6 @@
 # LabLearn — Native iOS App (Swift & SwiftUI)
 
-**LabLearn: Your Virtual Intelligent Science Lab** is a native iOS application built with **Swift 5 / SwiftUI** for Classes 6–12 PCM (Physics, Chemistry, Biology) students, designed using a clean, data-driven **MVVM (Model-View-ViewModel)** architecture.
+**LabLearn: Your Virtual Intelligent Science Lab** is a high-fidelity, native iOS application built with **Swift 5 & SwiftUI** for Classes 6–12 PCM (Physics, Chemistry, Biology) students, meticulously styled to match the official Figma design system.
 
 ---
 
@@ -10,87 +10,76 @@
    ```bash
    open LabLearn.xcodeproj
    ```
-2. In Xcode, select the **LabLearn** scheme from the top toolbar.
+2. In Xcode, select the **LabLearn** target and scheme from the top toolbar.
 3. Select any **iOS Simulator** (e.g., *iPhone 16 Pro*, *iPhone 15*, etc.).
-4. Press **Cmd + R** (or click the **Play / Run** button) to build and run.
+4. Press **⌘ + R** (or click the **Play** button) to build and run.
 
 ---
 
-## 🏛 Architecture (MVVM & Data-Driven)
+## 🧭 The 6 Core Screens
 
-```
+The application is structured around a streamlined, interactive onboarding & subscription funnel:
+
+| # | Screen | SwiftUI View | Key Features |
+|:---:|:---|:---|:---|
+| **1** | **Splash / Welcome** | `SplashWelcomeView.swift` | Full-bleed hero artwork (`splash_bg`), logo aligned 4pt above yellow bar, "Continue with Apple", soft crimson "Continue with Email", and "Create Account" navigation. |
+| **2** | **Role Selection** | `RoleSelectionView.swift` | Persona choice between *School-linked learner* (gold building icon) and *Independent learner* (soft crimson graduation cap) with selection badges. |
+| **3** | **Learning Plan (Monthly)** | `LearningPlanView.swift` | Interactive draggable glass toggle set to *Monthly*, Basic free tier card, and Premium Plan card (₹199 / month). |
+| **4** | **Learning Plan (Yearly)** | `LearningPlanView.swift` | Draggable glass toggle set to *Yearly*, dynamic *Save 20% (₹400 off)* gold badge, and discounted price (₹1,999 / year). |
+| **5** | **Complete Purchase** | `CheckoutPaymentView.swift` | Order summary, promo code applicator (`SAVE100`), payment method selector (UPI, Credit/Debit Card, Net Banking), and secure "Pay Now" trigger. |
+| **6** | **Payment Successful** | `PaymentSuccessView.swift` | Celebration checkmark badge, active plan confirmation banner, transaction breakdown receipt card, and "Explore Labs" button. |
+
+---
+
+## 🎨 Signature Design & UI Highlights
+
+### 1. Mathematically Fitted Organic Wave Header (`WaveHeader.swift`)
+- **Organic Double-Crest Wave**: Fitted directly to Figma reference artboards using high-precision cubic Bézier curves:
+  - Slopes smoothly up from the left edge (`y = 0.895h`) to a gentle crest under the back chevron (`x = 0.15w, y = 0.757h`).
+  - Dips into a graceful center trough directly beneath the centered navigation title (`x = 0.47w, y = 1.000h`).
+  - Rises to the right crest (`x = 0.86w, y = 0.710h`) and sweeps down to meet the trailing edge (`y = 0.800h`).
+- **Signature Crimson Ring**: A bold `24pt` thick crescent band entering from the top edge, sweeping past the title level, and meeting the right wave boundary.
+
+### 2. Draggable Glass Segmented Control (`CycleToggleBar`)
+- **Interactive Drag Physics**: Drag the indicator pill horizontally with real-time gesture tracking and spring snapping (`.spring(response: 0.28, dampingFraction: 0.78)`).
+- **Glassmorphism Styling**: Top-lit specular reflection gradient overlay, frosted bevel rim (`strokeBorder`), soft ambient shadow, and dynamic `1.02x` scale-up during drag.
+- **Dual Interaction**: Supports both continuous dragging and instant single-tap switching between *Monthly* and *Yearly*.
+
+### 3. Soft, Eye-Friendly Palette (`Theme.swift`)
+- **Calibrated Matte Crimson & Ruby**: Specifically tuned (`#BA1438` and `#BD173B`) to eliminate eye strain and screen glare while maintaining crisp white text contrast.
+- **Deep Velvet Card Gradient**: Luxurious wine-ruby background gradient (`#A61233` to `#850826`) on large card rectangles, eliminating the harshness of electric/neon reds.
+- **Subtle Drop Shadows**: Reduced shadow opacity (`0.12` to `0.16`) to remove over-saturated glowing halos.
+
+---
+
+## 🏛 Clean & Lean Project Structure
+
+```text
 LabLearn/
 ├── App/
-│   └── LabLearnApp.swift                 # App entry point & RootCoordinatorView
+│   └── LabLearnApp.swift           # Root coordinator linking all 6 screens
 ├── Models/
-│   ├── LabExperiment.swift               # PCM experiment entities, subjects, status
-│   ├── PeriodicElement.swift             # Element data, Bohr shells, Hinglish mnemonics
-│   ├── Badge.swift                       # 18 Achievement badges & unlock criteria
-│   └── Student.swift                     # Student profile, School, Entitlement, Orders
-├── ViewModels/
-│   ├── AppState.swift                    # Central coordinator for navigation & session
-│   ├── AuthViewModel.swift               # Authentication & role selection logic
-│   ├── LabsViewModel.swift               # Search & subject-filtered lab discovery
-│   ├── PeriodicLabViewModel.swift        # Bohr orbital simulation & audio speech synthesis
-│   └── SubscriptionViewModel.swift       # Billing cycle, promo codes, order calculation
+│   └── PaymentModels.swift         # BillingCycle & PaymentMethodType enums
 ├── Views/
 │   ├── Common/
-│   │   ├── Theme.swift                   # LabLearn color palette (Navy & Crimson)
-│   │   ├── WaveHeader.swift              # Signature top curved wave header
-│   │   └── CommonUI.swift                # PrimaryButton, CardContainer, chips, rows
-│   ├── Auth/
-│   │   ├── SplashLoginView.swift         # Welcome screen, Apple/Email login
-│   │   ├── RoleSelectionView.swift       # School-linked vs. Independent choice
-│   │   └── ConnectSchoolView.swift       # School referral code verification & access
-│   ├── Main/
-│   │   ├── MainTabView.swift             # Bottom tab bar navigation
-│   │   ├── HomeView.swift                # Dashboard with active lab, stats & recents
-│   │   └── BrowseLabsView.swift          # Searchable lab catalog with launch triggers
-│   ├── Simulation/
-│   │   ├── PeriodicLabView.swift         # Periodic Table selector & interactive modes
-│   │   ├── BohrModelView.swift           # Real-time animated canvas of orbital shells
-│   │   └── ElementDetailView.swift       # Element specs & Hinglish mnemonic audio player
-│   ├── Subscription/
-│   │   ├── LearningPlanView.swift        # Monthly/Yearly toggle & plan comparison
-│   │   └── CheckoutPaymentView.swift     # UPI, Card, Net Banking & Payment Success
-│   ├── Stats/
-│   │   ├── LearningStatisticsView.swift  # Progress rings, monthly bar chart & streaks
-│   │   └── MyBadgesView.swift            # 3-column grid of 18 achievement badges
-│   └── Profile/
-│       └── StudentProfileView.swift      # Profile specs, institution entitlement, sign-out
+│   │   ├── CardContainer.swift     # Reusable rounded card container
+│   │   ├── Theme.swift             # Soft crimson & navy brand palette
+│   │   └── WaveHeader.swift        # Curved organic wave header with red arc
+│   └── Screens/
+│       ├── SplashWelcomeView.swift # Screen 1: Welcome & Auth options
+│       ├── RoleSelectionView.swift # Screen 2: Persona / Role selection
+│       ├── LearningPlanView.swift  # Screens 3 & 4: Monthly & Yearly plans
+│       ├── CheckoutPaymentView.swift # Screen 5: Order summary & payment
+│       └── PaymentSuccessView.swift  # Screen 6: Confirmation & receipt
 └── Resources/
-    ├── Info.plist                        # App metadata & capabilities
-    └── Assets.xcassets                   # AppIcon & AccentColor tokens
+    ├── Assets.xcassets             # splash_bg, AppIcon, AccentColor
+    └── Info.plist                  # iOS bundle configuration
 ```
 
 ---
 
-## ✨ Features Implemented from Design Mockups
-
-1. **Authentication & Onboarding**:
-   - Welcome Splash with brand illustrations and Apple/Email authentication.
-   - Persona selection: *School-linked learner* vs. *Independent learner*.
-   - School referral code verification (`EDU-PCM-2026`) with entitlement breakdown.
-   - School connection confirmation for *Chaplin Pre-University (CPU)*.
-
-2. **Dashboard & Labs**:
-   - Interactive continue-card for in-progress experiments (*Acid-Base Titration*).
-   - Metric pills: *2 Available Labs*, *12 Badges Won*, *18.5h Lab Hours*.
-   - Subject categories: *Physics*, *Chemistry*, *Biology*.
-   - Searchable lab directory with instant Launch actions.
-
-3. **PeriodicLab Simulation**:
-   - Interactive Periodic Table with category highlighting (Group 2 Alkaline Earth Metals).
-   - **Bohr Atomic Shell Simulation**: Custom SwiftUI `Canvas` rendering rotating orbital electrons across K, L, M, N shells ($2, 8, 8, 2$).
-   - **Audio Mnemonic**: Native iOS Speech Synthesis (`AVSpeechSynthesizer`) reciting Hinglish memory tricks (*"Beta Mange Car Scooter Baap Razi"*).
-
-4. **Pricing, Checkout & Entitlements**:
-   - Monthly (₹199/mo) and Yearly (₹1,999/yr, Save 20%) plans comparison.
-   - Checkout with UPI, Credit/Debit cards, and Net Banking simulation.
-   - Instant receipt and plan activation screen.
-
-5. **Gamification & Analytics**:
-   - Subject-wise progress bars (Physics, Chemistry, Biology).
-   - Monthly activity bar chart and 7-day streak tracker.
-   - 18 achievement badges with category filters and completion percentage ($12/18 = 67\%$).
-
+## 🛠 Tech Stack
+- **Language**: Swift 5.0
+- **Framework**: SwiftUI (iOS 16.0+ deployment target)
+- **Architecture**: Lightweight State-Driven / MVVM
+- **Dependencies**: 100% pure native Apple frameworks (Zero external third-party dependencies)
