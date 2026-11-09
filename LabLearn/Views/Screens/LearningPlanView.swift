@@ -87,7 +87,7 @@ public struct LearningPlanView: View {
                         .frame(height: 52)
                         .background(Theme.redButtonGradient)
                         .clipShape(Capsule())
-                        .shadow(color: Theme.primaryRed.opacity(0.35), radius: 10, x: 0, y: 5)
+                        .shadow(color: Theme.primaryRed.opacity(0.24), radius: 10, x: 0, y: 5)
                     }
                     .padding(.horizontal, 20)
                     .padding(.bottom, 24)
@@ -309,7 +309,7 @@ public struct PremiumPlanCard: View {
                 )
             )
             .clipShape(RoundedRectangle(cornerRadius: 18))
-            .shadow(color: Theme.primaryRed.opacity(0.35), radius: 12, x: 0, y: 6)
+            .shadow(color: Theme.primaryRed.opacity(0.20), radius: 10, x: 0, y: 5)
         }
         .buttonStyle(PlainButtonStyle())
     }

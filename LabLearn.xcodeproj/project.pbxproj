@@ -7,17 +7,8 @@
 	objects = {
 /* Begin PBXBuildFile section */
 		D614F91E5FDDC048C9E1366B /* LabLearnApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E61D38F33C3F2BE147045FB7 /* LabLearnApp.swift */; };
-		1B5B4120C7B7CC31AD201D8B /* Badge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D10B4F7ADACB1D7DBEB3A32 /* Badge.swift */; };
-		B0494DF6F126A5A24D54E950 /* LabExperiment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 178AC0F9C5C69B8239604FF6 /* LabExperiment.swift */; };
-		B6BD0443B9D630DC2D231348 /* PeriodicElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C187E076C235EBEE047D00F /* PeriodicElement.swift */; };
-		79E14239787F75DA3D4E4D9C /* Student.swift in Sources */ = {isa = PBXBuildFile; fileRef = 858E322C135D699D10EC860E /* Student.swift */; };
-		C0DF431BA0C36E4EA20F5631 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5995E6DE2B1250B1AC3D2D9E /* AppState.swift */; };
-		90C74DAFB0B204B177E7C346 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84D1FC00CBFD0B235EAAE21B /* AuthViewModel.swift */; };
-		1E9DA1A391534F4AD3582789 /* LabsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ACC17FF7B46F844ED84BC56F /* LabsViewModel.swift */; };
-		6C6A9BF70CF0903904D529E4 /* OnboardingFlowViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B655A7264CC1EBB2E6303DE /* OnboardingFlowViewModel.swift */; };
-		7FF2DB47B5A2C59E7F7F6BC2 /* PeriodicLabViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0E3B61DDE08E4131D6C7DC /* PeriodicLabViewModel.swift */; };
-		7FF223B1A8BCEF8A65E5F229 /* SubscriptionViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 262588623500B634B7FF42E9 /* SubscriptionViewModel.swift */; };
-		B13A2A61474CD6A9BC607CC1 /* CommonUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 271E1AD5E15AAF2581A13935 /* CommonUI.swift */; };
+		13E1288349B2489852259EEE /* PaymentModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21600D93A9E05E56CE2DC592 /* PaymentModels.swift */; };
+		40DC185CD83E5F362ED21EB8 /* CardContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0804D272B6C6439F4D48236 /* CardContainer.swift */; };
 		DE768676CE2958369003B81C /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9B4091ED3810C5803319CD1 /* Theme.swift */; };
 		480209AFDC8510AD3FA44EA0 /* WaveHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 745BF17333D3F30DFA2EDB07 /* WaveHeader.swift */; };
 		35029FD3A200A1522FB0CA89 /* CheckoutPaymentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C857FC1776A814439D8582B8 /* CheckoutPaymentView.swift */; };
@@ -31,17 +22,8 @@
 /* Begin PBXFileReference section */
 		B95DCEACD406663851A3F43B /* LabLearn.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LabLearn.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E61D38F33C3F2BE147045FB7 /* LabLearnApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LabLearnApp.swift"; sourceTree = "<group>"; };
-		5D10B4F7ADACB1D7DBEB3A32 /* Badge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Badge.swift"; sourceTree = "<group>"; };
-		178AC0F9C5C69B8239604FF6 /* LabExperiment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LabExperiment.swift"; sourceTree = "<group>"; };
-		8C187E076C235EBEE047D00F /* PeriodicElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeriodicElement.swift"; sourceTree = "<group>"; };
-		858E322C135D699D10EC860E /* Student.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Student.swift"; sourceTree = "<group>"; };
-		5995E6DE2B1250B1AC3D2D9E /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppState.swift"; sourceTree = "<group>"; };
-		84D1FC00CBFD0B235EAAE21B /* AuthViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AuthViewModel.swift"; sourceTree = "<group>"; };
-		ACC17FF7B46F844ED84BC56F /* LabsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LabsViewModel.swift"; sourceTree = "<group>"; };
-		7B655A7264CC1EBB2E6303DE /* OnboardingFlowViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "OnboardingFlowViewModel.swift"; sourceTree = "<group>"; };
-		7E0E3B61DDE08E4131D6C7DC /* PeriodicLabViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PeriodicLabViewModel.swift"; sourceTree = "<group>"; };
-		262588623500B634B7FF42E9 /* SubscriptionViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SubscriptionViewModel.swift"; sourceTree = "<group>"; };
-		271E1AD5E15AAF2581A13935 /* CommonUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CommonUI.swift"; sourceTree = "<group>"; };
+		21600D93A9E05E56CE2DC592 /* PaymentModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PaymentModels.swift"; sourceTree = "<group>"; };
+		F0804D272B6C6439F4D48236 /* CardContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CardContainer.swift"; sourceTree = "<group>"; };
 		E9B4091ED3810C5803319CD1 /* Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Theme.swift"; sourceTree = "<group>"; };
 		745BF17333D3F30DFA2EDB07 /* WaveHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WaveHeader.swift"; sourceTree = "<group>"; };
 		C857FC1776A814439D8582B8 /* CheckoutPaymentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CheckoutPaymentView.swift"; sourceTree = "<group>"; };
@@ -85,7 +67,6 @@
 			children = (
 				77C037C483DC6B00C463C5F9 /* App */,
 				BC8E6A5FDB0FEE50AF1B10E7 /* Models */,
-				F3533A2279EAD65233E99B38 /* ViewModels */,
 				B642DCC00EC1A184662227C2 /* Resources */,
 				F867080DDDCAA8CC74A91BE2 /* Views */,
 			);
@@ -112,31 +93,15 @@
 		BC8E6A5FDB0FEE50AF1B10E7 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				5D10B4F7ADACB1D7DBEB3A32 /* Badge.swift */,
-				178AC0F9C5C69B8239604FF6 /* LabExperiment.swift */,
-				8C187E076C235EBEE047D00F /* PeriodicElement.swift */,
-				858E322C135D699D10EC860E /* Student.swift */,
+				21600D93A9E05E56CE2DC592 /* PaymentModels.swift */,
 			);
 			path = Models;
-			sourceTree = "<group>";
-		};
-		F3533A2279EAD65233E99B38 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				5995E6DE2B1250B1AC3D2D9E /* AppState.swift */,
-				84D1FC00CBFD0B235EAAE21B /* AuthViewModel.swift */,
-				ACC17FF7B46F844ED84BC56F /* LabsViewModel.swift */,
-				7B655A7264CC1EBB2E6303DE /* OnboardingFlowViewModel.swift */,
-				7E0E3B61DDE08E4131D6C7DC /* PeriodicLabViewModel.swift */,
-				262588623500B634B7FF42E9 /* SubscriptionViewModel.swift */,
-			);
-			path = ViewModels;
 			sourceTree = "<group>";
 		};
 		899BAD5F8D7E43D5B2DF307A /* Common */ = {
 			isa = PBXGroup;
 			children = (
-				271E1AD5E15AAF2581A13935 /* CommonUI.swift */,
+				F0804D272B6C6439F4D48236 /* CardContainer.swift */,
 				E9B4091ED3810C5803319CD1 /* Theme.swift */,
 				745BF17333D3F30DFA2EDB07 /* WaveHeader.swift */,
 			);
@@ -233,17 +198,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				D614F91E5FDDC048C9E1366B /* LabLearnApp.swift in Sources */,
-				1B5B4120C7B7CC31AD201D8B /* Badge.swift in Sources */,
-				B0494DF6F126A5A24D54E950 /* LabExperiment.swift in Sources */,
-				B6BD0443B9D630DC2D231348 /* PeriodicElement.swift in Sources */,
-				79E14239787F75DA3D4E4D9C /* Student.swift in Sources */,
-				C0DF431BA0C36E4EA20F5631 /* AppState.swift in Sources */,
-				90C74DAFB0B204B177E7C346 /* AuthViewModel.swift in Sources */,
-				1E9DA1A391534F4AD3582789 /* LabsViewModel.swift in Sources */,
-				6C6A9BF70CF0903904D529E4 /* OnboardingFlowViewModel.swift in Sources */,
-				7FF2DB47B5A2C59E7F7F6BC2 /* PeriodicLabViewModel.swift in Sources */,
-				7FF223B1A8BCEF8A65E5F229 /* SubscriptionViewModel.swift in Sources */,
-				B13A2A61474CD6A9BC607CC1 /* CommonUI.swift in Sources */,
+				13E1288349B2489852259EEE /* PaymentModels.swift in Sources */,
+				40DC185CD83E5F362ED21EB8 /* CardContainer.swift in Sources */,
 				DE768676CE2958369003B81C /* Theme.swift in Sources */,
 				480209AFDC8510AD3FA44EA0 /* WaveHeader.swift in Sources */,
 				35029FD3A200A1522FB0CA89 /* CheckoutPaymentView.swift in Sources */,

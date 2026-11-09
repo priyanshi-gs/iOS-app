@@ -22,17 +22,18 @@ public struct WaveHeader: View {
                 .clipShape(OrganicWaveShape())
                 .ignoresSafeArea(edges: .top)
             
-            // 2. Signature Crimson Ring in the Top-Right (anchored in the top-right safe area corner)
+            // 2. Signature Crimson Ring in the Top-Right
+            // Positioned deeper and lower so the bold red crescent sweeps into the right side
+            // of the header beside the title and down towards the wave boundary, matching Figma.
             GeometryReader { geo in
                 ZStack {
                     Circle()
-                        .stroke(Theme.primaryRed, lineWidth: 15)
-                        .frame(width: 110, height: 110)
-                        // Positioned so the inner curve sweeps across the top right of the blue area
-                        .position(x: geo.size.width - 15, y: -5)
+                        .stroke(Theme.primaryRed, lineWidth: 24)
+                        .frame(width: 170, height: 170)
+                        .position(x: geo.size.width + 10, y: 15)
                 }
+                .clipShape(OrganicWaveShape())
             }
-            .clipped()
             .ignoresSafeArea(edges: .top)
             
             // 3. Navigation Bar Content (Back button & Centered Title)
@@ -63,7 +64,7 @@ public struct WaveHeader: View {
             .padding(.horizontal, 20)
             .padding(.bottom, 12)
         }
-        // Compact height so top blue area is not overly tall and matches Figma
+        // Compact height so top blue area matches Figma precisely
         .frame(height: 54)
     }
 }
@@ -75,16 +76,21 @@ public struct OrganicWaveShape: Shape {
         path.move(to: CGPoint(x: 0, y: 0))
         path.addLine(to: CGPoint(x: rect.width, y: 0))
         
-        // Right side starts slightly higher (around y = rect.height - 18)
-        let rightEdgeY = rect.height - 18
+        // Right edge starts at ~75% of rect.height
+        let rightEdgeY = rect.height * 0.75
         path.addLine(to: CGPoint(x: rect.width, y: rightEdgeY))
         
-        // Exact curve from Figma:
-        // Swoops gently down under the centered title and slopes smoothly to the left
+        // Exact organic wave from Figma:
+        // Curves from right edge through center scoop to left edge
         path.addCurve(
-            to: CGPoint(x: 0, y: rect.height - 10),
-            control1: CGPoint(x: rect.width * 0.70, y: rect.height - 24),
-            control2: CGPoint(x: rect.width * 0.38, y: rect.height + 8)
+            to: CGPoint(x: rect.width * 0.44, y: rect.height),
+            control1: CGPoint(x: rect.width * 0.85, y: rect.height * 0.60),
+            control2: CGPoint(x: rect.width * 0.65, y: rect.height * 1.02)
+        )
+        path.addCurve(
+            to: CGPoint(x: 0, y: rect.height * 0.88),
+            control1: CGPoint(x: rect.width * 0.26, y: rect.height * 0.98),
+            control2: CGPoint(x: rect.width * 0.12, y: rect.height * 0.72)
         )
         
         path.closeSubpath()

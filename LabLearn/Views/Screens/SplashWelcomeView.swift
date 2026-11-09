@@ -126,7 +126,7 @@ public struct SplashWelcomeView: View {
                             .frame(height: 52)
                             .background(Theme.redButtonGradient)
                             .clipShape(Capsule())
-                            .shadow(color: Theme.primaryRed.opacity(0.5), radius: 12, x: 0, y: 6)
+                            .shadow(color: Theme.primaryRed.opacity(0.24), radius: 10, x: 0, y: 5)
                         }
                         
                         // Create Account Link
