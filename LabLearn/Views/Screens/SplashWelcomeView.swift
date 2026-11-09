@@ -142,12 +142,13 @@ public struct SplashWelcomeView: View {
                                     .font(.system(size: 12, weight: .heavy))
                                     .foregroundColor(Theme.accentGold)
                             }
-                            .padding(.top, 4)
+                            .padding(.vertical, 6)
                         }
                         .frame(maxWidth: .infinity)
                     }
                     .padding(.horizontal, 22)
-                    .padding(.bottom, max(geo.safeAreaInsets.bottom, 24))
+                    // Lifted up so it is never cut off by home indicator or bottom corners
+                    .padding(.bottom, max(geo.safeAreaInsets.bottom, 34) + 18)
                 }
             }
         }
