@@ -22,3 +22,4 @@ public enum PaymentMethodType: String, CaseIterable, Identifiable {
         }
     }
 }
+

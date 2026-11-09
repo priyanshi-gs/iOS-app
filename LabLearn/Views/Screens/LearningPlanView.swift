@@ -98,58 +98,61 @@ public struct LearningPlanView: View {
     }
 }
 
-// MARK: - Billing Cycle Toggle (Monthly vs. Yearly)
+// MARK: - Billing Cycle Toggle (Native Segmented Control Pill)
 public struct CycleToggleBar: View {
     @Binding public var selectedCycle: BillingCycle
     
     public var body: some View {
-        HStack(spacing: 8) {
-            // Monthly Button
-            Button(action: {
-                withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
-                    selectedCycle = .monthly
-                }
-            }) {
-                Text("Monthly")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(selectedCycle == .monthly ? .white : Theme.navyBackground)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 38)
-                    .background(
-                        selectedCycle == .monthly ? Theme.primaryRed : Color.clear
-                    )
-                    .clipShape(Capsule())
-                    .overlay(
-                        Capsule()
-                            .stroke(selectedCycle == .monthly ? Color.clear : Theme.navyBackground.opacity(0.4), lineWidth: 1.2)
-                    )
-            }
+        GeometryReader { geo in
+            let itemWidth = geo.size.width / 2
             
-            // Yearly Button
-            Button(action: {
-                withAnimation(.spring(response: 0.25, dampingFraction: 0.8)) {
-                    selectedCycle = .yearly
+            ZStack(alignment: .leading) {
+                // 1. Deep Navy Segment Track (Matches Figma mockup #022B5F)
+                Capsule()
+                    .fill(Color(red: 0.01, green: 0.17, blue: 0.38))
+                
+                // 2. Sliding Active Red Pill Indicator
+                Capsule()
+                    .fill(Theme.redButtonGradient)
+                    .frame(width: itemWidth)
+                    .offset(x: selectedCycle == .monthly ? 0 : itemWidth)
+                    .animation(.spring(response: 0.28, dampingFraction: 0.78), value: selectedCycle)
+                
+                // 3. Segment Labels & Tap Targets
+                HStack(spacing: 0) {
+                    // Monthly Segment
+                    Button(action: {
+                        withAnimation(.spring(response: 0.28, dampingFraction: 0.78)) {
+                            selectedCycle = .monthly
+                        }
+                    }) {
+                        Text("Monthly")
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                    
+                    // Yearly Segment
+                    Button(action: {
+                        withAnimation(.spring(response: 0.28, dampingFraction: 0.78)) {
+                            selectedCycle = .yearly
+                        }
+                    }) {
+                        Text("Yearly")
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
-            }) {
-                Text("Yearly")
-                    .font(.system(size: 14, weight: .bold))
-                    .foregroundColor(selectedCycle == .yearly ? .white : Theme.navyBackground)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 38)
-                    .background(
-                        selectedCycle == .yearly ? Theme.primaryRed : Color.clear
-                    )
-                    .clipShape(Capsule())
-                    .overlay(
-                        Capsule()
-                            .stroke(selectedCycle == .yearly ? Color.clear : Theme.navyBackground.opacity(0.4), lineWidth: 1.2)
-                    )
             }
         }
-        .padding(4)
-        .background(Color.white)
+        .frame(height: 42)
         .clipShape(Capsule())
-        .overlay(Capsule().stroke(Theme.borderLight, lineWidth: 1))
+        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 3)
     }
 }
 
