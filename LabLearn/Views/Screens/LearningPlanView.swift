@@ -98,25 +98,69 @@ public struct LearningPlanView: View {
     }
 }
 
-// MARK: - Billing Cycle Toggle (Native Segmented Control Pill)
+// MARK: - Billing Cycle Toggle (Native Draggable Segmented Control with Glass Effect)
 public struct CycleToggleBar: View {
     @Binding public var selectedCycle: BillingCycle
+    @State private var dragOffset: CGFloat = 0
+    @State private var isDragging: Bool = false
     
     public var body: some View {
         GeometryReader { geo in
             let itemWidth = geo.size.width / 2
+            let currentOffset: CGFloat = isDragging
+                ? min(max((selectedCycle == .monthly ? 0 : itemWidth) + dragOffset, 0), itemWidth)
+                : (selectedCycle == .monthly ? 0 : itemWidth)
             
             ZStack(alignment: .leading) {
                 // 1. Deep Navy Segment Track (Matches Figma mockup #022B5F)
                 Capsule()
                     .fill(Color(red: 0.01, green: 0.17, blue: 0.38))
+                    .overlay(
+                        Capsule()
+                            .stroke(Color.white.opacity(0.08), lineWidth: 0.8)
+                    )
                 
-                // 2. Sliding Active Red Pill Indicator
-                Capsule()
-                    .fill(Theme.redButtonGradient)
-                    .frame(width: itemWidth)
-                    .offset(x: selectedCycle == .monthly ? 0 : itemWidth)
-                    .animation(.spring(response: 0.28, dampingFraction: 0.78), value: selectedCycle)
+                // 2. Draggable Glass Crimson Pill Indicator
+                ZStack {
+                    // Base soft crimson fill
+                    Capsule()
+                        .fill(Theme.redButtonGradient)
+                    
+                    // Glass specular highlight overlay (top-lit refraction)
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.32),
+                                    Color.white.opacity(0.08),
+                                    Color.clear
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                    
+                    // Glass frosted bevel rim / specular edge
+                    Capsule()
+                        .strokeBorder(
+                            LinearGradient(
+                                colors: [
+                                    Color.white.opacity(0.48),
+                                    Color.white.opacity(0.12)
+                                ],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            ),
+                            lineWidth: 1
+                        )
+                }
+                .frame(width: itemWidth)
+                .offset(x: currentOffset)
+                .scaleEffect(isDragging ? 1.02 : 1.0)
+                .shadow(color: Color.black.opacity(0.20), radius: 6, x: 0, y: 3)
+                .shadow(color: Theme.primaryRed.opacity(0.22), radius: 8, x: 0, y: 2)
+                .animation(.spring(response: 0.28, dampingFraction: 0.78), value: selectedCycle)
+                .animation(.interactiveSpring(response: 0.15, dampingFraction: 0.85), value: dragOffset)
                 
                 // 3. Segment Labels & Tap Targets
                 HStack(spacing: 0) {
@@ -124,6 +168,7 @@ public struct CycleToggleBar: View {
                     Button(action: {
                         withAnimation(.spring(response: 0.28, dampingFraction: 0.78)) {
                             selectedCycle = .monthly
+                            dragOffset = 0
                         }
                     }) {
                         Text("Monthly")
@@ -138,6 +183,7 @@ public struct CycleToggleBar: View {
                     Button(action: {
                         withAnimation(.spring(response: 0.28, dampingFraction: 0.78)) {
                             selectedCycle = .yearly
+                            dragOffset = 0
                         }
                     }) {
                         Text("Yearly")
@@ -149,6 +195,41 @@ public struct CycleToggleBar: View {
                     .buttonStyle(PlainButtonStyle())
                 }
             }
+            .contentShape(Capsule())
+            .gesture(
+                DragGesture(minimumDistance: 3)
+                    .onChanged { value in
+                        isDragging = true
+                        dragOffset = value.translation.width
+                    }
+                    .onEnded { value in
+                        isDragging = false
+                        let translation = value.translation.width
+                        let predicted = value.predictedEndTranslation.width
+                        let targetCycle: BillingCycle
+                        
+                        if selectedCycle == .monthly {
+                            // Dragging from Monthly towards Yearly
+                            if translation > itemWidth * 0.38 || predicted > itemWidth * 0.45 {
+                                targetCycle = .yearly
+                            } else {
+                                targetCycle = .monthly
+                            }
+                        } else {
+                            // Dragging from Yearly towards Monthly
+                            if translation < -itemWidth * 0.38 || predicted < -itemWidth * 0.45 {
+                                targetCycle = .monthly
+                            } else {
+                                targetCycle = .yearly
+                            }
+                        }
+                        
+                        dragOffset = 0
+                        withAnimation(.spring(response: 0.28, dampingFraction: 0.78)) {
+                            selectedCycle = targetCycle
+                        }
+                    }
+            )
         }
         .frame(height: 42)
         .clipShape(Capsule())
