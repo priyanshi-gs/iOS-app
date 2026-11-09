@@ -115,7 +115,7 @@ public struct CheckoutPaymentView: View {
                     }
                     .background(Theme.premiumCardGradient)
                     .clipShape(RoundedRectangle(cornerRadius: 18))
-                    .shadow(color: Theme.primaryRed.opacity(0.25), radius: 8, x: 0, y: 4)
+                    .shadow(color: Theme.primaryRed.opacity(0.12), radius: 8, x: 0, y: 4)
                     
                     // Order Summary Section
                     VStack(alignment: .leading, spacing: 12) {
@@ -253,7 +253,7 @@ public struct CheckoutPaymentView: View {
                         .frame(height: 52)
                         .background(Theme.redButtonGradient)
                         .clipShape(Capsule())
-                        .shadow(color: Theme.primaryRed.opacity(0.24), radius: 10, x: 0, y: 5)
+                        .shadow(color: Theme.primaryRed.opacity(0.16), radius: 8, x: 0, y: 4)
                     }
                     .disabled(isProcessing)
                     .padding(.top, 4)

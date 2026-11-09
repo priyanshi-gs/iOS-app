@@ -94,7 +94,7 @@ public struct RoleSelectionView: View {
                     .frame(height: 52)
                     .background(Theme.redButtonGradient)
                     .clipShape(Capsule())
-                    .shadow(color: Theme.primaryRed.opacity(0.24), radius: 10, x: 0, y: 5)
+                    .shadow(color: Theme.primaryRed.opacity(0.16), radius: 8, x: 0, y: 4)
                 }
                 .padding(.horizontal, 20)
                 .padding(.bottom, 28)
