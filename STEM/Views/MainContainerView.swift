@@ -31,6 +31,16 @@ public struct MainContainerView: View {
                     Label(AppTab.labs.title, systemImage: AppTab.labs.icon)
                 }
                 .tag(AppTab.labs)
+
+                CarawinAssignedScreens(
+                    onDashboard: {
+                        selectedTab = .home
+                    }
+                )
+                .tabItem {
+                    Label(AppTab.profile.title, systemImage: AppTab.profile.icon)
+                }
+                .tag(AppTab.profile)
             }
             .tint(Theme.oxfordBlue)
             .navigationDestination(isPresented: Binding(
