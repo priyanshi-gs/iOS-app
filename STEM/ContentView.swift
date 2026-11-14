@@ -123,9 +123,14 @@ struct ContentView: View {
                             currentStep = .roleSelection
                         }
                     },
-                    onContinue: { cycle, _ in
+                    onContinue: { cycle, isPremium in
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                            currentStep = .checkout(cycle)
+                            if isPremium {
+                                currentStep = .checkout(cycle)
+                            } else {
+                                // Basic plan is free: link directly to the dashboard
+                                flowState = .mainDashboard
+                            }
                         }
                     }
                 )
