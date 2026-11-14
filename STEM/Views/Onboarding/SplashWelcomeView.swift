@@ -156,6 +156,19 @@ public struct SplashWelcomeView: View {
 
                             // Continue Button
                             Button(action: {
+                                let trimmed = emailOrName.trimmingCharacters(in: .whitespacesAndNewlines)
+                                if !trimmed.isEmpty {
+                                    let isEmail = trimmed.contains("@")
+                                    AuthService.shared.handleAppleSignIn(
+                                        userId: UUID().uuidString,
+                                        email: isEmail ? trimmed : "\(trimmed.lowercased().replacingOccurrences(of: " ", with: "."))@student.carawin.edu",
+                                        fullName: {
+                                            var comp = PersonNameComponents()
+                                            comp.givenName = isEmail ? (trimmed.components(separatedBy: "@").first?.capitalized ?? "Learner") : trimmed
+                                            return comp
+                                        }()
+                                    )
+                                }
                                 onContinue?()
                             }) {
                                 HStack(spacing: 8) {
@@ -188,7 +201,7 @@ public struct SplashWelcomeView: View {
                                     }
                                     .foregroundColor(.black)
                                     .frame(maxWidth: .infinity)
-                                    .frame(height: 46)
+                                    .frame(height: 48)
                                     .background(Color.white)
                                     .clipShape(Capsule())
                                     .shadow(color: Color.black.opacity(0.14), radius: 6, x: 0, y: 2)
@@ -208,14 +221,14 @@ public struct SplashWelcomeView: View {
                                             .foregroundColor(.black)
                                     }
                                     .frame(maxWidth: .infinity)
-                                    .frame(height: 46)
+                                    .frame(height: 48)
                                     .background(Color.white)
                                     .clipShape(Capsule())
                                     .shadow(color: Color.black.opacity(0.14), radius: 6, x: 0, y: 2)
                                 }
                                 .buttonStyle(PlainButtonStyle())
                             }
-                            .padding(.top, 2)
+                            .padding(.top, 4)
 
                             // Below Social Buttons: "New User ? Create Account"
                             Button(action: {
@@ -237,7 +250,7 @@ public struct SplashWelcomeView: View {
                                 .padding(.vertical, 8)
                             }
                             .buttonStyle(PlainButtonStyle())
-                            .padding(.top, 2)
+                            .padding(.top, 4)
                         }
                         .padding(.horizontal, 22)
                         .padding(.bottom, max(geo.safeAreaInsets.bottom, 24) + 12)
