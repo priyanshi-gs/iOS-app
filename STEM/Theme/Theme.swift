@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Brand Design System
 public enum Theme {
     // Primary Brand Palette
-    public static let oxfordBlue = Color(hex: "002147") // Dark pages, cards, and headings
+    public static let oxfordBlue = Color(hex: "0E3A6E") // Softened smooth royal navy (lighter and softer than harsh 002147)
     public static let crimson    = Color(hex: "DC143C") // Large ring graphics, highlight cards, key phrases
     public static let yellow     = Color(hex: "FFC20E") // Eyebrow labels, process step labels, thin accents
 
@@ -13,7 +13,7 @@ public enum Theme {
     public static let cardBackground  = Color(hex: "FFFFFF")
     public static let surfaceGray     = Color(hex: "F0F3F8")
     public static let surfaceLight    = Color(hex: "F8FAFC")
-    public static let textPrimary     = Color(hex: "002147")
+    public static let textPrimary     = Color(hex: "0E3A6E")
     public static let textSecondary   = Color(hex: "64748B")
     public static let textMuted       = Color(hex: "94A3B8")
     public static let textLight       = Color.white
@@ -21,8 +21,16 @@ public enum Theme {
     public static let borderSubtle    = Color(hex: "E2E8F0")
 
     // Onboarding & Checkout Funnel Tokens (Soft Crimson & Navy)
-    public static let navyBackground = Color(red: 0.04, green: 0.07, blue: 0.16)   // #0A1128
-    public static let navySurface = Color(red: 0.08, green: 0.12, blue: 0.25)      // #141F40
+    public static let navyBackground = Color(hex: "0C325D")   // Soft smooth navy background
+    public static let navySurface = Color(hex: "123E72")      // Soft smooth navy surface
+    public static let navyGradient = LinearGradient(
+        colors: [
+            Color(hex: "11437B"), // Soft luminous royal navy at top
+            Color(hex: "0B2E58")  // Smooth deep royal navy at bottom
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
     public static let primaryRed = Color(red: 0.73, green: 0.08, blue: 0.22)       // #BA1438 - soft matte ruby
     public static let primaryRedDark = Color(red: 0.55, green: 0.04, blue: 0.16)   // #8C0A29 - deep wine bordeaux
     public static let primaryBlue = Color(red: 0.16, green: 0.45, blue: 0.95)     // #2973F2

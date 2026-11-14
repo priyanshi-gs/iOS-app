@@ -31,8 +31,8 @@ public struct WaveHeader: View {
     
     public var body: some View {
         ZStack(alignment: .bottom) {
-            // 1. Navy Organic Wave Background (covers safe area + compact nav bar height)
-            Theme.navyBackground
+            // 1. Soft Smooth Navy Organic Wave Background
+            Theme.navyGradient
                 .clipShape(OrganicWaveShape())
                 .ignoresSafeArea(edges: .top)
             
@@ -61,13 +61,7 @@ public struct WaveHeader: View {
                 
                 HStack(alignment: .center) {
                     if showBackButton {
-                        Button(action: { onBack?() }) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 18, weight: .bold))
-                                .foregroundColor(.white)
-                                .frame(width: 36, height: 36, alignment: .leading)
-                                .contentShape(Rectangle())
-                        }
+                        LiquidCircleBackButton(action: { onBack?() })
                     } else {
                         Spacer().frame(width: 36)
                     }
@@ -86,6 +80,81 @@ public struct WaveHeader: View {
         }
         // Compact height so top blue area matches Figma precisely
         .frame(height: 54)
+    }
+}
+
+// MARK: - Native Circular Back Button with Liquid Glass Effect
+// Features a vibrant azure gradient, specular top reflection, subtle outer rim, and soft ambient glow.
+public struct LiquidCircleBackButton: View {
+    public let action: () -> Void
+
+    public init(action: @escaping () -> Void) {
+        self.action = action
+    }
+
+    public var body: some View {
+        Button(action: action) {
+            ZStack {
+                // 1. Ambient Glow Shadow
+                Circle()
+                    .fill(Color(hex: "0084FB").opacity(0.35))
+                    .frame(width: 38, height: 38)
+                    .blur(radius: 4)
+                    .offset(y: 2)
+
+                // 2. Base Liquid Azure Gradient (matching reference #0084FB to #006EDC)
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color(hex: "0096FF"), // Lighter luminous azure at top
+                                Color(hex: "006EDC")  // Rich smooth azure at bottom
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: 36, height: 36)
+
+                // 3. Top-Lit Specular Liquid Sheen
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.42),
+                                Color.white.opacity(0.10),
+                                Color.clear
+                            ],
+                            startPoint: .top,
+                            endPoint: .center
+                        )
+                    )
+                    .frame(width: 36, height: 36)
+
+                // 4. Subtle Outer Glass Bevel Rim
+                Circle()
+                    .strokeBorder(
+                        LinearGradient(
+                            colors: [
+                                Color.white.opacity(0.70),
+                                Color.white.opacity(0.20)
+                            ],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ),
+                        lineWidth: 1.2
+                    )
+                    .frame(width: 36, height: 36)
+
+                // 5. Native White Chevron Back Icon
+                Image(systemName: "chevron.left")
+                    .font(.system(size: 15, weight: .bold))
+                    .foregroundColor(.white)
+                    .offset(x: -1) // Optical center offset for left-pointing chevron
+            }
+            .contentShape(Circle())
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

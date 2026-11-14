@@ -52,8 +52,8 @@ public struct DashboardWaveHeader<RightContent: View>: View {
 
     public var body: some View {
         ZStack(alignment: .bottom) {
-            // 1. Navy Organic Asymmetric Wave Background
-            Theme.oxfordBlue
+            // 1. Soft Smooth Navy Organic Asymmetric Wave Background
+            Theme.navyGradient
                 .clipShape(DashboardWaveShape())
                 .ignoresSafeArea(edges: .top)
 
