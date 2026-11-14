@@ -17,58 +17,28 @@ public struct HomeView: View {
 
     public var body: some View {
         VStack(spacing: 0) {
-            // MARK: - Signature Waveform Header
-            WaveHeader(
+            // MARK: - Asymmetric Dashboard Waveform Header
+            DashboardWaveHeader(
+                icon: "house",
                 title: "Home",
-                showBackButton: false,
-                trailing: {
-                    HStack(spacing: 14) {
-                        Button(action: {}) {
-                            ZStack(alignment: .topTrailing) {
-                                Image(systemName: "bell")
-                                    .font(.system(size: 16, weight: .semibold))
-                                    .foregroundColor(.white)
-
-                                Circle()
-                                    .fill(Theme.accentGold)
-                                    .frame(width: 7, height: 7)
-                                    .offset(x: 2, y: -2)
-                            }
-                        }
-
-                        Button(action: {}) {
-                            Image(systemName: "person.circle.fill")
-                                .font(.system(size: 22))
-                                .foregroundColor(.white)
-                        }
-                    }
+                subtitlePrefix: "Welcome, ",
+                subtitleHighlight: viewModel.userProfile.name,
+                onNotificationTap: {
+                    // Notification action
+                },
+                onProfileTap: {
+                    // Profile action
                 }
             )
 
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 20) {
-                    // Welcome Subtitle Banner
-                    HStack {
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text("Welcome back,")
-                                .font(Theme.subheading(14))
-                                .foregroundColor(Theme.textSecondary)
-
-                            Text(viewModel.userProfile.name)
-                                .font(Theme.largeTitle(24))
-                                .foregroundColor(Theme.textPrimary)
-                        }
-
-                        Spacer()
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 14)
-
                     // Continue Learning Card
                     if let continueLab = viewModel.continueLearningLab {
                         ContinueLearningCardView(lab: continueLab) {
                             onLaunchSimulation?(continueLab)
                         }
+                        .padding(.top, 14)
                     }
 
                     // Stats Cards Row

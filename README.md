@@ -82,6 +82,7 @@ STEM/
 │
 ├── Components/              # Shared Reusable Design Components
 │   ├── WaveHeader.swift                 # Organic double-crest Bézier wave header with crimson ring
+│   ├── DashboardWaveHeader.swift        # Asymmetric deep-to-high wave header with integrated greeting & action cards
 │   ├── CardContainer.swift              # Standardized elevated card wrapper
 │   ├── CustomTabBar.swift               # Bottom navigation bar
 │   ├── PillButton.swift                 # Rounded pill action buttons

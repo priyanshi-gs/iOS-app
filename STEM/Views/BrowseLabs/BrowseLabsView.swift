@@ -14,32 +14,24 @@ public struct BrowseLabsView: View {
 
     public var body: some View {
         VStack(spacing: 0) {
-            // MARK: - Signature Waveform Header
-            WaveHeader(
+            // MARK: - Asymmetric Dashboard Waveform Header
+            DashboardWaveHeader(
+                icon: "flask",
                 title: "Browse Labs",
-                showBackButton: false
+                subtitlePrefix: "Explore ",
+                subtitleHighlight: "PCM Labs"
             )
 
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 18) {
-                    // Top Intro Section
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Explore Interactive Labs")
-                            .font(Theme.heading(20))
-                            .foregroundColor(Theme.textPrimary)
-
-                        Text("Interactive experiments and simulations across PCM.")
-                            .font(Theme.body(14))
-                            .foregroundColor(Theme.textSecondary)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 14)
-
                     // Search Bar
                     SearchBarView(
                         text: $viewModel.searchQuery,
                         placeholder: "Search labs, topics or experiments"
                     )
+                    .padding(.top, 14)
+
+                    // Subject Filter Chips
 
                 // Subject Filter Chips
                 ScrollView(.horizontal, showsIndicators: false) {
