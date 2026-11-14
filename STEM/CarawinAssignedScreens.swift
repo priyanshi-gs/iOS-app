@@ -247,15 +247,27 @@ private struct CarawinProfileScreen: View {
     }
 }
 
-private struct CarawinConnectSchoolScreen: View {
-    let onBack: () -> Void
-    let onVerified: () -> Void
-    let onSubmit: (String) -> Bool
+// MARK: - Connect School & School Connected Screens
+
+public struct ConnectSchoolView: View {
+    public let onBack: () -> Void
+    public let onVerified: () -> Void
+    public var onSubmit: ((String) -> Bool)?
     @State private var code = ""
     @State private var showCodeAlert = false
     @State private var rejectedCode = false
 
-    var body: some View {
+    public init(
+        onBack: @escaping () -> Void,
+        onVerified: @escaping () -> Void,
+        onSubmit: ((String) -> Bool)? = nil
+    ) {
+        self.onBack = onBack
+        self.onVerified = onVerified
+        self.onSubmit = onSubmit
+    }
+
+    public var body: some View {
         CarawinPage(title: "Connect School", back: onBack) {
             VStack(alignment: .leading, spacing: 15) {
                 Text("Connect your school").font(.system(size: 25, weight: .heavy, design: .rounded)).foregroundStyle(CarawinPalette.ink)
@@ -300,26 +312,39 @@ private struct CarawinConnectSchoolScreen: View {
     }
 
     private func verify() {
-        guard !code.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+        let trimmed = code.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
             rejectedCode = false
             showCodeAlert = true
             return
         }
-        guard onSubmit(code) else {
-            rejectedCode = true
-            showCodeAlert = true
-            return
+        if let onSubmit = onSubmit {
+            guard onSubmit(trimmed) else {
+                rejectedCode = true
+                showCodeAlert = true
+                return
+            }
         }
         onVerified()
     }
 }
 
-private struct CarawinConnectedScreen: View {
-    let schoolName: String?
-    let onBack: () -> Void
-    let onDashboard: () -> Void
+public struct SchoolConnectedView: View {
+    public let schoolName: String?
+    public let onBack: () -> Void
+    public let onDashboard: () -> Void
 
-    var body: some View {
+    public init(
+        schoolName: String? = "Springfield High School",
+        onBack: @escaping () -> Void,
+        onDashboard: @escaping () -> Void
+    ) {
+        self.schoolName = schoolName
+        self.onBack = onBack
+        self.onDashboard = onDashboard
+    }
+
+    public var body: some View {
         CarawinPage(title: "School Connected", back: onBack) {
             VStack(spacing: 16) {
                 ZStack {
@@ -363,6 +388,9 @@ private struct CarawinConnectedScreen: View {
         }
     }
 }
+
+typealias CarawinConnectSchoolScreen = ConnectSchoolView
+typealias CarawinConnectedScreen = SchoolConnectedView
 
 private struct CarawinStatisticsScreen: View {
     let data: CarawinStatisticsData?
@@ -456,9 +484,9 @@ private struct CarawinBadgesScreen: View {
     }
 }
 
-// MARK: - Reusable private styling, namespaced to avoid clashes
+// MARK: - Reusable styling, namespaced to avoid clashes
 
-private struct CarawinPage<Content: View>: View {
+struct CarawinPage<Content: View>: View {
     let title: String
     let back: (() -> Void)?
     @ViewBuilder let content: Content
@@ -481,7 +509,7 @@ private struct CarawinPage<Content: View>: View {
     }
 }
 
-private struct CarawinSectionTitle: View {
+struct CarawinSectionTitle: View {
     let title: String
     var body: some View {
         HStack(spacing: 7) {
@@ -506,7 +534,7 @@ private struct CarawinDataRow: View {
     }
 }
 
-private struct CarawinAccessRow: View {
+struct CarawinAccessRow: View {
     let icon: String
     let title: String
     var body: some View {
@@ -575,7 +603,7 @@ private struct CarawinStatsEmptyCard: View {
     }
 }
 
-private struct CarawinPalette {
+struct CarawinPalette {
     static let navy = Color(carawinHex: "002147")
     static let blue = Color(carawinHex: "14589C")
     static let red = Color(carawinHex: "DC143C")
@@ -588,11 +616,11 @@ private struct CarawinPalette {
     static let paleGold = Color(carawinHex: "FFF6D8")
 }
 
-private struct CarawinPageBackground: View {
+struct CarawinPageBackground: View {
     var body: some View { Color(carawinHex: "F4F6FB") }
 }
 
-private extension View {
+extension View {
     func carawinCard() -> some View {
         padding(14)
             .background(LinearGradient(colors: [.white, Color(carawinHex: "F5F8FF")], startPoint: .topLeading, endPoint: .bottomTrailing), in: RoundedRectangle(cornerRadius: 19))
@@ -601,7 +629,7 @@ private extension View {
     }
 }
 
-private extension Color {
+extension Color {
     init(carawinHex hex: String) {
         let value = UInt64(hex, radix: 16) ?? 0
         self.init(.sRGB, red: Double((value >> 16) & 0xFF) / 255,

@@ -63,6 +63,7 @@ public struct RoleSelectionView: View {
                         withAnimation(.spring(response: 0.28, dampingFraction: 0.75)) {
                             selectedOption = .schoolLinked
                         }
+                        onContinue?(.schoolLinked)
                     }
                     
                     // Option 2: Independent learner

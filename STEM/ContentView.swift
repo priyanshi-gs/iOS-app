@@ -8,6 +8,8 @@ public enum AppFlowState {
 public enum OnboardingStep: Hashable {
     case splash
     case roleSelection
+    case connectSchool
+    case schoolConnected
     case learningPlan
     case checkout(BillingCycle)
     case paymentSuccess(BillingCycle)
@@ -70,13 +72,49 @@ struct ContentView: View {
                             currentStep = .splash
                         }
                     },
-                    onContinue: { _ in
+                    onContinue: { option in
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                            currentStep = .learningPlan
+                            switch option {
+                            case .schoolLinked:
+                                currentStep = .connectSchool
+                            case .independent:
+                                currentStep = .learningPlan
+                            }
                         }
                     }
                 )
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                
+            case .connectSchool:
+                ConnectSchoolView(
+                    onBack: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            currentStep = .roleSelection
+                        }
+                    },
+                    onVerified: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            currentStep = .schoolConnected
+                        }
+                    }
+                )
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
+                
+            case .schoolConnected:
+                SchoolConnectedView(
+                    schoolName: "Springfield High School",
+                    onBack: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            currentStep = .connectSchool
+                        }
+                    },
+                    onDashboard: {
+                        withAnimation(.spring(response: 0.40, dampingFraction: 0.8)) {
+                            flowState = .mainDashboard
+                        }
+                    }
+                )
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))
                 
             case .learningPlan:
                 LearningPlanView(
