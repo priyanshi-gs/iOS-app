@@ -61,13 +61,13 @@ public struct MainContainerView: View {
                     onBack: {
                         isProfilePresented = false
                     },
-                    onDashboard: {
-                        isProfilePresented = false
-                        selectedTab = .home
-                    },
                     onLogout: {
                         isProfilePresented = false
                         onLogout?()
+                    },
+                    onDashboard: {
+                        isProfilePresented = false
+                        selectedTab = .home
                     }
                 )
                 .navigationBarBackButtonHidden(true)
