@@ -4,8 +4,11 @@ public struct MainContainerView: View {
     @State private var selectedTab: AppTab = .home
     @State private var activeSimulationLab: Lab? = nil
     @State private var isProfilePresented: Bool = false
+    public var onLogout: (() -> Void)?
 
-    public init() {}
+    public init(onLogout: (() -> Void)? = nil) {
+        self.onLogout = onLogout
+    }
 
     public var body: some View {
         NavigationStack {
@@ -61,6 +64,10 @@ public struct MainContainerView: View {
                     onDashboard: {
                         isProfilePresented = false
                         selectedTab = .home
+                    },
+                    onLogout: {
+                        isProfilePresented = false
+                        onLogout?()
                     }
                 )
                 .navigationBarBackButtonHidden(true)

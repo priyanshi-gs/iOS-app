@@ -72,6 +72,7 @@ public struct CarawinAssignedScreens: View {
     public var badges: [CarawinBadgeData]
     public var onDashboard: () -> Void
     public var onBack: (() -> Void)? = nil
+    public var onLogout: (() -> Void)? = nil
     /// Return true when your backend accepts the code. Leave nil for preview-only behavior.
     public var verifySchoolCode: ((String) -> Bool)?
 
@@ -81,6 +82,7 @@ public struct CarawinAssignedScreens: View {
         badges: [CarawinBadgeData] = [],
         verifySchoolCode: ((String) -> Bool)? = nil,
         onBack: (() -> Void)? = nil,
+        onLogout: (() -> Void)? = nil,
         onDashboard: @escaping () -> Void = {}
     ) {
         self.profile = profile
@@ -88,6 +90,7 @@ public struct CarawinAssignedScreens: View {
         self.badges = badges
         self.verifySchoolCode = verifySchoolCode
         self.onBack = onBack
+        self.onLogout = onLogout
         self.onDashboard = onDashboard
     }
 
@@ -98,6 +101,7 @@ public struct CarawinAssignedScreens: View {
                 CarawinProfileScreen(
                     data: profile,
                     onBack: onBack,
+                    onLogout: onLogout,
                     onConnect: { route = .connectSchool },
                     onStatistics: { route = .statistics },
                     onBadges: { route = .badges }
@@ -129,9 +133,11 @@ public struct CarawinAssignedScreens: View {
 private struct CarawinProfileScreen: View {
     let data: CarawinProfileData?
     var onBack: (() -> Void)? = nil
+    var onLogout: (() -> Void)? = nil
     let onConnect: () -> Void
     let onStatistics: () -> Void
     let onBadges: () -> Void
+    @State private var isShowingLogoutConfirmation: Bool = false
 
     var body: some View {
         CarawinPage(title: "Student Profile", back: onBack) {
@@ -198,6 +204,44 @@ private struct CarawinProfileScreen: View {
                     CarawinDataRow(icon: "checkmark.shield.fill", title: "Account Status", value: data?.accountStatus ?? "—")
                     CarawinDataRow(icon: "clock.fill", title: "Last Synchronized", value: data?.lastSynced ?? "—")
                 }.carawinCard()
+
+                // MARK: - Log Out Button
+                Button(role: .destructive, action: {
+                    isShowingLogoutConfirmation = true
+                }) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "rectangle.portrait.and.arrow.right")
+                            .font(.system(size: 15, weight: .bold))
+
+                        Text("Log Out")
+                            .font(.system(size: 15, weight: .bold))
+                    }
+                    .foregroundColor(CarawinPalette.red)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 14)
+                    .background(
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .fill(CarawinPalette.red.opacity(0.08))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                    .stroke(CarawinPalette.red.opacity(0.2), lineWidth: 1)
+                            )
+                    )
+                }
+                .buttonStyle(PlainButtonStyle())
+                .padding(.top, 8)
+                .confirmationDialog(
+                    "Log Out",
+                    isPresented: $isShowingLogoutConfirmation,
+                    titleVisibility: .visible
+                ) {
+                    Button("Log Out", role: .destructive) {
+                        onLogout?()
+                    }
+                    Button("Cancel", role: .cancel) {}
+                } message: {
+                    Text("Are you sure you want to log out of STEM?")
+                }
             }
         }
     }

@@ -25,8 +25,15 @@ struct ContentView: View {
                     .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .leading)))
                 
             case .mainDashboard:
-                MainContainerView()
-                    .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))
+                MainContainerView(
+                    onLogout: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            flowState = .onboarding
+                            currentStep = .splash
+                        }
+                    }
+                )
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))
             }
         }
         .preferredColorScheme(.light)
