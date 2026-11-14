@@ -278,30 +278,11 @@ private struct CarawinProfileScreen: View {
                     // Clearance spacer for the bottom half of the avatar circle
                     Spacer().frame(height: 38)
 
-                    // User Identity Section: Centered Name, Email & Account Type Pill
-                    VStack(spacing: 4) {
-                        Text(data?.name ?? "Samantha Taylor")
-                            .font(.system(size: 23, weight: .heavy, design: .rounded))
-                            .foregroundColor(CarawinPalette.ink)
-
-                        Text(data?.email ?? "samantha.taylor@carawin.edu")
-                            .font(.system(size: 14, weight: .regular))
-                            .foregroundColor(CarawinPalette.muted)
-
-                        HStack(spacing: 6) {
-                            Image(systemName: "person")
-                                .font(.system(size: 12, weight: .semibold))
-                            Text(data?.accountType ?? "Individual Account")
-                                .font(.system(size: 12.5, weight: .semibold, design: .rounded))
-                        }
-                        .foregroundColor(CarawinPalette.navy)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 6)
-                        .background(Color(carawinHex: "EEF4FE"))
-                        .clipShape(Capsule())
-                        .padding(.top, 4)
-                    }
-                    .padding(.bottom, 6)
+                    // User Identity Section: Centered Name
+                    Text(data?.name ?? "Samantha Taylor")
+                        .font(.system(size: 23, weight: .heavy, design: .rounded))
+                        .foregroundColor(CarawinPalette.ink)
+                        .padding(.bottom, 6)
 
                     // Plan & Entitlement Card
                     VStack(alignment: .leading, spacing: 12) {

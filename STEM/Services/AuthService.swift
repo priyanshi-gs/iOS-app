@@ -158,3 +158,4 @@ public final class AuthService: ObservableObject {
         self.authState = .authenticated(user)
     }
 }
+
