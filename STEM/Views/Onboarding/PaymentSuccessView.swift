@@ -161,12 +161,12 @@ public struct PaymentSuccessView: View {
                     )
                     .padding(.horizontal, 20)
                     
-                    // Explore Labs Action Button
+                    // Go to Dashboard Action Button
                     Button(action: {
                         onExploreLabs?()
                     }) {
                         HStack(spacing: 8) {
-                            Text("Explore Labs")
+                            Text("Go to Dashboard")
                                 .font(.system(size: 16, weight: .bold))
                             Image(systemName: "arrow.right")
                                 .font(.system(size: 14, weight: .heavy))

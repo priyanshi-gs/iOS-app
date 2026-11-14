@@ -283,10 +283,18 @@ public struct ConnectSchoolView: View {
                 }.padding(15).background(.white, in: RoundedRectangle(cornerRadius: 14))
                     .overlay(RoundedRectangle(cornerRadius: 14).stroke(CarawinPalette.border, lineWidth: 1))
                 Button(action: verify) {
-                    Label("Verify Code", systemImage: "arrow.right").font(.system(size: 16, weight: .bold)).foregroundStyle(.white)
-                        .frame(maxWidth: .infinity).padding(.vertical, 15)
-                        .background(LinearGradient(colors: [CarawinPalette.red, Color(carawinHex: "B80E32")], startPoint: .top, endPoint: .bottom), in: Capsule())
-                        .shadow(color: CarawinPalette.red.opacity(0.2), radius: 7, y: 4)
+                    HStack(spacing: 8) {
+                        Text("Verify Code")
+                            .font(.system(size: 16, weight: .bold))
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 14, weight: .heavy))
+                    }
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(Theme.redButtonGradient)
+                    .clipShape(Capsule())
+                    .shadow(color: CarawinPalette.red.opacity(0.2), radius: 7, y: 4)
                 }
                 HStack(spacing: 11) {
                     Image(systemName: "info.circle.fill").font(.system(size: 22)).foregroundStyle(CarawinPalette.blue)
@@ -380,9 +388,18 @@ public struct SchoolConnectedView: View {
                     CarawinAccessRow(icon: "chart.bar.fill", title: "Learning progress")
                 }.carawinCard()
                 Button(action: onDashboard) {
-                    Label("Go to Dashboard", systemImage: "arrow.right").font(.system(size: 16, weight: .bold)).foregroundStyle(.white)
-                        .frame(maxWidth: .infinity).padding(.vertical, 15)
-                        .background(LinearGradient(colors: [CarawinPalette.red, Color(carawinHex: "B80E32")], startPoint: .top, endPoint: .bottom), in: Capsule())
+                    HStack(spacing: 8) {
+                        Text("Go to Dashboard")
+                            .font(.system(size: 16, weight: .bold))
+                        Image(systemName: "arrow.right")
+                            .font(.system(size: 14, weight: .heavy))
+                    }
+                    .foregroundStyle(.white)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(Theme.redButtonGradient)
+                    .clipShape(Capsule())
+                    .shadow(color: CarawinPalette.red.opacity(0.2), radius: 7, y: 4)
                 }
             }
         }
