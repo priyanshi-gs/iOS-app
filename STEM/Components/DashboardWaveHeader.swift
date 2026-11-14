@@ -1,7 +1,11 @@
 import SwiftUI
 
 // MARK: - Dashboard Waveform Header (Asymmetric Wave with Integrated Actions)
-// Used in high-level dashboard screens (Home tab, Browse Labs tab) as requested in Figma.
+// Mathematically fitted to the reference design (Home & Browse Labs screens):
+// - Expansive deep navy bed under the title & greeting to eliminate text clipping.
+// - Gentle, organic upward S-curve to a high crest at x = 0.82, leaving white space for action cards.
+// - Prominent crimson ring arc in the top-right corner.
+// - Floating white action cards (notification bell with red dot + person profile) with subtle elevation.
 public struct DashboardWaveHeader<RightContent: View>: View {
     public let icon: String
     public let title: String
@@ -54,13 +58,13 @@ public struct DashboardWaveHeader<RightContent: View>: View {
                 .ignoresSafeArea(edges: .top)
 
             // 2. Signature Crimson Ring in the Top-Right Corner
-            // Matches reference: thick crimson arc sweeping through the upper right edge
+            // Matches reference: sweeps down from top margin into the right edge
             GeometryReader { geo in
                 ZStack {
                     Circle()
-                        .stroke(Theme.crimson, lineWidth: 24)
-                        .frame(width: 175, height: 175)
-                        .position(x: geo.size.width + 10, y: 15)
+                        .stroke(Theme.crimson, lineWidth: 26)
+                        .frame(width: 190, height: 190)
+                        .position(x: geo.size.width - 15, y: 25)
                 }
                 .clipShape(DashboardWaveShape())
             }
@@ -68,15 +72,15 @@ public struct DashboardWaveHeader<RightContent: View>: View {
 
             // 3. Header Foreground Elements
             HStack(alignment: .bottom, spacing: 0) {
-                // Left Title & Subtitle inside the Deep Navy section
-                VStack(alignment: .leading, spacing: 6) {
+                // Left Title & Subtitle inside the Deep Navy bed
+                VStack(alignment: .leading, spacing: 4) {
                     HStack(spacing: 8) {
                         Image(systemName: icon)
-                            .font(.system(size: 21, weight: .bold))
+                            .font(.system(size: 22, weight: .bold))
                             .foregroundColor(.white)
 
                         Text(title)
-                            .font(.system(size: 25, weight: .heavy))
+                            .font(.system(size: 26, weight: .heavy, design: .rounded))
                             .foregroundColor(.white)
                     }
 
@@ -90,8 +94,8 @@ public struct DashboardWaveHeader<RightContent: View>: View {
                             .foregroundColor(Theme.yellow)
                     }
                 }
-                .padding(.leading, 20)
-                .padding(.bottom, 20)
+                .padding(.leading, 24)
+                .padding(.bottom, 24) // Generous clearance so text is well above the wave!
 
                 Spacer()
 
@@ -102,22 +106,24 @@ public struct DashboardWaveHeader<RightContent: View>: View {
                     } else {
                         // Bell Notification Tile with Red Dot
                         Button(action: { onNotificationTap?() }) {
-                            ZStack(alignment: .topTrailing) {
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
                                     .fill(Color.white)
                                     .frame(width: 44, height: 44)
                                     .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
 
-                                Image(systemName: "bell")
-                                    .font(.system(size: 18, weight: .semibold))
-                                    .foregroundColor(Theme.oxfordBlue)
-                                    .frame(width: 44, height: 44)
+                                ZStack(alignment: .topTrailing) {
+                                    Image(systemName: "bell")
+                                        .font(.system(size: 19, weight: .semibold))
+                                        .foregroundColor(Theme.oxfordBlue)
 
-                                // Red notification badge dot
-                                Circle()
-                                    .fill(Theme.crimson)
-                                    .frame(width: 8, height: 8)
-                                    .offset(x: -9, y: 9)
+                                    // Small red notification dot at top-right corner of bell
+                                    Circle()
+                                        .fill(Theme.crimson)
+                                        .frame(width: 8, height: 8)
+                                        .offset(x: 4, y: -4)
+                                }
+                                .frame(width: 44, height: 44)
                             }
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -125,13 +131,13 @@ public struct DashboardWaveHeader<RightContent: View>: View {
                         // Profile / Person Tile
                         Button(action: { onProfileTap?() }) {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                RoundedRectangle(cornerRadius: 15, style: .continuous)
                                     .fill(Color.white)
                                     .frame(width: 44, height: 44)
                                     .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
 
                                 Image(systemName: "person")
-                                    .font(.system(size: 18, weight: .semibold))
+                                    .font(.system(size: 19, weight: .semibold))
                                     .foregroundColor(Theme.oxfordBlue)
                             }
                         }
@@ -142,17 +148,17 @@ public struct DashboardWaveHeader<RightContent: View>: View {
                 .padding(.bottom, 16)
             }
         }
-        // Total height allows comfortable spacing for safe area, text, and wave contour
-        .frame(height: 156)
+        // Total frame height below safe area, giving generous room for text and the wave contour
+        .frame(height: 135)
     }
 }
 
 // MARK: - Asymmetric Dashboard Wave Shape
-// Mathematical cubic Bézier curve fitted precisely to the reference design:
-// - Left edge extends deep (95% height) to contain the icon, title, and "Welcome, [Name]".
-// - Slopes through a gentle lower crest under the title text.
-// - S-curves boldly upward to a high apex (42% height) at 78% width.
-// - Gently curves down to 58% height at the right edge, exposing white space for action tiles.
+// Mathematical cubic Bézier curve fitted precisely to the reference design (Photo 2):
+// - Left section stays deep (94% - 98% height) across the entire text area (x = 0 to 0.44),
+//   providing a solid, un-clipped navy background behind the title and greeting.
+// - Sweeps smoothly upward via an S-curve to a high crest at x = 0.82, y = 0.42h.
+// - Rolls down softly to y = 0.56h at the right margin, creating ample white space for action cards.
 public struct DashboardWaveShape: Shape {
     public init() {}
 
@@ -162,28 +168,30 @@ public struct DashboardWaveShape: Shape {
         // 1. Top-left origin
         path.move(to: CGPoint(x: 0, y: 0))
 
-        // 2. Down left margin to deep wave start
-        path.addLine(to: CGPoint(x: 0, y: rect.height * 0.95))
+        // 2. Down left margin to deep wave start (y = 0.98h)
+        path.addLine(to: CGPoint(x: 0, y: rect.height * 0.98))
 
-        // 3. Segment 1: Gentle wave under the title & greeting
+        // 3. Segment 1: Stays deep across the entire text section (x: 0 -> 0.44)
         path.addCurve(
-            to: CGPoint(x: rect.width * 0.38, y: rect.height * 0.92),
-            control1: CGPoint(x: rect.width * 0.12, y: rect.height * 0.84),
-            control2: CGPoint(x: rect.width * 0.24, y: rect.height * 0.88)
+            to: CGPoint(x: rect.width * 0.44, y: rect.height * 0.94),
+            control1: CGPoint(x: rect.width * 0.16, y: rect.height * 0.91),
+            control2: CGPoint(x: rect.width * 0.30, y: rect.height * 0.95)
         )
 
-        // 4. Segment 2: Upward sweep to the high crest at x = 0.78
+        // 4. Segment 2: Smooth upward S-curve sweep to the apex crest (x: 0.44 -> 0.82)
+        // Arrives with horizontal tangency at x = 0.82, y = 0.42h
         path.addCurve(
-            to: CGPoint(x: rect.width * 0.78, y: rect.height * 0.42),
-            control1: CGPoint(x: rect.width * 0.50, y: rect.height * 0.96),
-            control2: CGPoint(x: rect.width * 0.68, y: rect.height * 0.42)
+            to: CGPoint(x: rect.width * 0.82, y: rect.height * 0.42),
+            control1: CGPoint(x: rect.width * 0.58, y: rect.height * 0.92),
+            control2: CGPoint(x: rect.width * 0.70, y: rect.height * 0.42)
         )
 
-        // 5. Segment 3: Gentle downward roll to the right margin
+        // 5. Segment 3: Gentle downward roll to the right margin (x: 0.82 -> 1.0)
+        // Leaves horizontally and curves down to y = 0.56h
         path.addCurve(
-            to: CGPoint(x: rect.width, y: rect.height * 0.58),
-            control1: CGPoint(x: rect.width * 0.86, y: rect.height * 0.42),
-            control2: CGPoint(x: rect.width * 0.96, y: rect.height * 0.52)
+            to: CGPoint(x: rect.width, y: rect.height * 0.56),
+            control1: CGPoint(x: rect.width * 0.90, y: rect.height * 0.42),
+            control2: CGPoint(x: rect.width * 0.96, y: rect.height * 0.50)
         )
 
         // 6. Up right margin to top-right
