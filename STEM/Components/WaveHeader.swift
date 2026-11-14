@@ -83,8 +83,9 @@ public struct WaveHeader: View {
     }
 }
 
-// MARK: - Native Circular Back Button with Liquid Glass Effect
-// Features a vibrant azure gradient, specular top reflection, subtle outer rim, and soft ambient glow.
+// MARK: - Native Circular Back Button with Transparent Liquid Glass Effect
+// Features a pure transparent liquid glass circle with realistic optical refraction,
+// specular top highlight, subtle frosted glass base, and crisp bevel rim (no blue tint).
 public struct LiquidCircleBackButton: View {
     public let action: () -> Void
 
@@ -95,20 +96,26 @@ public struct LiquidCircleBackButton: View {
     public var body: some View {
         Button(action: action) {
             ZStack {
-                // 1. Ambient Glow Shadow
+                // 1. Soft Ambient Depth Shadow (Natural translucent shadow, zero blue color)
                 Circle()
-                    .fill(Color(hex: "0084FB").opacity(0.35))
-                    .frame(width: 38, height: 38)
+                    .fill(Color.black.opacity(0.18))
+                    .frame(width: 36, height: 36)
                     .blur(radius: 4)
                     .offset(y: 2)
 
-                // 2. Base Liquid Azure Gradient (matching reference #0084FB to #006EDC)
+                // 2. Translucent Frosted Glass Base (Zero blue tint, pure transparent liquid glass)
+                Circle()
+                    .fill(Color.white.opacity(0.15))
+                    .frame(width: 36, height: 36)
+
+                // 3. Curved Specular Liquid Sheen (Light refraction from top edge)
                 Circle()
                     .fill(
                         LinearGradient(
-                            colors: [
-                                Color(hex: "0096FF"), // Lighter luminous azure at top
-                                Color(hex: "006EDC")  // Rich smooth azure at bottom
+                            stops: [
+                                .init(color: Color.white.opacity(0.40), location: 0.0),
+                                .init(color: Color.white.opacity(0.12), location: 0.45),
+                                .init(color: Color.white.opacity(0.0), location: 0.80)
                             ],
                             startPoint: .top,
                             endPoint: .bottom
@@ -116,28 +123,30 @@ public struct LiquidCircleBackButton: View {
                     )
                     .frame(width: 36, height: 36)
 
-                // 3. Top-Lit Specular Liquid Sheen
+                // 4. Subtle Inner Specular Rim for 3D liquid curvature
                 Circle()
-                    .fill(
+                    .inset(by: 1.0)
+                    .strokeBorder(
                         LinearGradient(
                             colors: [
-                                Color.white.opacity(0.42),
-                                Color.white.opacity(0.10),
+                                Color.white.opacity(0.25),
                                 Color.clear
                             ],
                             startPoint: .top,
                             endPoint: .center
-                        )
+                        ),
+                        lineWidth: 0.8
                     )
                     .frame(width: 36, height: 36)
 
-                // 4. Subtle Outer Glass Bevel Rim
+                // 5. Crisp Outer Glass Bevel / Refraction Rim
                 Circle()
                     .strokeBorder(
                         LinearGradient(
-                            colors: [
-                                Color.white.opacity(0.70),
-                                Color.white.opacity(0.20)
+                            stops: [
+                                .init(color: Color.white.opacity(0.70), location: 0.0),
+                                .init(color: Color.white.opacity(0.20), location: 0.5),
+                                .init(color: Color.white.opacity(0.40), location: 1.0)
                             ],
                             startPoint: .top,
                             endPoint: .bottom
@@ -146,10 +155,11 @@ public struct LiquidCircleBackButton: View {
                     )
                     .frame(width: 36, height: 36)
 
-                // 5. Native White Chevron Back Icon
+                // 6. Native White Chevron Back Icon
                 Image(systemName: "chevron.left")
                     .font(.system(size: 15, weight: .bold))
                     .foregroundColor(.white)
+                    .shadow(color: Color.black.opacity(0.25), radius: 1.5, x: 0, y: 1)
                     .offset(x: -1) // Optical center offset for left-pointing chevron
             }
             .contentShape(Circle())
