@@ -3,6 +3,7 @@ import SwiftUI
 public struct MainContainerView: View {
     @State private var selectedTab: AppTab = .home
     @State private var activeSimulationLab: Lab? = nil
+    @State private var isProfilePresented: Bool = false
 
     public init() {}
 
@@ -15,6 +16,9 @@ public struct MainContainerView: View {
                     },
                     onNavigateToBrowse: {
                         selectedTab = .labs
+                    },
+                    onOpenProfile: {
+                        isProfilePresented = true
                     }
                 )
                 .tabItem {
@@ -25,22 +29,15 @@ public struct MainContainerView: View {
                 BrowseLabsView(
                     onLaunchLab: { lab in
                         activeSimulationLab = lab
+                    },
+                    onOpenProfile: {
+                        isProfilePresented = true
                     }
                 )
                 .tabItem {
                     Label(AppTab.labs.title, systemImage: AppTab.labs.icon)
                 }
                 .tag(AppTab.labs)
-
-                CarawinAssignedScreens(
-                    onDashboard: {
-                        selectedTab = .home
-                    }
-                )
-                .tabItem {
-                    Label(AppTab.profile.title, systemImage: AppTab.profile.icon)
-                }
-                .tag(AppTab.profile)
             }
             .tint(Theme.oxfordBlue)
             .navigationDestination(isPresented: Binding(
@@ -55,6 +52,18 @@ public struct MainContainerView: View {
                     )
                     .navigationBarBackButtonHidden(true)
                 }
+            }
+            .navigationDestination(isPresented: $isProfilePresented) {
+                CarawinAssignedScreens(
+                    onBack: {
+                        isProfilePresented = false
+                    },
+                    onDashboard: {
+                        isProfilePresented = false
+                        selectedTab = .home
+                    }
+                )
+                .navigationBarBackButtonHidden(true)
             }
         }
     }

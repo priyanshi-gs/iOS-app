@@ -4,15 +4,18 @@ public struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
     public var onLaunchSimulation: ((Lab) -> Void)?
     public var onNavigateToBrowse: (() -> Void)?
+    public var onOpenProfile: (() -> Void)?
 
     public init(
         viewModel: HomeViewModel = HomeViewModel(),
         onLaunchSimulation: ((Lab) -> Void)? = nil,
-        onNavigateToBrowse: (() -> Void)? = nil
+        onNavigateToBrowse: (() -> Void)? = nil,
+        onOpenProfile: (() -> Void)? = nil
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.onLaunchSimulation = onLaunchSimulation
         self.onNavigateToBrowse = onNavigateToBrowse
+        self.onOpenProfile = onOpenProfile
     }
 
     public var body: some View {
@@ -27,7 +30,7 @@ public struct HomeView: View {
                     // Notification action
                 },
                 onProfileTap: {
-                    // Profile action
+                    onOpenProfile?()
                 }
             )
 

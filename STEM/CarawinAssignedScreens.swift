@@ -71,6 +71,7 @@ public struct CarawinAssignedScreens: View {
     public var statistics: CarawinStatisticsData?
     public var badges: [CarawinBadgeData]
     public var onDashboard: () -> Void
+    public var onBack: (() -> Void)? = nil
     /// Return true when your backend accepts the code. Leave nil for preview-only behavior.
     public var verifySchoolCode: ((String) -> Bool)?
 
@@ -79,12 +80,14 @@ public struct CarawinAssignedScreens: View {
         statistics: CarawinStatisticsData? = nil,
         badges: [CarawinBadgeData] = [],
         verifySchoolCode: ((String) -> Bool)? = nil,
+        onBack: (() -> Void)? = nil,
         onDashboard: @escaping () -> Void = {}
     ) {
         self.profile = profile
         self.statistics = statistics
         self.badges = badges
         self.verifySchoolCode = verifySchoolCode
+        self.onBack = onBack
         self.onDashboard = onDashboard
     }
 
@@ -92,7 +95,13 @@ public struct CarawinAssignedScreens: View {
         Group {
             switch route {
             case .profile:
-                CarawinProfileScreen(data: profile, onConnect: { route = .connectSchool }, onStatistics: { route = .statistics }, onBadges: { route = .badges })
+                CarawinProfileScreen(
+                    data: profile,
+                    onBack: onBack,
+                    onConnect: { route = .connectSchool },
+                    onStatistics: { route = .statistics },
+                    onBadges: { route = .badges }
+                )
             case .connectSchool:
                 CarawinConnectSchoolScreen(
                     onBack: { route = .profile },
@@ -119,12 +128,13 @@ public struct CarawinAssignedScreens: View {
 
 private struct CarawinProfileScreen: View {
     let data: CarawinProfileData?
+    var onBack: (() -> Void)? = nil
     let onConnect: () -> Void
     let onStatistics: () -> Void
     let onBadges: () -> Void
 
     var body: some View {
-        CarawinPage(title: "Student Profile", back: nil) {
+        CarawinPage(title: "Student Profile", back: onBack) {
             VStack(spacing: 14) {
                 VStack(spacing: 7) {
                     Image(systemName: "person.fill").font(.system(size: 24, weight: .semibold)).foregroundStyle(.white)

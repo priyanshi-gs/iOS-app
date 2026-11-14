@@ -35,9 +35,9 @@ flowchart TD
     
     subgraph Platform ["STEM Learning Platform: MainContainerView"]
         Success -.->|Tap 'Explore Labs'| Dashboard[MainContainerView]
-        Dashboard --> Home[Home Tab: Continue Learning & Stats]
-        Dashboard --> Labs[Browse Labs Tab: Physics, Chemistry, Biology]
-        Dashboard --> Account[Account Tab: Carawin Assigned Screens]
+        Dashboard --> Home[Tab 1: Home Dashboard & Stats]
+        Dashboard --> Labs[Tab 2: Browse Labs - Physics, Chemistry, Biology]
+        Home -.->|Tap Profile Icon| Account[Profile & Student Account: Carawin Screens]
         Dashboard --> Sim[Interactive Science Simulation: Bohr Model & Periodic Table]
     end
 ```

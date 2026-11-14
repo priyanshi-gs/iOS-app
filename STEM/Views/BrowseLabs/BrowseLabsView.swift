@@ -3,13 +3,16 @@ import SwiftUI
 public struct BrowseLabsView: View {
     @StateObject private var viewModel: BrowseLabsViewModel
     public var onLaunchLab: ((Lab) -> Void)?
+    public var onOpenProfile: (() -> Void)?
 
     public init(
         viewModel: BrowseLabsViewModel = BrowseLabsViewModel(),
-        onLaunchLab: ((Lab) -> Void)? = nil
+        onLaunchLab: ((Lab) -> Void)? = nil,
+        onOpenProfile: (() -> Void)? = nil
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel)
         self.onLaunchLab = onLaunchLab
+        self.onOpenProfile = onOpenProfile
     }
 
     public var body: some View {
@@ -19,7 +22,10 @@ public struct BrowseLabsView: View {
                 icon: "flask",
                 title: "Browse Labs",
                 subtitlePrefix: "Explore ",
-                subtitleHighlight: "PCM Labs"
+                subtitleHighlight: "PCM Labs",
+                onProfileTap: {
+                    onOpenProfile?()
+                }
             )
 
             ScrollView(.vertical, showsIndicators: false) {

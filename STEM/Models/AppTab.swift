@@ -3,7 +3,6 @@ import Foundation
 public enum AppTab: Int, CaseIterable, Identifiable {
     case home = 0
     case labs = 1
-    case profile = 2
 
     public var id: Int { rawValue }
 
@@ -11,7 +10,6 @@ public enum AppTab: Int, CaseIterable, Identifiable {
         switch self {
         case .home: return "Home"
         case .labs: return "Labs"
-        case .profile: return "Profile"
         }
     }
 
@@ -19,7 +17,6 @@ public enum AppTab: Int, CaseIterable, Identifiable {
         switch self {
         case .home: return "house.fill"
         case .labs: return "flask.fill"
-        case .profile: return "person.crop.circle.fill"
         }
     }
 }
