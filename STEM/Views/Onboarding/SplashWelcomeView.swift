@@ -38,14 +38,14 @@ public struct SplashWelcomeView: View {
                 
                 // MARK: - Foreground UI Overlay
                 VStack(alignment: .leading, spacing: 0) {
-                    // 1. Top Brand Header: Flask Icon + "LabLearn"
+                    // 1. Top Brand Header: Flask Icon + "STEM"
                     // Positioned precisely 4pt above the background's yellow bar
                     HStack(spacing: 8) {
                         Image(systemName: "flask")
                             .font(.system(size: 20, weight: .bold))
                             .foregroundColor(.white)
                         
-                        Text("LabLearn")
+                        Text("STEM")
                             .font(.system(size: 24, weight: .heavy))
                             .foregroundColor(.white)
                     }
