@@ -85,7 +85,18 @@ public struct CarawinAssignedScreens: View {
         onLogout: (() -> Void)? = nil,
         onDashboard: @escaping () -> Void = {}
     ) {
-        self.profile = profile
+        self.profile = profile ?? CarawinProfileData(
+            name: "Samantha Taylor",
+            email: "samantha.taylor@carawin.edu",
+            schoolName: "Springfield High School",
+            accountType: "Individual Account",
+            planName: "Basic Learner Plan",
+            availableLabs: 5,
+            accountCreated: "Sep 2026",
+            accountStatus: "Active",
+            lastSynced: "Just now",
+            badgesEarned: 3
+        )
         self.statistics = statistics
         self.badges = badges
         self.verifySchoolCode = verifySchoolCode
@@ -130,6 +141,121 @@ public struct CarawinAssignedScreens: View {
     }
 }
 
+// MARK: - Profile Wave Shape & Header (Matches Reference UI)
+
+public struct ProfileWaveShape: Shape {
+    public func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: 0, y: 0))
+        path.addLine(to: CGPoint(x: rect.width, y: 0))
+
+        // Right edge
+        let rightEdgeY = rect.height * 0.62
+        path.addLine(to: CGPoint(x: rect.width, y: rightEdgeY))
+
+        // Segment 1 (Right Edge -> Right Crest -> Center Trough):
+        path.addCurve(
+            to: CGPoint(x: rect.width * 0.50, y: rect.height * 0.88),
+            control1: CGPoint(x: rect.width * 0.82, y: rect.height * 0.38),
+            control2: CGPoint(x: rect.width * 0.66, y: rect.height * 0.86)
+        )
+
+        // Segment 2 (Center Trough -> Left Crest -> Left Edge):
+        path.addCurve(
+            to: CGPoint(x: 0, y: rect.height * 0.65),
+            control1: CGPoint(x: rect.width * 0.34, y: rect.height * 0.86),
+            control2: CGPoint(x: rect.width * 0.18, y: rect.height * 0.40)
+        )
+
+        path.closeSubpath()
+        return path
+    }
+}
+
+public struct ProfileWaveHeader: View {
+    public let name: String
+    public var onBack: (() -> Void)? = nil
+
+    public init(name: String, onBack: (() -> Void)? = nil) {
+        self.name = name
+        self.onBack = onBack
+    }
+
+    public var body: some View {
+        ZStack(alignment: .bottom) {
+            // 1. Organic Wave Deep Navy Background
+            ProfileWaveShape()
+                .fill(Theme.navyGradient)
+                .frame(height: 122)
+                .ignoresSafeArea(edges: .top)
+
+            // 2. Decorative Red Sweeping Arc in Top-Right
+            GeometryReader { geo in
+                ZStack {
+                    Circle()
+                        .stroke(Theme.primaryRed, lineWidth: 24)
+                        .frame(width: 175, height: 175)
+                        .position(x: geo.size.width - 3, y: 4)
+                }
+                .clipShape(ProfileWaveShape())
+            }
+            .ignoresSafeArea(edges: .top)
+
+            // 3. Navigation Bar Content (Back button, Centered Title)
+            HStack(alignment: .center) {
+                if onBack != nil {
+                    LiquidCircleBackButton(action: { onBack?() })
+                } else {
+                    Spacer().frame(width: 36)
+                }
+
+                Spacer()
+
+                Text("Student Profile")
+                    .font(.system(size: 17, weight: .bold))
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                Spacer().frame(width: 36)
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 46)
+
+            // 4. Circular Avatar with Initials (ST) Straddling the Wave Trough
+            Circle()
+                .fill(CarawinPalette.navy)
+                .frame(width: 74, height: 74)
+                .overlay(
+                    Circle()
+                        .stroke(Color.white, lineWidth: 3.5)
+                )
+                .overlay(
+                    Text(initials(from: name))
+                        .font(.system(size: 24, weight: .bold, design: .rounded))
+                        .foregroundColor(.white)
+                )
+                .shadow(color: Color.black.opacity(0.14), radius: 8, x: 0, y: 4)
+                .offset(y: 37)
+        }
+        .frame(height: 68)
+    }
+
+    private func initials(from text: String) -> String {
+        let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return "ST" }
+        let parts = trimmed.split(separator: " ")
+        if parts.count >= 2 {
+            let first = parts[0].prefix(1)
+            let second = parts[1].prefix(1)
+            return "\(first)\(second)".uppercased()
+        } else if let first = parts.first {
+            return String(first.prefix(2)).uppercased()
+        }
+        return "ST"
+    }
+}
+
 private struct CarawinProfileScreen: View {
     let data: CarawinProfileData?
     var onBack: (() -> Void)? = nil
@@ -140,110 +266,145 @@ private struct CarawinProfileScreen: View {
     @State private var isShowingLogoutConfirmation: Bool = false
 
     var body: some View {
-        CarawinPage(title: "Student Profile", back: onBack) {
-            VStack(spacing: 14) {
-                VStack(spacing: 7) {
-                    Image(systemName: "person.fill").font(.system(size: 24, weight: .semibold)).foregroundStyle(.white)
-                        .frame(width: 58, height: 58).background(CarawinPalette.navy.gradient, in: Circle())
-                        .overlay(Circle().stroke(.white, lineWidth: 3)).shadow(color: CarawinPalette.navy.opacity(0.2), radius: 8, y: 4)
-                    Text(data?.name ?? "Your Profile").font(.system(size: 21, weight: .heavy)).foregroundStyle(CarawinPalette.ink)
-                    Text(data?.email ?? "Personal details appear when your account is connected")
-                        .font(.system(size: 14)).foregroundStyle(CarawinPalette.muted).multilineTextAlignment(.center)
-                }
-                .frame(maxWidth: .infinity).padding(.vertical, 16)
-                .background(LinearGradient(colors: [.white, CarawinPalette.paleBlue], startPoint: .topLeading, endPoint: .bottomTrailing), in: RoundedRectangle(cornerRadius: 20))
-                .overlay(alignment: .topTrailing) { Circle().fill(CarawinPalette.red.opacity(0.13)).frame(width: 40, height: 40).offset(x: -12, y: 12) }
+        VStack(spacing: 0) {
+            // Top Profile Wave Header with embedded avatar straddling the curve
+            ProfileWaveHeader(
+                name: data?.name ?? "Samantha Taylor",
+                onBack: onBack
+            )
 
-                VStack(alignment: .leading, spacing: 12) {
-                    CarawinSectionTitle(title: "Plan & Entitlement")
-                    CarawinDataRow(icon: "person.text.rectangle.fill", title: "Account type", value: data?.accountType ?? "—")
-                    CarawinDataRow(icon: "checkmark.seal.fill", title: "Plan details", value: data?.planName ?? "—")
-                    CarawinDataRow(icon: "flask.fill", title: "Available lab access", value: data?.availableLabs.map { "\($0) labs" } ?? "—")
-                    Button(action: onConnect) {
-                        Label("Link your school", systemImage: "plus.circle.fill")
-                            .font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
-                            .frame(maxWidth: .infinity).padding(.vertical, 12)
-                            .background(LinearGradient(colors: [CarawinPalette.navy, CarawinPalette.blue], startPoint: .leading, endPoint: .trailing), in: Capsule())
+            ScrollView(showsIndicators: false) {
+                VStack(spacing: 14) {
+                    // Clearance spacer for the bottom half of the avatar circle
+                    Spacer().frame(height: 38)
+
+                    // User Identity Section: Centered Name, Email & Account Type Pill
+                    VStack(spacing: 4) {
+                        Text(data?.name ?? "Samantha Taylor")
+                            .font(.system(size: 23, weight: .heavy, design: .rounded))
+                            .foregroundColor(CarawinPalette.ink)
+
+                        Text(data?.email ?? "samantha.taylor@carawin.edu")
+                            .font(.system(size: 14, weight: .regular))
+                            .foregroundColor(CarawinPalette.muted)
+
+                        HStack(spacing: 6) {
+                            Image(systemName: "person")
+                                .font(.system(size: 12, weight: .semibold))
+                            Text(data?.accountType ?? "Individual Account")
+                                .font(.system(size: 12.5, weight: .semibold, design: .rounded))
+                        }
+                        .foregroundColor(CarawinPalette.navy)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 6)
+                        .background(Color(carawinHex: "EEF4FE"))
+                        .clipShape(Capsule())
+                        .padding(.top, 4)
                     }
-                }.carawinCard()
+                    .padding(.bottom, 6)
 
-                HStack {
-                    Text("My Badges").font(.system(size: 17, weight: .heavy)).foregroundStyle(CarawinPalette.ink)
-                    Spacer()
-                    Button("View All  →", action: onBadges).font(.system(size: 13, weight: .bold)).foregroundStyle(CarawinPalette.red)
-                }
-                HStack(spacing: 12) {
-                    Image(systemName: "rosette.fill").font(.system(size: 25, weight: .semibold)).foregroundStyle(CarawinPalette.red)
-                        .frame(width: 48, height: 48).background(CarawinPalette.paleGold, in: RoundedRectangle(cornerRadius: 14))
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text(data?.badgesEarned.map { "\($0) badges earned" } ?? "Your badge collection")
-                            .font(.system(size: 14, weight: .semibold)).foregroundStyle(CarawinPalette.ink)
-                        Text("Your personal badges appear here").font(.system(size: 12)).foregroundStyle(CarawinPalette.muted)
+                    // Plan & Entitlement Card
+                    VStack(alignment: .leading, spacing: 12) {
+                        CarawinSectionTitle(title: "Plan & Entitlement")
+                        CarawinDataRow(icon: "person.text.rectangle.fill", title: "Account type", value: data?.accountType ?? "Individual Account")
+                        CarawinDataRow(icon: "checkmark.seal.fill", title: "Plan details", value: data?.planName ?? "Basic Learner Plan")
+                        CarawinDataRow(icon: "flask.fill", title: "Available lab access", value: data?.availableLabs.map { "\($0) labs" } ?? "5 labs")
+                        Button(action: onConnect) {
+                            Label("Link your school", systemImage: "plus.circle.fill")
+                                .font(.system(size: 14, weight: .bold)).foregroundStyle(.white)
+                                .frame(maxWidth: .infinity).padding(.vertical, 12)
+                                .background(LinearGradient(colors: [CarawinPalette.navy, CarawinPalette.blue], startPoint: .leading, endPoint: .trailing), in: Capsule())
+                        }
+                    }.carawinCard()
+
+                    // My Badges Card
+                    HStack {
+                        Text("My Badges").font(.system(size: 17, weight: .heavy)).foregroundStyle(CarawinPalette.ink)
+                        Spacer()
+                        Button("View All  →", action: onBadges).font(.system(size: 13, weight: .bold)).foregroundStyle(CarawinPalette.red)
                     }
-                    Spacer()
-                }.carawinCard()
-
-                CarawinSectionTitle(title: "Learning")
-                Button(action: onStatistics) {
                     HStack(spacing: 12) {
-                        Image(systemName: "chart.bar.fill").font(.system(size: 19, weight: .bold)).foregroundStyle(.white)
-                            .frame(width: 44, height: 44).background(CarawinPalette.blue.gradient, in: RoundedRectangle(cornerRadius: 13))
+                        Image(systemName: "rosette.fill").font(.system(size: 25, weight: .semibold)).foregroundStyle(CarawinPalette.red)
+                            .frame(width: 48, height: 48).background(CarawinPalette.paleGold, in: RoundedRectangle(cornerRadius: 14))
                         VStack(alignment: .leading, spacing: 3) {
-                            Text("Learning Statistics").font(.system(size: 15, weight: .bold)).foregroundStyle(CarawinPalette.ink)
-                            Text("View your progress and performance").font(.system(size: 12)).foregroundStyle(CarawinPalette.muted)
+                            Text(data?.badgesEarned.map { "\($0) badges earned" } ?? "3 badges earned")
+                                .font(.system(size: 14, weight: .semibold)).foregroundStyle(CarawinPalette.ink)
+                            Text("Your personal badges appear here").font(.system(size: 12)).foregroundStyle(CarawinPalette.muted)
                         }
                         Spacer()
-                        Image(systemName: "chevron.right").font(.system(size: 14, weight: .bold)).foregroundStyle(CarawinPalette.red)
                     }.carawinCard()
-                }.buttonStyle(.plain)
 
-                CarawinSectionTitle(title: "Account Specifications")
-                VStack(spacing: 11) {
-                    CarawinDataRow(icon: "envelope.fill", title: "Registered Email", value: data?.email ?? "—")
-                    CarawinDataRow(icon: "calendar", title: "Account Created", value: data?.accountCreated ?? "—")
-                    CarawinDataRow(icon: "checkmark.shield.fill", title: "Account Status", value: data?.accountStatus ?? "—")
-                    CarawinDataRow(icon: "clock.fill", title: "Last Synchronized", value: data?.lastSynced ?? "—")
-                }.carawinCard()
+                    // Learning Card
+                    CarawinSectionTitle(title: "Learning")
+                    Button(action: onStatistics) {
+                        HStack(spacing: 12) {
+                            Image(systemName: "chart.bar.fill").font(.system(size: 19, weight: .bold)).foregroundStyle(.white)
+                                .frame(width: 44, height: 44).background(CarawinPalette.blue.gradient, in: RoundedRectangle(cornerRadius: 13))
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Learning Statistics").font(.system(size: 15, weight: .bold)).foregroundStyle(CarawinPalette.ink)
+                                Text("View your progress and performance").font(.system(size: 12)).foregroundStyle(CarawinPalette.muted)
+                            }
+                            Spacer()
+                            Image(systemName: "chevron.right").font(.system(size: 14, weight: .bold)).foregroundStyle(CarawinPalette.red)
+                        }.carawinCard()
+                    }.buttonStyle(.plain)
 
-                // MARK: - Log Out Button
-                Button(role: .destructive, action: {
-                    isShowingLogoutConfirmation = true
-                }) {
-                    HStack(spacing: 8) {
-                        Image(systemName: "rectangle.portrait.and.arrow.right")
-                            .font(.system(size: 15, weight: .bold))
+                    // Account Specifications Card
+                    CarawinSectionTitle(title: "Account Specifications")
+                    VStack(spacing: 11) {
+                        CarawinDataRow(icon: "envelope.fill", title: "Registered Email", value: data?.email ?? "samantha.taylor@carawin.edu")
+                        CarawinDataRow(icon: "calendar", title: "Account Created", value: data?.accountCreated ?? "Sep 2026")
+                        CarawinDataRow(icon: "checkmark.shield.fill", title: "Account Status", value: data?.accountStatus ?? "Active")
+                        CarawinDataRow(icon: "clock.fill", title: "Last Synchronized", value: data?.lastSynced ?? "Just now")
+                    }.carawinCard()
 
-                        Text("Log Out")
-                            .font(.system(size: 15, weight: .bold))
+                    // MARK: - Log Out Button
+                    Button(role: .destructive, action: {
+                        isShowingLogoutConfirmation = true
+                    }) {
+                        HStack(spacing: 8) {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .font(.system(size: 15, weight: .bold))
+
+                            Text("Log Out")
+                                .font(.system(size: 15, weight: .bold))
+                        }
+                        .foregroundColor(CarawinPalette.red)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                .fill(CarawinPalette.red.opacity(0.08))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                                        .stroke(CarawinPalette.red.opacity(0.2), lineWidth: 1)
+                                )
+                        )
                     }
-                    .foregroundColor(CarawinPalette.red)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .fill(CarawinPalette.red.opacity(0.08))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                                    .stroke(CarawinPalette.red.opacity(0.2), lineWidth: 1)
-                            )
-                    )
-                }
-                .buttonStyle(PlainButtonStyle())
-                .padding(.top, 8)
-                .confirmationDialog(
-                    "Log Out",
-                    isPresented: $isShowingLogoutConfirmation,
-                    titleVisibility: .visible
-                ) {
-                    Button("Log Out", role: .destructive) {
-                        onLogout?()
+                    .buttonStyle(PlainButtonStyle())
+                    .padding(.top, 8)
+                    .confirmationDialog(
+                        "Log Out",
+                        isPresented: $isShowingLogoutConfirmation,
+                        titleVisibility: .visible
+                    ) {
+                        Button("Log Out", role: .destructive) {
+                            onLogout?()
+                        }
+                        Button("Cancel", role: .cancel) {}
+                    } message: {
+                        Text("Are you sure you want to log out of STEM?")
                     }
-                    Button("Cancel", role: .cancel) {}
-                } message: {
-                    Text("Are you sure you want to log out of STEM?")
                 }
+                .padding(.horizontal, 17)
+                .padding(.top, 4)
+                .padding(.bottom, 100)
+                .frame(maxWidth: 520)
+                .frame(maxWidth: .infinity)
             }
+            .background(CarawinPageBackground())
         }
+        .background(Theme.screenBackground.ignoresSafeArea())
     }
 }
 
