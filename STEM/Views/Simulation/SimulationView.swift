@@ -220,8 +220,8 @@ public struct SimulationView: View {
             ElementDetailSheetView(viewModel: viewModel) {
                 viewModel.isDetailSheetPresented = false
             }
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
+            .presentationDetents([.fraction(0.85), .large])
+            .presentationDragIndicator(.hidden)
         }
     }
 
