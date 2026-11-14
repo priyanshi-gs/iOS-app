@@ -13,31 +13,33 @@ public struct BrowseLabsView: View {
     }
 
     public var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 18) {
-                // Top Header Section with Brand Arcs
-                ZStack(alignment: .topTrailing) {
-                    DecorativeArcView()
-                        .offset(x: 20, y: -20)
+        VStack(spacing: 0) {
+            // MARK: - Signature Waveform Header
+            WaveHeader(
+                title: "Browse Labs",
+                showBackButton: false
+            )
 
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 18) {
+                    // Top Intro Section
                     VStack(alignment: .leading, spacing: 4) {
-                        Text("Browse Labs")
-                            .font(Theme.largeTitle(26))
-                            .foregroundColor(Theme.oxfordBlue)
+                        Text("Explore Interactive Labs")
+                            .font(Theme.heading(20))
+                            .foregroundColor(Theme.textPrimary)
 
-                        Text("Explore interactive labs across PCM.")
+                        Text("Interactive experiments and simulations across PCM.")
                             .font(Theme.body(14))
                             .foregroundColor(Theme.textSecondary)
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 40)
-                }
+                    .padding(.top, 14)
 
-                // Search Bar
-                SearchBarView(
-                    text: $viewModel.searchQuery,
-                    placeholder: "Search labs, topics or experiments"
-                )
+                    // Search Bar
+                    SearchBarView(
+                        text: $viewModel.searchQuery,
+                        placeholder: "Search labs, topics or experiments"
+                    )
 
                 // Subject Filter Chips
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -90,8 +92,9 @@ public struct BrowseLabsView: View {
             }
             .padding(.horizontal, 20)
         }
-        .background(Color(hex: "F8FAFD").ignoresSafeArea())
     }
+    .background(Theme.screenBackground.ignoresSafeArea())
+}
 
     // Helper for filter chip pill
     @ViewBuilder

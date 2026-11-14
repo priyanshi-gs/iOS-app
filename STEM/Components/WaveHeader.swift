@@ -4,6 +4,7 @@ public struct WaveHeader: View {
     public let title: String
     public var showBackButton: Bool = true
     public var onBack: (() -> Void)? = nil
+    public var trailingView: AnyView? = nil
     
     public init(
         title: String,
@@ -13,6 +14,19 @@ public struct WaveHeader: View {
         self.title = title
         self.showBackButton = showBackButton
         self.onBack = onBack
+        self.trailingView = nil
+    }
+    
+    public init<Trailing: View>(
+        title: String,
+        showBackButton: Bool = true,
+        onBack: (() -> Void)? = nil,
+        @ViewBuilder trailing: () -> Trailing
+    ) {
+        self.title = title
+        self.showBackButton = showBackButton
+        self.onBack = onBack
+        self.trailingView = AnyView(trailing())
     }
     
     public var body: some View {
@@ -36,30 +50,36 @@ public struct WaveHeader: View {
             }
             .ignoresSafeArea(edges: .top)
             
-            // 3. Navigation Bar Content (Back button & Centered Title)
-            HStack(alignment: .center) {
-                if showBackButton {
-                    Button(action: { onBack?() }) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .bold))
-                            .foregroundColor(.white)
-                            .frame(width: 36, height: 36, alignment: .leading)
-                            .contentShape(Rectangle())
-                    }
-                } else {
-                    Spacer().frame(width: 36)
-                }
-                
-                Spacer()
-                
+            // 3. Navigation Bar Content (Back button, Centered Title, and Trailing Actions)
+            ZStack(alignment: .center) {
+                // Centered Title
                 Text(title)
                     .font(.system(size: 17, weight: .bold))
                     .foregroundColor(.white)
+                    .lineLimit(1)
+                    .padding(.horizontal, 68)
                 
-                Spacer()
-                
-                // Balance space on trailing side
-                Spacer().frame(width: 36)
+                HStack(alignment: .center) {
+                    if showBackButton {
+                        Button(action: { onBack?() }) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 18, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: 36, height: 36, alignment: .leading)
+                                .contentShape(Rectangle())
+                        }
+                    } else {
+                        Spacer().frame(width: 36)
+                    }
+                    
+                    Spacer()
+                    
+                    if let trailingView = trailingView {
+                        trailingView
+                    } else {
+                        Spacer().frame(width: 36)
+                    }
+                }
             }
             .padding(.horizontal, 20)
             .padding(.bottom, 12)

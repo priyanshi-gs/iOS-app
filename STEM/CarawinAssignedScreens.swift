@@ -411,40 +411,19 @@ private struct CarawinPage<Content: View>: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            ZStack(alignment: .topTrailing) {
-                CarawinPalette.navy
-                Circle()
-                    .trim(from: 0.45, to: 0.95)
-                    .stroke(CarawinPalette.red, style: StrokeStyle(lineWidth: 18, lineCap: .round))
-                    .frame(width: 140, height: 140)
-                    .offset(x: 35, y: -45)
-                Circle()
-                    .trim(from: 0.50, to: 0.85)
-                    .stroke(CarawinPalette.gold, style: StrokeStyle(lineWidth: 6, lineCap: .round))
-                    .frame(width: 85, height: 85)
-                    .offset(x: 10, y: -20)
-                HStack {
-                    if let back {
-                        Button(action: back) { Image(systemName: "chevron.left").font(.system(size: 16, weight: .bold)).foregroundStyle(.white).frame(width: 42, height: 42) }
-                    }
-                    Spacer()
-                    Text(title).font(.system(size: 16, weight: .bold)).foregroundStyle(.white).lineLimit(1)
-                    Spacer()
-                    if back != nil { Color.clear.frame(width: 42, height: 42) }
-                }.padding(.horizontal, 15).padding(.top, 88)
-            }
-            .frame(height: 148).clipShape(UnevenRoundedRectangle(bottomLeadingRadius: 30, bottomTrailingRadius: 30))
-            .overlay(alignment: .bottom) { Capsule().fill(CarawinPalette.gold).frame(width: 62, height: 2).offset(y: -10) }
+            WaveHeader(
+                title: title,
+                showBackButton: back != nil,
+                onBack: back
+            )
+
             ScrollView(showsIndicators: false) {
                 content.padding(.horizontal, 17).padding(.top, 16).padding(.bottom, 100)
                     .frame(maxWidth: 520).frame(maxWidth: .infinity)
             }
             .background(CarawinPageBackground())
-            .clipShape(UnevenRoundedRectangle(topLeadingRadius: 30, topTrailingRadius: 30))
-            .offset(y: -1)
         }
-        .background(CarawinPalette.navy.ignoresSafeArea())
-        .ignoresSafeArea(edges: .top)
+        .background(Theme.screenBackground.ignoresSafeArea())
     }
 }
 

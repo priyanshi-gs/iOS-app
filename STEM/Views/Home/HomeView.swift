@@ -16,91 +16,59 @@ public struct HomeView: View {
     }
 
     public var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 0) {
-                // MARK: - Dark Oxford Blue Curved Header
-                ZStack(alignment: .topTrailing) {
-                    // Header Background
-                    Theme.oxfordBlue
-                        .frame(height: 180)
-                        .clipShape(
-                            CurvedHeaderShape()
-                        )
-
-                    // Brand Crimson & Yellow Arc Graphics
-                    DecorativeArcView()
-                        .offset(x: -10, y: 10)
-
-                    // Header Content
-                    VStack(alignment: .leading, spacing: 14) {
-                        // Navigation Bar Row
-                        HStack {
-                            HStack(spacing: 8) {
-                                Image(systemName: "house.fill")
-                                    .font(.system(size: 18, weight: .bold))
+        VStack(spacing: 0) {
+            // MARK: - Signature Waveform Header
+            WaveHeader(
+                title: "Home",
+                showBackButton: false,
+                trailing: {
+                    HStack(spacing: 14) {
+                        Button(action: {}) {
+                            ZStack(alignment: .topTrailing) {
+                                Image(systemName: "bell")
+                                    .font(.system(size: 16, weight: .semibold))
                                     .foregroundColor(.white)
 
-                                Text("Home")
-                                    .font(Theme.heading(20))
-                                    .foregroundColor(.white)
-                            }
-
-                            Spacer()
-
-                            // Right Action Icons
-                            HStack(spacing: 12) {
-                                Button(action: {}) {
-                                    ZStack(alignment: .topTrailing) {
-                                        Image(systemName: "bell")
-                                            .font(.system(size: 16, weight: .semibold))
-                                            .foregroundColor(.white)
-                                            .padding(8)
-                                            .background(Color.white.opacity(0.12))
-                                            .clipShape(Circle())
-
-                                        Circle()
-                                            .fill(Theme.crimson)
-                                            .frame(width: 8, height: 8)
-                                            .offset(x: 2, y: 2)
-                                    }
-                                }
-
-                                Button(action: {}) {
-                                    Image(systemName: "person.circle")
-                                        .font(.system(size: 26, weight: .light))
-                                        .foregroundColor(.white)
-                                }
+                                Circle()
+                                    .fill(Theme.accentGold)
+                                    .frame(width: 7, height: 7)
+                                    .offset(x: 2, y: -2)
                             }
                         }
-                        .padding(.top, 50)
-                        .padding(.horizontal, 20)
 
-                        // Welcome Subtitle
-                        HStack(spacing: 4) {
-                            Text("Welcome,")
-                                .font(Theme.subheading(15))
-                                .foregroundColor(.white.opacity(0.85))
+                        Button(action: {}) {
+                            Image(systemName: "person.circle.fill")
+                                .font(.system(size: 22))
+                                .foregroundColor(.white)
+                        }
+                    }
+                }
+            )
+
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 20) {
+                    // Welcome Subtitle Banner
+                    HStack {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Welcome back,")
+                                .font(Theme.subheading(14))
+                                .foregroundColor(Theme.textSecondary)
 
                             Text(viewModel.userProfile.name)
-                                .font(Theme.subheading(15))
-                                .foregroundColor(Theme.yellow)
-                                .fontWeight(.bold)
+                                .font(Theme.largeTitle(24))
+                                .foregroundColor(Theme.textPrimary)
                         }
-                        .padding(.horizontal, 20)
 
                         Spacer()
                     }
-                }
-                .frame(height: 180)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 14)
 
-                // MARK: - Main Content Area
-                VStack(spacing: 20) {
                     // Continue Learning Card
                     if let continueLab = viewModel.continueLearningLab {
                         ContinueLearningCardView(lab: continueLab) {
                             onLaunchSimulation?(continueLab)
                         }
-                        .padding(.top, -30)
                     }
 
                     // Stats Cards Row
@@ -191,8 +159,7 @@ public struct HomeView: View {
                 .padding(.horizontal, 18)
             }
         }
-        .background(Color(hex: "F8FAFD").ignoresSafeArea())
-        .edgesIgnoringSafeArea(.top)
+        .background(Theme.screenBackground.ignoresSafeArea())
     }
 
     // Helper for Subject pill buttons
@@ -218,22 +185,6 @@ public struct HomeView: View {
             .shadow(color: isSelected ? Theme.oxfordBlue.opacity(0.2) : Color.clear, radius: 6, x: 0, y: 3)
         }
         .buttonStyle(PlainButtonStyle())
-    }
-}
-
-// Custom curved bottom shape for the top header
-public struct CurvedHeaderShape: Shape {
-    public func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: 0, y: 0))
-        path.addLine(to: CGPoint(x: rect.width, y: 0))
-        path.addLine(to: CGPoint(x: rect.width, y: rect.height - 24))
-        path.addQuadCurve(
-            to: CGPoint(x: 0, y: rect.height - 10),
-            control: CGPoint(x: rect.width * 0.5, y: rect.height + 15)
-        )
-        path.closeSubpath()
-        return path
     }
 }
 
