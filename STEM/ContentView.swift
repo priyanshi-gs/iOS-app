@@ -7,6 +7,7 @@ public enum AppFlowState {
 
 public enum OnboardingStep: Hashable {
     case splash
+    case createAccount
     case roleSelection
     case connectSchool
     case schoolConnected
@@ -47,23 +48,43 @@ struct ContentView: View {
             switch currentStep {
             case .splash:
                 SplashWelcomeView(
+                    onContinue: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            currentStep = .roleSelection
+                        }
+                    },
                     onContinueWithApple: {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                             currentStep = .roleSelection
                         }
                     },
-                    onContinueWithEmail: {
+                    onContinueWithGoogle: {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                             currentStep = .roleSelection
                         }
                     },
                     onCreateAccount: {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                            currentStep = .roleSelection
+                            currentStep = .createAccount
                         }
                     }
                 )
                 .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .leading)))
+
+            case .createAccount:
+                CreateAccountView(
+                    onBack: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            currentStep = .splash
+                        }
+                    },
+                    onSubmit: {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                            currentStep = .splash
+                        }
+                    }
+                )
+                .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
                 
             case .roleSelection:
                 RoleSelectionView(

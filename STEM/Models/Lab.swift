@@ -17,6 +17,8 @@ public struct Lab: Identifiable, Hashable, Codable {
     public let gradientStartHex: String
     public let gradientEndHex: String
     public let description: String
+    public let gradeClass: Int
+    public let simulationPath: String?
 
     public init(
         id: String = UUID().uuidString,
@@ -28,7 +30,9 @@ public struct Lab: Identifiable, Hashable, Codable {
         thumbnailSymbol: String,
         gradientStartHex: String,
         gradientEndHex: String,
-        description: String = ""
+        description: String = "",
+        gradeClass: Int = 10,
+        simulationPath: String? = nil
     ) {
         self.id = id
         self.title = title
@@ -40,6 +44,8 @@ public struct Lab: Identifiable, Hashable, Codable {
         self.gradientStartHex = gradientStartHex
         self.gradientEndHex = gradientEndHex
         self.description = description
+        self.gradeClass = gradeClass
+        self.simulationPath = simulationPath
     }
 }
 
