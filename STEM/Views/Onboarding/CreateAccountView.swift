@@ -6,11 +6,14 @@ public struct CreateAccountView: View {
 
     @State private var name: String = ""
     @State private var email: String = ""
+    @State private var mobile: String = ""
     @State private var password: String = ""
     @State private var confirmPassword: String = ""
 
     @State private var isPasswordVisible: Bool = false
     @State private var isConfirmPasswordVisible: Bool = false
+    @State private var isSubmitting: Bool = false
+    @State private var isRegistrationSuccess: Bool = false
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
 
@@ -78,15 +81,27 @@ public struct CreateAccountView: View {
                                 .autocorrectionDisabled()
                         }
 
-                        // 3. Password Field (with eye button show/hide)
+                        // 3. Mobile Number Field
+                        formInputField(
+                            label: "Mobile Number",
+                            icon: "phone.fill",
+                            placeholder: "Enter your 10-digit mobile number"
+                        ) {
+                            TextField("e.g. 9876543210", text: $mobile)
+                                .font(.system(size: 15))
+                                .keyboardType(.phonePad)
+                                .autocorrectionDisabled()
+                        }
+
+                        // 4. Password Field (with eye button show/hide)
                         passwordField(
                             label: "Password",
-                            placeholder: "Enter your password",
+                            placeholder: "At least 8 characters",
                             text: $password,
                             isVisible: $isPasswordVisible
                         )
 
-                        // 4. Confirm Password Field (with eye button show/hide)
+                        // 5. Confirm Password Field (with eye button show/hide)
                         passwordField(
                             label: "Confirm Password",
                             placeholder: "Re-enter your password",
@@ -112,10 +127,17 @@ public struct CreateAccountView: View {
                     // Submit Button
                     Button(action: validateAndSubmit) {
                         HStack(spacing: 8) {
-                            Text("Submit")
-                                .font(.system(size: 16, weight: .bold))
-                            Image(systemName: "arrow.right")
-                                .font(.system(size: 14, weight: .heavy))
+                            if isSubmitting {
+                                ProgressView()
+                                    .tint(.white)
+                                Text("Creating Account...")
+                                    .font(.system(size: 16, weight: .bold))
+                            } else {
+                                Text("Submit")
+                                    .font(.system(size: 16, weight: .bold))
+                                Image(systemName: "arrow.right")
+                                    .font(.system(size: 14, weight: .heavy))
+                            }
                         }
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
@@ -124,6 +146,7 @@ public struct CreateAccountView: View {
                         .clipShape(Capsule())
                         .shadow(color: Theme.primaryRed.opacity(0.18), radius: 8, x: 0, y: 4)
                     }
+                    .disabled(isSubmitting)
                     .padding(.top, 10)
 
                     // Bottom "Already have an account? Sign In" link
@@ -150,9 +173,13 @@ public struct CreateAccountView: View {
         .background(Theme.screenBackground.ignoresSafeArea())
         .alert(isPresented: $showAlert) {
             Alert(
-                title: Text("Notice"),
+                title: Text(isRegistrationSuccess ? "Success" : "Notice"),
                 message: Text(alertMessage),
-                dismissButton: .default(Text("OK"))
+                dismissButton: .default(Text("OK")) {
+                    if isRegistrationSuccess {
+                        onSubmit?()
+                    }
+                }
             )
         }
     }
@@ -161,6 +188,7 @@ public struct CreateAccountView: View {
     private func validateAndSubmit() {
         let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedMobile = mobile.trimmingCharacters(in: .whitespacesAndNewlines)
 
         guard !trimmedName.isEmpty else {
             alertMessage = "Please enter your name."
@@ -174,14 +202,20 @@ public struct CreateAccountView: View {
             return
         }
 
+        guard !trimmedMobile.isEmpty else {
+            alertMessage = "Please enter your mobile number."
+            showAlert = true
+            return
+        }
+
         guard !password.isEmpty else {
             alertMessage = "Please enter a password."
             showAlert = true
             return
         }
 
-        guard password.count >= 6 else {
-            alertMessage = "Password must be at least 6 characters long."
+        guard password.count >= 8 else {
+            alertMessage = "Password must be at least 8 characters long."
             showAlert = true
             return
         }
@@ -192,19 +226,31 @@ public struct CreateAccountView: View {
             return
         }
 
-        // Save session or register with AuthService
-        AuthService.shared.handleAppleSignIn(
-            userId: UUID().uuidString,
-            email: trimmedEmail,
-            fullName: {
-                var comp = PersonNameComponents()
-                comp.givenName = trimmedName
-                return comp
-            }()
-        )
+        isSubmitting = true
 
-        // Submit and return to the login screen
-        onSubmit?()
+        // Register with AuthService and backend
+        Task {
+            let regResult = await AuthService.shared.register(
+                name: trimmedName,
+                email: trimmedEmail,
+                password: password,
+                mobile: trimmedMobile,
+                role: "STUDENT"
+            )
+            await MainActor.run {
+                isSubmitting = false
+                switch regResult {
+                case .success:
+                    isRegistrationSuccess = true
+                    alertMessage = "Account created successfully! Please sign in with your email and password."
+                    showAlert = true
+                case .failure(let error):
+                    isRegistrationSuccess = false
+                    alertMessage = error.localizedDescription
+                    showAlert = true
+                }
+            }
+        }
     }
 
     // MARK: - Helper Views
@@ -292,3 +338,8 @@ public struct CreateAccountView: View {
     }
 }
 
+
+#Preview {
+    CreateAccountView()
+        .preferredColorScheme(.light)
+}

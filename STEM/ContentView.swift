@@ -1,5 +1,11 @@
 import SwiftUI
 
+// Compatibility typealiases — point to the real screens, not the stubs
+public typealias ConnectSchoolView = ConnectSchoolScreen
+public typealias SchoolConnectedView = SchoolConnectedScreen
+public typealias CarawinAssignedScreens = AssignedScreens
+
+
 public enum AppFlowState {
     case onboarding
     case mainDashboard
@@ -17,19 +23,17 @@ public enum OnboardingStep: Hashable {
 }
 
 struct ContentView: View {
+    @ObservedObject private var authService = AuthService.shared
     @State private var flowState: AppFlowState = .onboarding
     @State private var currentStep: OnboardingStep = .splash
+    @State private var connectedSchoolName: String = "Graphic Era University (GEU)"
     
     var body: some View {
         ZStack {
-            switch flowState {
-            case .onboarding:
-                onboardingFlowView
-                    .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .leading)))
-                
-            case .mainDashboard:
+            if flowState == .mainDashboard || (authService.currentUser != nil && authService.authState.isAuthenticated) {
                 MainContainerView(
                     onLogout: {
+                        authService.signOut()
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                             flowState = .onboarding
                             currentStep = .splash
@@ -37,6 +41,9 @@ struct ContentView: View {
                     }
                 )
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .opacity))
+            } else {
+                onboardingFlowView
+                    .transition(.asymmetric(insertion: .opacity, removal: .move(edge: .leading)))
             }
         }
         .preferredColorScheme(.light)
@@ -117,13 +124,16 @@ struct ContentView: View {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                             currentStep = .schoolConnected
                         }
+                    },
+                    onVerifiedSchool: { schoolName in
+                        connectedSchoolName = schoolName
                     }
                 )
                 .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading)))
                 
             case .schoolConnected:
                 SchoolConnectedView(
-                    schoolName: "Springfield High School",
+                    schoolName: connectedSchoolName,
                     onBack: {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                             currentStep = .connectSchool

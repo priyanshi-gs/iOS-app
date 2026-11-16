@@ -19,6 +19,8 @@ public struct Lab: Identifiable, Hashable, Codable {
     public let description: String
     public let gradeClass: Int
     public let simulationPath: String?
+    public let thumbnailUrl: String?
+    public var isLocked: Bool
 
     public init(
         id: String = UUID().uuidString,
@@ -32,7 +34,9 @@ public struct Lab: Identifiable, Hashable, Codable {
         gradientEndHex: String,
         description: String = "",
         gradeClass: Int = 10,
-        simulationPath: String? = nil
+        simulationPath: String? = nil,
+        thumbnailUrl: String? = nil,
+        isLocked: Bool = false
     ) {
         self.id = id
         self.title = title
@@ -46,6 +50,8 @@ public struct Lab: Identifiable, Hashable, Codable {
         self.description = description
         self.gradeClass = gradeClass
         self.simulationPath = simulationPath
+        self.thumbnailUrl = thumbnailUrl
+        self.isLocked = isLocked
     }
 }
 

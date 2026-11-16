@@ -168,12 +168,12 @@ public struct LiquidCircleBackButton: View {
     }
 }
 
-// Organic wave shape matching the Figma screen curve with mathematical precision:
-// - Left edge starts at 89.5% height
-// - Curves up to the left crest (at 15% width, 75.7% height) under the back chevron
-// - Dips down into the center trough (at 47% width, 100% height) directly under the title
-// - Curves up into the right crest (at 86% width, 71.0% height)
-// - Descends to meet the right edge at 80% height where it meets the red ring
+// Soft, smooth organic wave shape with continuous C1 curvature:
+// - Left edge starts smoothly at 82% height
+// - Curves through a gentle left crest (at 16% width, 76% height)
+// - Dips into a smooth, rounded center trough (at 50% width, 92% height) with zero sharp corner / flat horizontal tangent
+// - Curves gracefully through the right crest (at 84% width, 76% height)
+// - Lands at right edge at 80% height where it meets the crimson ring
 public struct OrganicWaveShape: Shape {
     public func path(in rect: CGRect) -> Path {
         var path = Path()
@@ -184,20 +184,21 @@ public struct OrganicWaveShape: Shape {
         let rightEdgeY = rect.height * 0.80
         path.addLine(to: CGPoint(x: rect.width, y: rightEdgeY))
         
-        // Segment 1 (Right to Center):
-        // Starts at right edge, sweeps through the right crest, and dips smoothly into the center trough
+        // Segment 1 (Right to Center Trough):
+        // Starts at right edge, sweeps through the gentle right crest, and dips smoothly into the center trough
+        // Horizontal tangent at x = 0.50, y = 0.92h prevents any sharp corner or V-notch
         path.addCurve(
-            to: CGPoint(x: rect.width * 0.47, y: rect.height),
-            control1: CGPoint(x: rect.width * 0.82, y: rect.height * 0.56),
-            control2: CGPoint(x: rect.width * 0.65, y: rect.height * 0.96)
+            to: CGPoint(x: rect.width * 0.50, y: rect.height * 0.92),
+            control1: CGPoint(x: rect.width * 0.84, y: rect.height * 0.68),
+            control2: CGPoint(x: rect.width * 0.64, y: rect.height * 0.92)
         )
         
-        // Segment 2 (Center to Left):
-        // Slopes up from the center trough, curves over the left crest, and lands gracefully on the left edge
+        // Segment 2 (Center to Left Edge):
+        // Continuous horizontal takeoff from the center trough, curves over the soft left crest, and lands gracefully on the left edge
         path.addCurve(
-            to: CGPoint(x: 0, y: rect.height * 0.895),
-            control1: CGPoint(x: rect.width * 0.31, y: rect.height * 0.98),
-            control2: CGPoint(x: rect.width * 0.16, y: rect.height * 0.55)
+            to: CGPoint(x: 0, y: rect.height * 0.82),
+            control1: CGPoint(x: rect.width * 0.36, y: rect.height * 0.92),
+            control2: CGPoint(x: rect.width * 0.16, y: rect.height * 0.68)
         )
         
         path.closeSubpath()

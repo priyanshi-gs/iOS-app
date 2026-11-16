@@ -5,6 +5,12 @@ public struct CheckoutPaymentView: View {
     @State private var couponCode: String = ""
     @State private var isCouponApplied: Bool = false
     @State private var isProcessing: Bool = false
+    @State private var payUHTML: String? = nil
+    @State private var showPayUSheet: Bool = false
+    @State private var paymentErrorMessage: String? = nil
+    @State private var showErrorAlert: Bool = false
+    @State private var livePlans: [CarawinPlan] = []
+    @State private var selectedPlan: CarawinPlan? = nil
     
     public var billingCycle: BillingCycle = .yearly
     public var onBack: (() -> Void)? = nil
@@ -21,11 +27,11 @@ public struct CheckoutPaymentView: View {
     }
     
     private var basePrice: Int {
-        billingCycle == .monthly ? 199 : 2399
+        selectedPlan?.priceInRupees ?? 299
     }
     
     private var discount: Int {
-        billingCycle == .monthly ? 0 : 400
+        (selectedPlan?.allLabs ?? false) ? 300 : 0
     }
     
     private var couponDiscount: Int {
@@ -59,64 +65,92 @@ public struct CheckoutPaymentView: View {
                     }
                     .padding(.top, 14)
                     
-                    // Top Plan Summary Card (Matches Screen 5)
-                    ZStack(alignment: .trailing) {
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack(alignment: .top, spacing: 10) {
-                                Image(systemName: "crown.fill")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(Theme.accentGold)
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Premium Plan")
-                                        .font(.system(size: 16, weight: .heavy))
-                                        .foregroundColor(.white)
-                                    Text("\(billingCycle.rawValue) Subscription")
-                                        .font(.system(size: 11))
-                                        .foregroundColor(Color.white.opacity(0.8))
-                                }
-                                
-                                Spacer()
-                                
-                                if billingCycle == .yearly {
-                                    Text("Save 20%")
-                                        .font(.system(size: 10, weight: .bold))
-                                        .foregroundColor(Theme.navyBackground)
-                                        .padding(.horizontal, 8)
-                                        .padding(.vertical, 3)
-                                        .background(Theme.accentGold)
-                                        .clipShape(Capsule())
-                                }
+                    // MARK: - Live Plans List (from GET /api/v1/plans)
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Select Plan")
+                            .font(.system(size: 15, weight: .bold))
+                            .foregroundColor(Theme.textDark)
+
+                        if livePlans.isEmpty {
+                            HStack(spacing: 10) {
+                                ProgressView().tint(Theme.oxfordBlue)
+                                Text("Loading live plans from server...")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(Theme.textMuted)
                             }
-                            
-                            Divider()
-                                .background(Color.white.opacity(0.25))
-                            
-                            VStack(alignment: .leading, spacing: 6) {
-                                FeatureCheckBullet(text: "Access to complete lab library")
-                                FeatureCheckBullet(text: "30+ PCM interactive labs")
-                                FeatureCheckBullet(text: "Assessments with progress tracking")
-                                FeatureCheckBullet(text: "School & teacher support")
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 20)
+                        } else {
+                            VStack(spacing: 10) {
+                                ForEach(livePlans) { plan in
+                                    let isSelected = selectedPlan?.id == plan.id
+                                    Button(action: {
+                                        withAnimation {
+                                            selectedPlan = plan
+                                        }
+                                    }) {
+                                        HStack(spacing: 12) {
+                                            ZStack {
+                                                Circle()
+                                                    .stroke(isSelected ? Theme.oxfordBlue : Theme.borderLight, lineWidth: isSelected ? 5 : 1.5)
+                                                    .frame(width: 20, height: 20)
+                                            }
+
+                                            VStack(alignment: .leading, spacing: 3) {
+                                                HStack(spacing: 6) {
+                                                    Text(plan.name)
+                                                        .font(.system(size: 14, weight: .bold))
+                                                        .foregroundColor(Theme.textDark)
+
+                                                    if plan.allLabs {
+                                                        Text("ALL LABS")
+                                                            .font(.system(size: 8, weight: .heavy))
+                                                            .foregroundColor(.white)
+                                                            .padding(.horizontal, 6)
+                                                            .padding(.vertical, 2)
+                                                            .background(Color(hex: "168B61"))
+                                                            .cornerRadius(4)
+                                                    } else {
+                                                        Text("\(plan.labsCount > 0 ? "\(plan.labsCount) LABS" : "SUBJECT")")
+                                                            .font(.system(size: 8, weight: .bold))
+                                                            .foregroundColor(Theme.textSecondary)
+                                                            .padding(.horizontal, 6)
+                                                            .padding(.vertical, 2)
+                                                            .background(Color(hex: "EEF1F8"))
+                                                            .cornerRadius(4)
+                                                    }
+                                                }
+
+                                                Text(plan.allLabs ? "Complete access to all STEM practicals" : "\(plan.durationDays) days access")
+                                                    .font(.system(size: 11, weight: .regular))
+                                                    .foregroundColor(Theme.textMuted)
+                                            }
+
+                                            Spacer()
+
+                                            VStack(alignment: .trailing, spacing: 1) {
+                                                Text(plan.formattedPrice)
+                                                    .font(.system(size: 15, weight: .heavy, design: .rounded))
+                                                    .foregroundColor(Theme.textDark)
+                                                Text("/ \(plan.durationDays >= 300 ? "year" : (plan.durationDays >= 180 ? "6 mo" : "month"))")
+                                                    .font(.system(size: 10, weight: .medium))
+                                                    .foregroundColor(Theme.textMuted)
+                                            }
+                                        }
+                                        .padding(14)
+                                        .background(isSelected ? Color(hex: "F8F7FF") : Color.white)
+                                        .cornerRadius(14)
+                                        .overlay(
+                                            RoundedRectangle(cornerRadius: 14)
+                                                .stroke(isSelected ? Theme.oxfordBlue : Theme.borderLight, lineWidth: isSelected ? 2 : 1)
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
+                                }
                             }
                         }
-                        .padding(16)
-                        
-                        // Glowing beaker icon illustration on the right
-                        Image(systemName: "flask.fill")
-                            .font(.system(size: 54))
-                            .foregroundStyle(
-                                LinearGradient(
-                                    colors: [Color.white.opacity(0.4), Color.pink.opacity(0.2)],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                )
-                            )
-                            .offset(x: -16, y: 30)
                     }
-                    .background(Theme.premiumCardGradient)
-                    .clipShape(RoundedRectangle(cornerRadius: 18))
-                    .shadow(color: Theme.primaryRed.opacity(0.12), radius: 8, x: 0, y: 4)
-                    
+
                     // Order Summary Section
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Order Summary")
@@ -126,14 +160,14 @@ public struct CheckoutPaymentView: View {
                         CardContainer(padding: 16) {
                             VStack(spacing: 10) {
                                 SummaryRow(
-                                    title: "Premium Plan (\(billingCycle.rawValue))",
+                                    title: selectedPlan?.name ?? "Subscription Plan",
                                     amount: "₹\(basePrice)",
                                     amountColor: Theme.textDark
                                 )
                                 
                                 if discount > 0 {
                                     SummaryRow(
-                                        title: "Discount (20%)",
+                                        title: "Discount",
                                         amount: "-₹\(discount)",
                                         amountColor: Theme.accentGreen
                                     )
@@ -227,14 +261,8 @@ public struct CheckoutPaymentView: View {
                         }
                     }
                     
-                    // Pay Now Action Button
-                    Button(action: {
-                        isProcessing = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
-                            isProcessing = false
-                            onPaymentCompleted?()
-                        }
-                    }) {
+                    // Pay Now Action Button (Live PayU Gateway)
+                    Button(action: startRealPayment) {
                         HStack(spacing: 8) {
                             if isProcessing {
                                 ProgressView()
@@ -274,6 +302,80 @@ public struct CheckoutPaymentView: View {
             }
         }
         .background(Theme.screenBackground.ignoresSafeArea())
+        .sheet(isPresented: $showPayUSheet) {
+            if let html = payUHTML {
+                NavigationStack {
+                    PayUWebView(
+                        htmlString: html,
+                        onSuccess: {
+                            showPayUSheet = false
+                            onPaymentCompleted?()
+                        },
+                        onFailure: { errorMsg in
+                            showPayUSheet = false
+                            paymentErrorMessage = errorMsg
+                            showErrorAlert = true
+                        }
+                    )
+                    .navigationTitle("PayU Payment")
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .cancellationAction) {
+                            Button("Cancel") {
+                                showPayUSheet = false
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .alert(isPresented: $showErrorAlert) {
+            Alert(
+                title: Text("Payment"),
+                message: Text(paymentErrorMessage ?? "Payment was cancelled or could not be completed."),
+                dismissButton: .default(Text("OK"))
+            )
+        }
+        .task {
+            // Live fetch plans from backend (GET /api/v1/plans)
+            if let plans = try? await DataService.shared.fetchPlansLive(), !plans.isEmpty {
+                await MainActor.run {
+                    self.livePlans = plans.filter { $0.active }
+                    if self.selectedPlan == nil {
+                        self.selectedPlan = plans.first { $0.allLabs } ?? plans.first
+                    }
+                }
+            }
+        }
+    }
+
+    private func startRealPayment() {
+        guard let planId = selectedPlan?.id ?? livePlans.first?.id else { return }
+        isProcessing = true
+
+        Task {
+            do {
+                let initiate = try await PayUService.shared.startCheckout(
+                    planId: planId,
+                    couponCode: isCouponApplied ? couponCode : nil
+                )
+                let html = PayUService.shared.buildPayUHTML(
+                    action: initiate.action,
+                    fields: initiate.fields
+                )
+                await MainActor.run {
+                    self.isProcessing = false
+                    self.payUHTML = html
+                    self.showPayUSheet = true
+                }
+            } catch {
+                await MainActor.run {
+                    self.isProcessing = false
+                    self.paymentErrorMessage = error.localizedDescription
+                    self.showErrorAlert = true
+                }
+            }
+        }
     }
 }
 

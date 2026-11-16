@@ -1,9 +1,19 @@
 import SwiftUI
 
+public enum LabNavRoute: Hashable {
+    case overview(Lab)
+    case study(Lab)
+    case simulation(Lab)
+    case test(Lab)
+    case result(Lab)
+    case profile
+    case notifications
+}
+
 public struct MainContainerView: View {
     @State private var selectedTab: AppTab = .home
-    @State private var activeSimulationLab: Lab? = nil
-    @State private var isProfilePresented: Bool = false
+    @State private var browseSubjectFilter: Subject? = nil
+    @State private var navigationPath = NavigationPath()
     public var onLogout: (() -> Void)?
 
     public init(onLogout: (() -> Void)? = nil) {
@@ -11,17 +21,22 @@ public struct MainContainerView: View {
     }
 
     public var body: some View {
-        NavigationStack {
+        NavigationStack(path: $navigationPath) {
             TabView(selection: $selectedTab) {
                 HomeView(
                     onLaunchSimulation: { lab in
-                        activeSimulationLab = lab
+                        DataService.shared.recordOpenedLab(id: lab.id)
+                        navigationPath.append(LabNavRoute.overview(lab))
                     },
-                    onNavigateToBrowse: {
+                    onNavigateToBrowse: { subject in
+                        browseSubjectFilter = subject
                         selectedTab = .labs
                     },
                     onOpenProfile: {
-                        isProfilePresented = true
+                        navigationPath.append(LabNavRoute.profile)
+                    },
+                    onOpenNotifications: {
+                        navigationPath.append(LabNavRoute.notifications)
                     }
                 )
                 .tabItem {
@@ -30,11 +45,13 @@ public struct MainContainerView: View {
                 .tag(AppTab.home)
 
                 BrowseLabsView(
+                    selectedSubject: browseSubjectFilter,
                     onLaunchLab: { lab in
-                        activeSimulationLab = lab
+                        DataService.shared.recordOpenedLab(id: lab.id)
+                        navigationPath.append(LabNavRoute.overview(lab))
                     },
                     onOpenProfile: {
-                        isProfilePresented = true
+                        navigationPath.append(LabNavRoute.profile)
                     }
                 )
                 .tabItem {
@@ -43,34 +60,110 @@ public struct MainContainerView: View {
                 .tag(AppTab.labs)
             }
             .tint(Theme.oxfordBlue)
-            .navigationDestination(isPresented: Binding(
-                get: { activeSimulationLab != nil },
-                set: { if !$0 { activeSimulationLab = nil } }
-            )) {
-                if let lab = activeSimulationLab {
-                    SimulationView(
+            .navigationDestination(for: LabNavRoute.self) { route in
+                switch route {
+                case .overview(let lab):
+                    LabOverviewScreen(
+                        lab: lab,
                         onBack: {
-                            activeSimulationLab = nil
+                            if !navigationPath.isEmpty {
+                                navigationPath.removeLast()
+                            }
+                        },
+                        onContinueLab: {
+                            navigationPath.append(LabNavRoute.study(lab))
+                        }
+                    )
+                    .navigationBarBackButtonHidden(true)
+
+                case .study(let lab):
+                    StudyMaterialScreen(
+                        lab: lab,
+                        onBack: {
+                            if !navigationPath.isEmpty {
+                                navigationPath.removeLast()
+                            }
+                        },
+                        onProceedToExperiment: {
+                            navigationPath.append(LabNavRoute.simulation(lab))
+                        }
+                    )
+                    .navigationBarBackButtonHidden(true)
+
+                case .simulation(let lab):
+                    LabSimulationPlayerView(
+                        lab: lab,
+                        onBack: {
+                            if !navigationPath.isEmpty {
+                                navigationPath.removeLast()
+                            }
+                        },
+                        onCompleteExperiment: {
+                            navigationPath.append(LabNavRoute.test(lab))
+                        }
+                    )
+                    .navigationBarBackButtonHidden(true)
+
+                case .test(let lab):
+                    LabAssessmentScreen(
+                        lab: lab,
+                        onBack: {
+                            if !navigationPath.isEmpty {
+                                navigationPath.removeLast()
+                            }
+                        },
+                        onCompleteTest: {
+                            navigationPath.append(LabNavRoute.result(lab))
+                        }
+                    )
+                    .navigationBarBackButtonHidden(true)
+
+                case .result(let lab):
+                    LabResultScreen(
+                        lab: lab,
+                        onBackToLabs: {
+                            navigationPath = NavigationPath()
+                        },
+                        onViewAllBadges: {
+                            navigationPath = NavigationPath()
+                            navigationPath.append(LabNavRoute.profile)
+                        }
+                    )
+                    .navigationBarBackButtonHidden(true)
+
+                case .profile:
+                    CarawinAssignedScreens(
+                        onBack: {
+                            if !navigationPath.isEmpty {
+                                navigationPath.removeLast()
+                            }
+                        },
+                        onLogout: {
+                            navigationPath = NavigationPath()
+                            onLogout?()
+                        },
+                        onDashboard: {
+                            navigationPath = NavigationPath()
+                            selectedTab = .home
+                        }
+                    )
+                    .navigationBarBackButtonHidden(true)
+
+                case .notifications:
+                    NotificationsScreen(
+                        onBack: {
+                            if !navigationPath.isEmpty {
+                                navigationPath.removeLast()
+                            }
+                        },
+                        onSelectLabId: { labId in
+                            if let lab = DataService.shared.getLab(by: labId) {
+                                navigationPath.append(LabNavRoute.overview(lab))
+                            }
                         }
                     )
                     .navigationBarBackButtonHidden(true)
                 }
-            }
-            .navigationDestination(isPresented: $isProfilePresented) {
-                CarawinAssignedScreens(
-                    onBack: {
-                        isProfilePresented = false
-                    },
-                    onLogout: {
-                        isProfilePresented = false
-                        onLogout?()
-                    },
-                    onDashboard: {
-                        isProfilePresented = false
-                        selectedTab = .home
-                    }
-                )
-                .navigationBarBackButtonHidden(true)
             }
         }
     }

@@ -31,11 +31,15 @@ public struct ContinueLearningCardView: View {
                         .tracking(0.8)
 
                     Text(lab.title)
-                        .font(Theme.subheading(15))
+                        .font(.system(size: 15, weight: .bold, design: .rounded))
                         .foregroundColor(.white)
-                        .lineLimit(1)
+                        .lineLimit(nil)
+                        .lineSpacing(2)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
 
-                    Text("\(lab.subject.rawValue) • \(lab.status.rawValue)")
+                    let statusText = lab.status == .notStarted ? "In Progress" : lab.status.rawValue
+                    Text("\(lab.subject.rawValue) • \(statusText)")
                         .font(Theme.caption(12))
                         .foregroundColor(Color(hex: "94A3B8"))
                 }

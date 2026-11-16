@@ -7,14 +7,16 @@ public struct UserProfile: Identifiable, Codable {
     public var badgesWonCount: Int
     public var labHoursTotal: Double
     public var activeLabId: String?
+    public var accessTierLabel: String
 
     public init(
         id: String = UUID().uuidString,
-        name: String = "Ratnam",
-        availableLabsCount: Int = 2,
-        badgesWonCount: Int = 12,
-        labHoursTotal: Double = 18.5,
-        activeLabId: String? = "ch-101"
+        name: String = "Student",
+        availableLabsCount: Int = 0,
+        badgesWonCount: Int = 0,
+        labHoursTotal: Double = 0.0,
+        activeLabId: String? = nil,
+        accessTierLabel: String = "Free Access"
     ) {
         self.id = id
         self.name = name
@@ -22,6 +24,7 @@ public struct UserProfile: Identifiable, Codable {
         self.badgesWonCount = badgesWonCount
         self.labHoursTotal = labHoursTotal
         self.activeLabId = activeLabId
+        self.accessTierLabel = accessTierLabel
     }
 }
 

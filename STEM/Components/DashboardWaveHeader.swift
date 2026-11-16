@@ -20,7 +20,7 @@ public struct DashboardWaveHeader<RightContent: View>: View {
         icon: String = "house",
         title: String,
         subtitlePrefix: String = "Welcome, ",
-        subtitleHighlight: String = "Ratnam",
+        subtitleHighlight: String = "Student",
         onNotificationTap: (() -> Void)? = nil,
         onProfileTap: (() -> Void)? = nil
     ) where RightContent == EmptyView {
@@ -38,7 +38,7 @@ public struct DashboardWaveHeader<RightContent: View>: View {
         icon: String = "house",
         title: String,
         subtitlePrefix: String = "Welcome, ",
-        subtitleHighlight: String = "Ratnam",
+        subtitleHighlight: String = "Student",
         @ViewBuilder rightContent: () -> RightContent
     ) {
         self.icon = icon
@@ -62,9 +62,9 @@ public struct DashboardWaveHeader<RightContent: View>: View {
             GeometryReader { geo in
                 ZStack {
                     Circle()
-                        .stroke(Theme.crimson, lineWidth: 26)
-                        .frame(width: 190, height: 190)
-                        .position(x: geo.size.width - 15, y: 25)
+                        .stroke(Theme.crimson, lineWidth: 22)
+                        .frame(width: 165, height: 165)
+                        .position(x: geo.size.width - 8, y: 18)
                 }
                 .clipShape(DashboardWaveShape())
             }
@@ -73,33 +73,33 @@ public struct DashboardWaveHeader<RightContent: View>: View {
             // 3. Header Foreground Elements
             HStack(alignment: .bottom, spacing: 0) {
                 // Left Title & Subtitle inside the Deep Navy bed
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 8) {
                         Image(systemName: icon)
-                            .font(.system(size: 22, weight: .bold))
+                            .font(.system(size: 20, weight: .bold))
                             .foregroundColor(.white)
 
                         Text(title)
-                            .font(.system(size: 26, weight: .heavy, design: .rounded))
+                            .font(.system(size: 24, weight: .heavy, design: .rounded))
                             .foregroundColor(.white)
                     }
 
                     HStack(spacing: 4) {
                         Text(subtitlePrefix)
-                            .font(.system(size: 15, weight: .bold))
+                            .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.white)
 
                         Text(subtitleHighlight)
-                            .font(.system(size: 15, weight: .heavy))
+                            .font(.system(size: 14, weight: .heavy))
                             .foregroundColor(Theme.yellow)
                     }
                 }
-                .padding(.leading, 24)
-                .padding(.bottom, 24) // Generous clearance so text is well above the wave!
+                .padding(.leading, 22)
+                .padding(.bottom, 48) // Lifted title & greeting further above the wave line
 
                 Spacer()
 
-                // Right Action Tiles inside the White Space beneath the High Wave
+                // Right Action Tiles inside the Soft Wave contour
                 HStack(spacing: 12) {
                     if let customRightContent = customRightContent {
                         customRightContent
@@ -107,14 +107,14 @@ public struct DashboardWaveHeader<RightContent: View>: View {
                         // Bell Notification Tile with Red Dot
                         Button(action: { onNotificationTap?() }) {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                RoundedRectangle(cornerRadius: 13, style: .continuous)
                                     .fill(Color.white)
-                                    .frame(width: 44, height: 44)
-                                    .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+                                    .frame(width: 42, height: 42)
+                                    .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
 
                                 ZStack(alignment: .topTrailing) {
                                     Image(systemName: "bell")
-                                        .font(.system(size: 19, weight: .semibold))
+                                        .font(.system(size: 18, weight: .semibold))
                                         .foregroundColor(Theme.oxfordBlue)
 
                                     // Small red notification dot at top-right corner of bell
@@ -123,7 +123,7 @@ public struct DashboardWaveHeader<RightContent: View>: View {
                                         .frame(width: 8, height: 8)
                                         .offset(x: 4, y: -4)
                                 }
-                                .frame(width: 44, height: 44)
+                                .frame(width: 42, height: 42)
                             }
                         }
                         .buttonStyle(PlainButtonStyle())
@@ -131,13 +131,13 @@ public struct DashboardWaveHeader<RightContent: View>: View {
                         // Profile / Person Tile
                         Button(action: { onProfileTap?() }) {
                             ZStack {
-                                RoundedRectangle(cornerRadius: 15, style: .continuous)
+                                RoundedRectangle(cornerRadius: 13, style: .continuous)
                                     .fill(Color.white)
-                                    .frame(width: 44, height: 44)
-                                    .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+                                    .frame(width: 42, height: 42)
+                                    .shadow(color: Color.black.opacity(0.06), radius: 6, x: 0, y: 2)
 
                                 Image(systemName: "person")
-                                    .font(.system(size: 19, weight: .semibold))
+                                    .font(.system(size: 18, weight: .semibold))
                                     .foregroundColor(Theme.oxfordBlue)
                             }
                         }
@@ -148,17 +148,16 @@ public struct DashboardWaveHeader<RightContent: View>: View {
                 .padding(.bottom, 16)
             }
         }
-        // Total frame height below safe area, giving generous room for text and the wave contour
-        .frame(height: 135)
+        // Balanced compact height to leave generous screen real estate for home content
+        .frame(height: 140)
     }
 }
 
 // MARK: - Asymmetric Dashboard Wave Shape
-// Mathematical cubic Bézier curve fitted precisely to the reference design (Photo 2):
-// - Left section stays deep (94% - 98% height) across the entire text area (x = 0 to 0.44),
-//   providing a solid, un-clipped navy background behind the title and greeting.
-// - Sweeps smoothly upward via an S-curve to a high crest at x = 0.82, y = 0.42h.
-// - Rolls down softly to y = 0.56h at the right margin, creating ample white space for action cards.
+// Mathematical C1-continuous Bézier curve creating a soft, smooth, organic wave:
+// - Left section cradles the title and welcome text smoothly (y: 0.88h -> 0.90h).
+// - Transitions with collinear tangents through (0.52w, 0.76h) into a soft crest at (0.81w, 0.63h).
+// - Gently curves down to 0.70h at the right margin, eliminating all sharp corners or kinks.
 public struct DashboardWaveShape: Shape {
     public init() {}
 
@@ -168,33 +167,25 @@ public struct DashboardWaveShape: Shape {
         // 1. Top-left origin
         path.move(to: CGPoint(x: 0, y: 0))
 
-        // 2. Down left margin to deep wave start (y = 0.98h)
-        path.addLine(to: CGPoint(x: 0, y: rect.height * 0.98))
+        // 2. Down left margin to deep wave start (y = 0.88h)
+        path.addLine(to: CGPoint(x: 0, y: rect.height * 0.88))
 
-        // 3. Segment 1: Stays deep across the entire text section (x: 0 -> 0.44)
+        // 3. Segment 1: Soft, gentle curve cradling the title & welcome text (x: 0 -> 0.52)
         path.addCurve(
-            to: CGPoint(x: rect.width * 0.44, y: rect.height * 0.94),
-            control1: CGPoint(x: rect.width * 0.16, y: rect.height * 0.91),
-            control2: CGPoint(x: rect.width * 0.30, y: rect.height * 0.95)
+            to: CGPoint(x: rect.width * 0.52, y: rect.height * 0.76),
+            control1: CGPoint(x: rect.width * 0.18, y: rect.height * 0.94),
+            control2: CGPoint(x: rect.width * 0.36, y: rect.height * 0.88)
         )
 
-        // 4. Segment 2: Smooth upward S-curve sweep to the apex crest (x: 0.44 -> 0.82)
-        // Arrives with horizontal tangency at x = 0.82, y = 0.42h
+        // 4. Segment 2: C1 smooth continuous sweep to the crest and right margin (x: 0.52 -> 1.0)
+        // Collinear control1 gives silky continuity without any corner or kink
         path.addCurve(
-            to: CGPoint(x: rect.width * 0.82, y: rect.height * 0.42),
-            control1: CGPoint(x: rect.width * 0.58, y: rect.height * 0.92),
-            control2: CGPoint(x: rect.width * 0.70, y: rect.height * 0.42)
+            to: CGPoint(x: rect.width, y: rect.height * 0.70),
+            control1: CGPoint(x: rect.width * 0.68, y: rect.height * 0.64),
+            control2: CGPoint(x: rect.width * 0.84, y: rect.height * 0.58)
         )
 
-        // 5. Segment 3: Gentle downward roll to the right margin (x: 0.82 -> 1.0)
-        // Leaves horizontally and curves down to y = 0.56h
-        path.addCurve(
-            to: CGPoint(x: rect.width, y: rect.height * 0.56),
-            control1: CGPoint(x: rect.width * 0.90, y: rect.height * 0.42),
-            control2: CGPoint(x: rect.width * 0.96, y: rect.height * 0.50)
-        )
-
-        // 6. Up right margin to top-right
+        // 5. Up right margin to top-right
         path.addLine(to: CGPoint(x: rect.width, y: 0))
 
         path.closeSubpath()

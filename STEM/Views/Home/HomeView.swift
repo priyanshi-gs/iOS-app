@@ -1,72 +1,117 @@
 import SwiftUI
 
+@MainActor
 public struct HomeView: View {
     @StateObject private var viewModel: HomeViewModel
     public var onLaunchSimulation: ((Lab) -> Void)?
-    public var onNavigateToBrowse: (() -> Void)?
+    public var onNavigateToBrowse: ((Subject?) -> Void)?
     public var onOpenProfile: (() -> Void)?
+    public var onOpenNotifications: (() -> Void)?
 
     public init(
-        viewModel: HomeViewModel = HomeViewModel(),
+        viewModel: HomeViewModel? = nil,
         onLaunchSimulation: ((Lab) -> Void)? = nil,
-        onNavigateToBrowse: (() -> Void)? = nil,
-        onOpenProfile: (() -> Void)? = nil
+        onNavigateToBrowse: ((Subject?) -> Void)? = nil,
+        onOpenProfile: (() -> Void)? = nil,
+        onOpenNotifications: (() -> Void)? = nil
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        self._viewModel = StateObject(wrappedValue: viewModel ?? HomeViewModel())
         self.onLaunchSimulation = onLaunchSimulation
         self.onNavigateToBrowse = onNavigateToBrowse
         self.onOpenProfile = onOpenProfile
+        self.onOpenNotifications = onOpenNotifications
     }
+
+    // Filtered labs based on chosen subject
+    private var displayedLabs: [Lab] {
+        if let subject = viewModel.selectedSubject {
+            let matched = viewModel.recentLabs.filter { $0.subject == subject }
+            return matched
+        }
+        return viewModel.recentLabs
+    }
+
 
     public var body: some View {
         VStack(spacing: 0) {
-            // MARK: - Asymmetric Dashboard Waveform Header
+            // MARK: - Header
             DashboardWaveHeader(
                 icon: "house",
                 title: "Home",
                 subtitlePrefix: "Welcome, ",
                 subtitleHighlight: viewModel.userProfile.name,
                 onNotificationTap: {
-                    // Notification action
+                    onOpenNotifications?()
                 },
                 onProfileTap: {
                     onOpenProfile?()
                 }
             )
 
+            // MARK: - Dashboard content
+
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(spacing: 20) {
                     // Continue Learning Card
                     if let continueLab = viewModel.continueLearningLab {
                         ContinueLearningCardView(lab: continueLab) {
+                            viewModel.updateActiveLab(continueLab)
                             onLaunchSimulation?(continueLab)
                         }
                         .padding(.top, 14)
                     }
-
-                    // Stats Cards Row
+                    // Stats Cards Row (100% Dynamic & Live from Backend)
                     HStack(spacing: 10) {
-                        StatCard(
-                            icon: "microscope",
-                            iconColor: Theme.oxfordBlue,
-                            value: "\(viewModel.userProfile.availableLabsCount)",
-                            label: "Available Labs",
-                            sublabel: "Free Access"
-                        )
+                        // Available Labs (Soft Pastel Sky Blue - derived from Brand Navy / Cyan)
+                        Button(action: {
+                            onNavigateToBrowse?(nil)
+                        }) {
+                            StatCard(
+                                icon: "flask.fill",
+                                iconColor: Color(hex: "0284C7"),
+                                iconBgColor: Color(hex: "E0F2FE"),
+                                cardBgColor: Color(hex: "F0F7FF"),
+                                cardBorderColor: Color(hex: "D9EAFD"),
+                                value: "\(viewModel.userProfile.availableLabsCount)",
+                                label: "Available Labs",
+                                sublabel: viewModel.userProfile.accessTierLabel
+                            )
+                        }
+                        .buttonStyle(PlainButtonStyle())
 
-                        StatCard(
-                            icon: "medal.fill",
-                            iconColor: Theme.crimson,
-                            value: "\(viewModel.userProfile.badgesWonCount)",
-                            label: "Badges Won"
-                        )
+                        // Badges Won (Soft Pastel Rose Blush - derived from Brand Crimson)
+                        Button(action: {
+                            onOpenProfile?()
+                        }) {
+                            StatCard(
+                                icon: "medal.fill",
+                                iconColor: Theme.crimson,
+                                iconBgColor: Color(hex: "FFE4E6"),
+                                cardBgColor: Color(hex: "FFF1F2"),
+                                cardBorderColor: Color(hex: "FFE2E5"),
+                                value: "\(viewModel.userProfile.badgesWonCount)",
+                                label: "Badges Won",
+                                sublabel: nil
+                            )
+                        }
+                        .buttonStyle(PlainButtonStyle())
 
-                        StatCard(
-                            icon: "clock.fill",
-                            iconColor: Color(hex: "D97706"),
-                            value: "\(String(format: "%.1f", viewModel.userProfile.labHoursTotal))h",
-                            label: "Lab Hours"
-                        )
+                        // Lab Hours (Soft Pastel Warm Gold/Amber - derived from Brand Yellow)
+                        Button(action: {
+                            onOpenProfile?()
+                        }) {
+                            StatCard(
+                                icon: "clock.fill",
+                                iconColor: Color(hex: "D97706"),
+                                iconBgColor: Color(hex: "FEF3C7"),
+                                cardBgColor: Color(hex: "FFFBEB"),
+                                cardBorderColor: Color(hex: "FEF3C7"),
+                                value: "\(String(format: "%.1f", viewModel.userProfile.labHoursTotal))h",
+                                label: "Lab Hours",
+                                sublabel: nil
+                            )
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
 
                     // Explore by Subject Section
@@ -82,23 +127,22 @@ public struct HomeView: View {
                         }
                     }
 
-                    // Recent Visited Labs Section
+                    // Experiments List Section (Dynamically filtered by Subject)
                     VStack(alignment: .leading, spacing: 12) {
                         HStack {
-                            Text("Recent Visited Labs")
+                            Text(viewModel.selectedSubject != nil ? "\(viewModel.selectedSubject!.rawValue) Experiments" : "Recent Visited Labs")
                                 .font(Theme.heading(17))
                                 .foregroundColor(Theme.textPrimary)
 
                             Spacer()
 
                             Button(action: {
-                                onNavigateToBrowse?()
+                                onNavigateToBrowse?(viewModel.selectedSubject)
                             }) {
                                 HStack(spacing: 4) {
-                                    Text("View All")
+                                    Text(viewModel.selectedSubject != nil ? "All \(viewModel.selectedSubject!.rawValue)" : "View All")
                                         .font(Theme.caption(12))
                                         .fontWeight(.bold)
-
                                     Image(systemName: "arrow.right")
                                         .font(.system(size: 10, weight: .bold))
                                 }
@@ -107,14 +151,43 @@ public struct HomeView: View {
                         }
 
                         VStack(spacing: 4) {
-                            ForEach(viewModel.recentLabs.prefix(5)) { lab in
-                                RecentLabRowView(lab: lab) {
-                                    onLaunchSimulation?(lab)
+                            if viewModel.isLoading {
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                        .tint(Theme.oxfordBlue)
+                                        .padding(.vertical, 20)
+                                    Spacer()
                                 }
-
-                                if lab.id != viewModel.recentLabs.prefix(5).last?.id {
-                                    Divider()
-                                        .background(Color(hex: "F1F5F9"))
+                            } else if displayedLabs.isEmpty {
+                                VStack(spacing: 8) {
+                                    Image(systemName: viewModel.selectedSubject?.systemIcon ?? "flask.fill")
+                                        .font(.system(size: 26))
+                                        .foregroundColor(Theme.textSecondary.opacity(0.6))
+                                        .padding(.top, 12)
+                                    Text("No \(viewModel.selectedSubject?.rawValue ?? "") experiments found")
+                                        .font(Theme.body(13))
+                                        .foregroundColor(Theme.textSecondary)
+                                    Button(action: {
+                                        onNavigateToBrowse?(viewModel.selectedSubject)
+                                    }) {
+                                        Text("Explore in Catalog →")
+                                            .font(.system(size: 12, weight: .bold))
+                                            .foregroundColor(Theme.primaryBlue)
+                                    }
+                                    .padding(.bottom, 12)
+                                }
+                                .frame(maxWidth: .infinity)
+                            } else {
+                                ForEach(displayedLabs.prefix(5)) { lab in
+                                    RecentLabRowView(lab: lab) {
+                                        viewModel.updateActiveLab(lab)
+                                        onLaunchSimulation?(lab)
+                                    }
+                                    if lab.id != displayedLabs.prefix(5).last?.id {
+                                        Divider()
+                                            .background(Color(hex: "F1F5F9"))
+                                    }
                                 }
                             }
                         }
@@ -126,13 +199,15 @@ public struct HomeView: View {
                         )
                     }
 
-                    // Bottom padding for tab bar
                     Spacer().frame(height: 20)
                 }
                 .padding(.horizontal, 18)
             }
         }
         .background(Theme.screenBackground.ignoresSafeArea())
+        .onAppear {
+            viewModel.loadData()
+        }
     }
 
     // Helper for Subject pill buttons
@@ -141,7 +216,9 @@ public struct HomeView: View {
         let isSelected = viewModel.selectedSubject == subject
 
         Button(action: {
-            viewModel.selectSubject(subject)
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
+                viewModel.selectSubject(subject)
+            }
         }) {
             VStack(spacing: 8) {
                 Image(systemName: subject.systemIcon)
@@ -161,3 +238,8 @@ public struct HomeView: View {
     }
 }
 
+
+#Preview("Home Screen") {
+    HomeView()
+        .preferredColorScheme(.light)
+}
