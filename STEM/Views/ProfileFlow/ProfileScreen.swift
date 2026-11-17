@@ -353,7 +353,7 @@ public struct ProfileScreen: View {
                                     .font(.system(size: 24))
                                     .foregroundColor(Theme.textMuted)
                                     .frame(width: 48, height: 48)
-                                    .background(Theme.surfaceWarm, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                    .background(Theme.surfaceLight, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text("No Badges Yet")
                                         .font(.system(size: 13, weight: .bold))

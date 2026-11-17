@@ -13,6 +13,7 @@ public enum Theme {
     public static let cardBackground  = Color(hex: "FFFFFF")
     public static let surfaceGray     = Color(hex: "F0F3F8")
     public static let surfaceLight    = Color(hex: "F8FAFC")
+    public static let surfaceWarm     = Color(hex: "F8FAFC")
     public static let textPrimary     = Color(hex: "0E3A6E")
     public static let textSecondary   = Color(hex: "64748B")
     public static let textMuted       = Color(hex: "94A3B8")

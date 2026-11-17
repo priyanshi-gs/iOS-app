@@ -508,7 +508,7 @@ struct BadgeDetailSheet: View {
                         }
                     }
                     .padding(16)
-                    .background(Theme.surfaceWarm, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .background(Theme.surfaceLight, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
                     .padding(.horizontal, 24)
 
                     // External Viewer / Certificate link
