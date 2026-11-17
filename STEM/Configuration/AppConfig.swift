@@ -27,7 +27,26 @@ public struct AppConfig {
         }
     }
 
-    // MARK: - Google OAuth Configuration
-    public static var googleClientID: String = "485328173144-77obcm8e0vshdqcsm3dc4gp7vsgt6aab.apps.googleusercontent.com"
-    public static var googleRedirectScheme: String = "com.googleusercontent.apps.485328173144-77obcm8e0vshdqcsm3dc4gp7vsgt6aab"
+    // MARK: - Google OAuth Configuration (Loaded dynamically from gitignored GoogleCredentials.plist)
+    public static var googleClientID: String {
+        loadCredential(key: "CLIENT_ID")
+    }
+
+    public static var googleRedirectScheme: String {
+        loadCredential(key: "REVERSED_CLIENT_ID")
+    }
+
+    private static func loadCredential(key: String) -> String {
+        if let path = Bundle.main.path(forResource: "GoogleCredentials", ofType: "plist"),
+           let dict = NSDictionary(contentsOfFile: path) as? [String: Any],
+           let val = dict[key] as? String, !val.isEmpty {
+            return val
+        }
+        let localPath = "/Users/ratnamsmac/Documents/Projects/LabLearn/STEM/Configuration/GoogleCredentials.plist"
+        if let dict = NSDictionary(contentsOfFile: localPath) as? [String: Any],
+           let val = dict[key] as? String, !val.isEmpty {
+            return val
+        }
+        return ""
+    }
 }
