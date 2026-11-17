@@ -75,9 +75,10 @@ public struct DashboardWaveHeader<RightContent: View>: View {
                 // Left Title & Subtitle inside the Deep Navy bed
                 VStack(alignment: .leading, spacing: 6) {
                     HStack(spacing: 8) {
-                        Image(systemName: icon)
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.white)
+                        Image("app_logo")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 32, height: 32)
 
                         Text(title)
                             .font(.system(size: 24, weight: .heavy, design: .rounded))
