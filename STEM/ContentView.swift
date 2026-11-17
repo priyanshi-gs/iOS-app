@@ -27,15 +27,11 @@ struct ContentView: View {
     @State private var flowState: AppFlowState = .onboarding
     @State private var currentStep: OnboardingStep = .splash
     @State private var connectedSchoolName: String = "Graphic Era University (GEU)"
-    @State private var isShowingInitialSplash: Bool = true
-    @State private var isShowingWelcomeVideo: Bool = false
+    @State private var isShowingWelcomeVideo: Bool = true
     
     var body: some View {
         ZStack {
-            if isShowingInitialSplash {
-                InitialLaunchSplashView()
-                    .transition(.opacity)
-            } else if isShowingWelcomeVideo {
+            if isShowingWelcomeVideo {
                 WelcomeVideoSplashView {
                     withAnimation(.easeInOut(duration: 0.45)) {
                         isShowingWelcomeVideo = false
@@ -59,14 +55,6 @@ struct ContentView: View {
             }
         }
         .preferredColorScheme(.light)
-        .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.8) {
-                withAnimation(.easeInOut(duration: 0.4)) {
-                    isShowingInitialSplash = false
-                    isShowingWelcomeVideo = true
-                }
-            }
-        }
     }
     
     @ViewBuilder
