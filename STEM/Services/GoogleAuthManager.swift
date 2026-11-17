@@ -1,7 +1,8 @@
 import Foundation
+import Combine
 import AuthenticationServices
 import UIKit
-import Combine
+import SwiftUI
 
 @MainActor
 public final class GoogleAuthManager: NSObject, ObservableObject, ASWebAuthenticationPresentationContextProviding {
