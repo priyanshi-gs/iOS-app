@@ -105,6 +105,55 @@ public final class AuthService: ObservableObject {
         saveSession(user: user, token: "apple_token_\(UUID().uuidString)")
     }
 
+    // MARK: - Sign In with Google (POST /api/v1/auth/google)
+    public func signInWithGoogle(idToken: String) async -> Result<AuthUser, Error> {
+        authState = .authenticating
+        let csrf = await fetchCsrfToken()
+        let endpoints = ["/api/v1/auth/google", "/auth/google"]
+        var lastError: Error?
+
+        for endpoint in endpoints {
+            guard let url = URL(string: "\(AppConfig.baseURL)\(endpoint)") else { continue }
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            request.setValue("application/json", forHTTPHeaderField: "Accept")
+
+            if let csrf = csrf {
+                request.setValue(csrf, forHTTPHeaderField: "X-CSRF-Token")
+            }
+
+            let bodyDict: [String: Any] = ["idToken": idToken]
+
+            do {
+                request.httpBody = try JSONSerialization.data(withJSONObject: bodyDict)
+                let (data, response) = try await URLSession.shared.data(for: request)
+
+                if let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) {
+                    if let user = parseAuthResponse(from: data, fallbackEmail: "google.user@carawin.edu") {
+                        // Refresh live details from /me if available
+                        try? await fetchMeLive()
+                        return .success(currentUser ?? user)
+                    }
+                } else if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode >= 400 && httpResponse.statusCode < 500 {
+                    let errMsg = parseErrorMessage(from: data) ?? "Google sign-in failed. Please try again."
+                    authState = .unauthenticated
+                    return .failure(NSError(domain: "AuthService", code: httpResponse.statusCode, userInfo: [NSLocalizedDescriptionKey: errMsg]))
+                }
+            } catch {
+                lastError = error
+            }
+        }
+
+        authState = .unauthenticated
+        let error = lastError ?? NSError(
+            domain: "AuthService",
+            code: 500,
+            userInfo: [NSLocalizedDescriptionKey: "Failed to connect to authentication server. Please check your internet connection."]
+        )
+        return .failure(error)
+    }
+
     // MARK: - Email & Password Sign In
     public func signInWithEmail(email: String, password: String) async -> Result<AuthUser, Error> {
         authState = .authenticating
@@ -270,8 +319,11 @@ public final class AuthService: ObservableObject {
         let id = (userDict["id"] as? String) ?? (userDict["_id"] as? String) ?? UUID().uuidString
         let name = (userDict["name"] as? String) ?? fallbackName
         let email = (userDict["email"] as? String) ?? fallbackEmail
-        let userRole = (userDict["role"] as? String) ?? role
+        let userRole = (userDict["role"] as? String)
+            ?? (userDict["roles"] as? [String])?.first
+            ?? role
         let school = (userDict["schoolName"] as? String)
+            ?? ((userDict["schools"] as? [[String: Any]])?.first?["name"] as? String)
 
         let user = AuthUser(id: id, name: name, email: email, role: userRole, schoolName: school)
         saveSession(user: user, token: token)

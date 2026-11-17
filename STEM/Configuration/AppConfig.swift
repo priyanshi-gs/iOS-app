@@ -26,4 +26,8 @@ public struct AppConfig {
             return "https://secure.payu.in"
         }
     }
+
+    // MARK: - Google OAuth Configuration
+    public static var googleClientID: String = "placeholder-client-id.apps.googleusercontent.com"
+    public static var googleRedirectScheme: String = "devplaceholder.carawin.labs"
 }

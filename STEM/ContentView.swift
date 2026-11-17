@@ -57,17 +57,29 @@ struct ContentView: View {
                 SplashWelcomeView(
                     onContinue: {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                            currentStep = .roleSelection
+                            if authService.currentUser != nil && authService.authState.isAuthenticated {
+                                flowState = .mainDashboard
+                            } else {
+                                currentStep = .roleSelection
+                            }
                         }
                     },
                     onContinueWithApple: {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                            currentStep = .roleSelection
+                            if authService.currentUser != nil && authService.authState.isAuthenticated {
+                                flowState = .mainDashboard
+                            } else {
+                                currentStep = .roleSelection
+                            }
                         }
                     },
                     onContinueWithGoogle: {
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
-                            currentStep = .roleSelection
+                            if authService.currentUser != nil && authService.authState.isAuthenticated {
+                                flowState = .mainDashboard
+                            } else {
+                                currentStep = .roleSelection
+                            }
                         }
                     },
                     onCreateAccount: {

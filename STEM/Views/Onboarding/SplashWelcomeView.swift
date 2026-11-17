@@ -10,6 +10,7 @@ public struct SplashWelcomeView: View {
     @State private var password: String = ""
     @State private var isPasswordVisible: Bool = false
     @State private var isSigningIn: Bool = false
+    @State private var isGoogleSigningIn: Bool = false
     @State private var errorMessage: String? = nil
 
     public init(
@@ -301,6 +302,11 @@ public struct SplashWelcomeView: View {
                             HStack(spacing: 10) {
                                 // Continue with Apple Button
                                 Button(action: {
+                                    AuthService.shared.handleAppleSignIn(
+                                        userId: UUID().uuidString,
+                                        email: "apple.user@carawin.edu",
+                                        fullName: nil
+                                    )
                                     onContinueWithApple?()
                                 }) {
                                     HStack(spacing: 6) {
@@ -317,16 +323,36 @@ public struct SplashWelcomeView: View {
                                     .shadow(color: Color.black.opacity(0.14), radius: 6, x: 0, y: 2)
                                 }
                                 .buttonStyle(PlainButtonStyle())
+                                .disabled(isSigningIn || isGoogleSigningIn)
 
                                 // Continue with Google Button
                                 Button(action: {
-                                    onContinueWithGoogle?()
+                                    guard !isGoogleSigningIn && !isSigningIn else { return }
+                                    isGoogleSigningIn = true
+                                    errorMessage = nil
+                                    Task {
+                                        let result = await GoogleAuthManager.shared.signIn()
+                                        await MainActor.run {
+                                            isGoogleSigningIn = false
+                                            switch result {
+                                            case .success:
+                                                onContinueWithGoogle?()
+                                            case .failure(let error):
+                                                errorMessage = error.localizedDescription
+                                            }
+                                        }
+                                    }
                                 }) {
                                     HStack(spacing: 6) {
-                                        Image(systemName: "g.circle.fill")
-                                            .font(.system(size: 16, weight: .bold))
-                                            .foregroundColor(Color(hex: "EA4335"))
-                                        Text("Continue with Google")
+                                        if isGoogleSigningIn {
+                                            ProgressView()
+                                                .scaleEffect(0.8)
+                                        } else {
+                                            Image(systemName: "g.circle.fill")
+                                                .font(.system(size: 16, weight: .bold))
+                                                .foregroundColor(Color(hex: "EA4335"))
+                                        }
+                                        Text(isGoogleSigningIn ? "Signing In…" : "Continue with Google")
                                             .font(.system(size: 13, weight: .bold))
                                             .foregroundColor(.black)
                                     }
@@ -337,6 +363,7 @@ public struct SplashWelcomeView: View {
                                     .shadow(color: Color.black.opacity(0.14), radius: 6, x: 0, y: 2)
                                 }
                                 .buttonStyle(PlainButtonStyle())
+                                .disabled(isGoogleSigningIn || isSigningIn)
                             }
                             .padding(.top, 8)
 
