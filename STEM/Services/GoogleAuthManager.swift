@@ -30,7 +30,7 @@ public final class GoogleAuthManager: NSObject, ObservableObject, ASWebAuthentic
             return .failure(NSError(domain: "GoogleAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Google Sign-In is not configured. Please check GoogleCredentials.plist."]))
         }
 
-        let redirectUri = "\(AppConfig.googleRedirectScheme)://oauth2callback"
+        let redirectUri = "\(AppConfig.googleRedirectScheme):/oauth2callback"
         let nonce = UUID().uuidString
         let state = UUID().uuidString
 
