@@ -77,7 +77,7 @@ public struct AssignedScreens: View {
             case .statistics:
                 StatisticsScreen(data: liveStatistics ?? statistics, onBack: { route = .profile })
             case .badges:
-                BadgesScreen(data: liveBadges.isEmpty ? badges : liveBadges, earnedCount: liveBadges.filter { $0.isEarned }.count, onBack: { route = .profile })
+                BadgesScreen(data: liveBadges, earnedCount: liveBadges.filter { $0.isEarned }.count, onBack: { route = .profile })
             case .checkout:
                 CheckoutPaymentView(
                     onBack: { route = .profile },

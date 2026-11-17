@@ -38,8 +38,34 @@ public struct CarawinBadgeData: Identifiable {
     public let category: String
     public let symbol: String
     public let isEarned: Bool
-    public init(id: UUID = UUID(), name: String, category: String, symbol: String, isEarned: Bool = true) {
-        self.id = id; self.name = name; self.category = category; self.symbol = symbol; self.isEarned = isEarned
+    public let issuedAt: String?
+    public let imageUrl: String?
+    public let viewerUrl: String?
+    public let school: String?
+    public let revoked: Bool
+
+    public init(
+        id: UUID = UUID(),
+        name: String,
+        category: String,
+        symbol: String = "rosette",
+        isEarned: Bool = true,
+        issuedAt: String? = nil,
+        imageUrl: String? = nil,
+        viewerUrl: String? = nil,
+        school: String? = nil,
+        revoked: Bool = false
+    ) {
+        self.id = id
+        self.name = name
+        self.category = category
+        self.symbol = symbol
+        self.isEarned = isEarned
+        self.issuedAt = issuedAt
+        self.imageUrl = imageUrl
+        self.viewerUrl = viewerUrl
+        self.school = school
+        self.revoked = revoked
     }
 }
 

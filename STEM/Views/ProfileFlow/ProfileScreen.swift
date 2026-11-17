@@ -365,7 +365,7 @@ public struct ProfileScreen: View {
 
                         // Badge count tile
                         VStack(spacing: 4) {
-                            Text("\(liveBadgesCount > 0 ? liveBadgesCount : (data?.badgesEarned ?? 0))")
+                            Text("\(liveBadgesCount)")
                                 .font(.system(size: 24, weight: .heavy, design: .rounded))
                                 .foregroundColor(Theme.textSecondary)
                             Text("Badges\nWon")

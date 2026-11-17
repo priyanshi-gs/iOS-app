@@ -7,28 +7,39 @@ public struct BadgesScreen: View {
 
     @State private var selectedFilter: BadgeFilter = .all
     @State private var liveBadges: [CarawinBadgeData] = []
+    @State private var hasFetched: Bool = false
     @State private var isLoading: Bool = false
+    @State private var selectedBadge: CarawinBadgeData? = nil
 
+    // Strictly live badges from backend. Zero mock fallback!
     private var activeBadges: [CarawinBadgeData] {
-        liveBadges.isEmpty ? (initialData.isEmpty ? BadgesScreen.sampleBadges : initialData) : liveBadges
+        hasFetched ? liveBadges : (liveBadges.isEmpty ? initialData : liveBadges)
     }
 
     private var totalCount: Int { activeBadges.count }
     private var earned: Int { earnedCount ?? activeBadges.filter(\.isEarned).count }
-    private var locked: Int { totalCount - earned }
+    private var locked: Int { max(0, totalCount - earned) }
     private var completionPercent: Double { totalCount > 0 ? Double(earned) / Double(totalCount) : 0 }
 
     private var filteredData: [CarawinBadgeData] {
         switch selectedFilter {
-        case .all: return activeBadges
-        case .chemistry: return activeBadges.filter { $0.category.lowercased() == "chemistry" }
-        case .physics: return activeBadges.filter { $0.category.lowercased() == "physics" }
-        case .biology: return activeBadges.filter { $0.category.lowercased() == "biology" }
-        case .milestones: return activeBadges.filter { $0.category.lowercased() == "milestone" }
+        case .all:
+            return activeBadges
+        case .chemistry:
+            return activeBadges.filter { $0.category.lowercased().contains("chem") }
+        case .physics:
+            return activeBadges.filter { $0.category.lowercased().contains("phys") }
+        case .biology:
+            return activeBadges.filter { $0.category.lowercased().contains("bio") }
+        case .milestones:
+            return activeBadges.filter {
+                let cat = $0.category.lowercased()
+                return cat.contains("milestone") || cat.contains("protocol") || cat.contains("achievement")
+            }
         }
     }
 
-    public init(data: [CarawinBadgeData], earnedCount: Int? = nil, onBack: @escaping () -> Void) {
+    public init(data: [CarawinBadgeData] = [], earnedCount: Int? = nil, onBack: @escaping () -> Void) {
         self.initialData = data
         self.earnedCount = earnedCount
         self.onBack = onBack
@@ -71,11 +82,19 @@ public struct BadgesScreen: View {
                                 Text("\(earned) Earned")
                                     .font(.system(size: 12, weight: .semibold))
                                     .foregroundColor(.white.opacity(0.85))
-                                Text("·")
-                                    .foregroundColor(.white.opacity(0.5))
-                                Text("\(locked) Locked")
-                                    .font(.system(size: 12, weight: .semibold))
-                                    .foregroundColor(.white.opacity(0.6))
+                                if totalCount > 0 {
+                                    Text("·")
+                                        .foregroundColor(.white.opacity(0.5))
+                                    Text("\(locked) Locked")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(.white.opacity(0.6))
+                                } else {
+                                    Text("·")
+                                        .foregroundColor(.white.opacity(0.5))
+                                    Text("Complete labs to earn")
+                                        .font(.system(size: 12, weight: .semibold))
+                                        .foregroundColor(.white.opacity(0.7))
+                                }
                             }
                         }
 
@@ -115,23 +134,81 @@ public struct BadgesScreen: View {
                         in: RoundedRectangle(cornerRadius: 18, style: .continuous)
                     )
 
-                    // MARK: - Filter Tabs
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 0) {
-                            filterTab(.all, label: "All (\(totalCount))", isFirst: true)
-                            filterDivider()
-                            filterTab(.chemistry, label: "Chemistry")
-                            filterDivider()
-                            filterTab(.physics, label: "Physics")
-                            filterDivider()
-                            filterTab(.biology, label: "Biology")
-                            filterDivider()
-                            filterTab(.milestones, label: "Milestones", isLast: true)
+                    // MARK: - Filter Tabs (Only shown when there are badges to filter)
+                    if !activeBadges.isEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 0) {
+                                filterTab(.all, label: "All (\(totalCount))", isFirst: true)
+                                filterDivider()
+                                filterTab(.chemistry, label: "Chemistry")
+                                filterDivider()
+                                filterTab(.physics, label: "Physics")
+                                filterDivider()
+                                filterTab(.biology, label: "Biology")
+                                filterDivider()
+                                filterTab(.milestones, label: "Milestones", isLast: true)
+                            }
                         }
                     }
 
-                    // MARK: - Badge Grid
-                    if filteredData.isEmpty {
+                    // MARK: - Loading Indicator
+                    if isLoading && !hasFetched {
+                        VStack(spacing: 12) {
+                            ProgressView()
+                                .tint(Theme.crimson)
+                                .scaleEffect(1.2)
+                            Text("Loading your live badges...")
+                                .font(.system(size: 14, weight: .medium))
+                                .foregroundColor(Theme.textSecondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 50)
+                    }
+                    // MARK: - Empty State (Zero badges earned)
+                    else if activeBadges.isEmpty {
+                        VStack(spacing: 14) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color(hex: "FFF1BF"))
+                                    .frame(width: 76, height: 76)
+                                Image(systemName: "trophy")
+                                    .font(.system(size: 34, weight: .semibold))
+                                    .foregroundColor(Color(hex: "A8650A"))
+                            }
+                            .padding(.top, 20)
+
+                            Text("No Badges Yet")
+                                .font(.system(size: 18, weight: .heavy, design: .rounded))
+                                .foregroundColor(Theme.oxfordBlue)
+
+                            Text("Complete virtual lab experiments and pass assessments to earn your official verified badges.")
+                                .font(.system(size: 13, weight: .regular))
+                                .foregroundColor(Theme.textSecondary)
+                                .multilineTextAlignment(.center)
+                                .lineSpacing(3)
+                                .padding(.horizontal, 24)
+
+                            Button(action: onBack) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "flask.fill")
+                                    Text("Explore Labs")
+                                }
+                                .font(.system(size: 14, weight: .bold))
+                                .foregroundColor(.white)
+                                .padding(.horizontal, 22)
+                                .padding(.vertical, 10)
+                                .background(Theme.crimson, in: Capsule())
+                            }
+                            .padding(.top, 6)
+                            .padding(.bottom, 22)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .background(Color.white, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .shadow(color: Color.black.opacity(0.04), radius: 8, x: 0, y: 3)
+                        .padding(.top, 8)
+                    }
+                    // MARK: - Category Filter Empty State
+                    else if filteredData.isEmpty {
                         VStack(spacing: 12) {
                             Image(systemName: "rosette")
                                 .font(.system(size: 40))
@@ -142,13 +219,18 @@ public struct BadgesScreen: View {
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 50)
-                    } else {
+                    }
+                    // MARK: - Live Badge Grid
+                    else {
                         LazyVGrid(
                             columns: Array(repeating: GridItem(.flexible(), spacing: 12), count: 3),
                             spacing: 12
                         ) {
                             ForEach(filteredData) { badge in
                                 BadgeTileView(badge: badge)
+                                    .onTapGesture {
+                                        selectedBadge = badge
+                                    }
                             }
                         }
                     }
@@ -161,17 +243,32 @@ public struct BadgesScreen: View {
         }
         .background(Theme.screenBackground.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
+        .sheet(item: $selectedBadge) { badge in
+            BadgeDetailSheet(badge: badge)
+        }
         .task {
-            isLoading = true
-            do {
-                let badges = try await DataService.shared.fetchUserBadgesLive()
-                if !badges.isEmpty {
-                    self.liveBadges = badges
-                }
-            } catch {
-                print("Badges live fetch error: \(error.localizedDescription)")
+            await fetchLiveBadges()
+        }
+        .refreshable {
+            await fetchLiveBadges()
+        }
+    }
+
+    private func fetchLiveBadges() async {
+        isLoading = true
+        do {
+            let fetched = try await DataService.shared.fetchUserBadgesLive()
+            await MainActor.run {
+                self.liveBadges = fetched
+                self.hasFetched = true
+                self.isLoading = false
             }
-            isLoading = false
+        } catch {
+            print("Badges live fetch error: \(error.localizedDescription)")
+            await MainActor.run {
+                self.hasFetched = true
+                self.isLoading = false
+            }
         }
     }
 
@@ -199,22 +296,6 @@ public struct BadgesScreen: View {
             .foregroundColor(Theme.borderSubtle)
             .padding(.horizontal, 2)
     }
-
-    // MARK: - Sample badges for preview
-    static let sampleBadges: [CarawinBadgeData] = [
-        CarawinBadgeData(name: "Titration Master", category: "Chemistry", symbol: "flask.fill", isEarned: true),
-        CarawinBadgeData(name: "Safety First", category: "Protocol", symbol: "shield.fill", isEarned: true),
-        CarawinBadgeData(name: "Analytical Master", category: "Milestone", symbol: "chart.bar.xaxis", isEarned: true),
-        CarawinBadgeData(name: "Beer-Lambert Law", category: "Optics", symbol: "light.max", isEarned: false),
-        CarawinBadgeData(name: "Acid-Base Ace", category: "Chemistry", symbol: "flask.fill", isEarned: true),
-        CarawinBadgeData(name: "Newtonian Pioneer", category: "Physics", symbol: "atom", isEarned: false),
-        CarawinBadgeData(name: "Precision Burette", category: "Lab Skill", symbol: "eyedropper.halffull", isEarned: true),
-        CarawinBadgeData(name: "Reaction Kinetics", category: "Chemistry", symbol: "circle.hexagongrid.fill", isEarned: false),
-        CarawinBadgeData(name: "Spectra Hunter", category: "Physics", symbol: "waveform.path.ecg", isEarned: true),
-        CarawinBadgeData(name: "Molecular Master", category: "Chemistry", symbol: "circle.grid.3x3.fill", isEarned: true),
-        CarawinBadgeData(name: "Stoichiometry Star", category: "Chemistry", symbol: "plus.forwardslash.minus", isEarned: false),
-        CarawinBadgeData(name: "Lab Veteran", category: "Milestone", symbol: "rosette", isEarned: true),
-    ]
 }
 
 // MARK: - Filter enum
@@ -227,34 +308,50 @@ struct BadgeTileView: View {
     let badge: CarawinBadgeData
 
     private var tileColor: Color {
-        switch badge.category.lowercased() {
-        case "chemistry": return Color(hex: "1E3A8A")
-        case "physics":   return Color(hex: "7C3AED")
-        case "biology":   return Color(hex: "065F46")
-        case "milestone": return Color(hex: "B45309")
-        case "protocol":  return Color(hex: "991B1B")
-        case "lab skill": return Color(hex: "B45309")
-        default:          return Color(hex: "374151")
-        }
+        let cat = (badge.category + " " + badge.name).lowercased()
+        if cat.contains("chem") { return Color(hex: "1E3A8A") }
+        if cat.contains("phys") { return Color(hex: "7C3AED") }
+        if cat.contains("bio")  { return Color(hex: "065F46") }
+        if cat.contains("milestone") { return Color(hex: "B45309") }
+        if cat.contains("protocol") { return Color(hex: "991B1B") }
+        return Color(hex: "11437B")
     }
 
     var body: some View {
         VStack(spacing: 8) {
             ZStack(alignment: .bottomTrailing) {
-                // Icon tile
-                Image(systemName: badge.symbol)
-                    .font(.system(size: 26, weight: .semibold))
-                    .foregroundColor(.white)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 72)
-                    .background(
-                        LinearGradient(
-                            colors: [tileColor.opacity(0.9), tileColor],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing
-                        ),
-                        in: RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    )
+                // Icon tile or remote image
+                Group {
+                    if let imgUrlStr = badge.imageUrl, let url = URL(string: imgUrlStr) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .padding(8)
+                            default:
+                                Image(systemName: badge.symbol)
+                                    .font(.system(size: 26, weight: .semibold))
+                                    .foregroundColor(.white)
+                            }
+                        }
+                    } else {
+                        Image(systemName: badge.symbol)
+                            .font(.system(size: 26, weight: .semibold))
+                            .foregroundColor(.white)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .frame(height: 72)
+                .background(
+                    LinearGradient(
+                        colors: [tileColor.opacity(0.9), tileColor],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    ),
+                    in: RoundedRectangle(cornerRadius: 16, style: .continuous)
+                )
 
                 // Earned / locked badge
                 if badge.isEarned {
@@ -280,6 +377,7 @@ struct BadgeTileView: View {
             Text(badge.category)
                 .font(.system(size: 10, weight: .medium))
                 .foregroundColor(Theme.textSecondary)
+                .lineLimit(1)
         }
         .padding(10)
         .background(Color.white, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
@@ -288,10 +386,158 @@ struct BadgeTileView: View {
     }
 }
 
-#Preview("My Badges") {
-    BadgesScreen(
-        data: BadgesScreen.sampleBadges,
-        earnedCount: 8,
-        onBack: {}
-    )
+// MARK: - Badge Detail Sheet
+struct BadgeDetailSheet: View {
+    let badge: CarawinBadgeData
+    @Environment(\.dismiss) private var dismiss
+
+    private var formattedDate: String {
+        guard let iso = badge.issuedAt else { return "Verified" }
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        var date = isoFormatter.date(from: iso)
+        if date == nil {
+            isoFormatter.formatOptions = [.withInternetDateTime]
+            date = isoFormatter.date(from: iso)
+        }
+        guard let d = date else { return iso }
+        let df = DateFormatter()
+        df.dateStyle = .medium
+        df.timeStyle = .none
+        return df.string(from: d)
+    }
+
+    var body: some View {
+        NavigationStack {
+            ScrollView {
+                VStack(spacing: 20) {
+                    // Badge artwork preview
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 24, style: .continuous)
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color(hex: "11437B"), Color(hex: "0A2648")],
+                                    startPoint: .topLeading, endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 140, height: 140)
+                            .shadow(color: Color(hex: "11437B").opacity(0.3), radius: 12, x: 0, y: 6)
+
+                        if let imgUrlStr = badge.imageUrl, let url = URL(string: imgUrlStr) {
+                            AsyncImage(url: url) { phase in
+                                switch phase {
+                                case .success(let image):
+                                    image
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                        .frame(width: 100, height: 100)
+                                default:
+                                    Image(systemName: badge.symbol)
+                                        .font(.system(size: 54))
+                                        .foregroundColor(Theme.yellow)
+                                }
+                            }
+                        } else {
+                            Image(systemName: badge.symbol)
+                                .font(.system(size: 54))
+                                .foregroundColor(Theme.yellow)
+                        }
+                    }
+                    .padding(.top, 24)
+
+                    // Title & Lab
+                    VStack(spacing: 6) {
+                        Text(badge.name)
+                            .font(.system(size: 22, weight: .heavy, design: .rounded))
+                            .foregroundColor(Theme.oxfordBlue)
+                            .multilineTextAlignment(.center)
+
+                        Text(badge.category)
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(Theme.textSecondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.horizontal, 24)
+
+                    // Status pill
+                    HStack(spacing: 6) {
+                        if badge.revoked {
+                            Image(systemName: "xmark.octagon.fill")
+                                .foregroundColor(Theme.crimson)
+                            Text("REVOKED")
+                                .font(.system(size: 11, weight: .heavy))
+                                .foregroundColor(Theme.crimson)
+                        } else {
+                            Image(systemName: "checkmark.seal.fill")
+                                .foregroundColor(Color(hex: "0F7A55"))
+                            Text("ACCREDITED")
+                                .font(.system(size: 11, weight: .heavy))
+                                .foregroundColor(Color(hex: "0F7A55"))
+                        }
+                    }
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 6)
+                    .background(
+                        badge.revoked ? Color(hex: "FDE4EA") : Color(hex: "DFF5EA"),
+                        in: Capsule()
+                    )
+
+                    // Details Card
+                    VStack(spacing: 12) {
+                        HStack {
+                            Text("Issued")
+                                .font(.system(size: 13, weight: .medium))
+                                .foregroundColor(Theme.textSecondary)
+                            Spacer()
+                            Text(formattedDate)
+                                .font(.system(size: 13, weight: .bold))
+                                .foregroundColor(Theme.oxfordBlue)
+                        }
+
+                        if let school = badge.school, !school.isEmpty {
+                            Divider()
+                            HStack {
+                                Text("Institution")
+                                    .font(.system(size: 13, weight: .medium))
+                                    .foregroundColor(Theme.textSecondary)
+                                Spacer()
+                                Text(school)
+                                    .font(.system(size: 13, weight: .bold))
+                                    .foregroundColor(Theme.oxfordBlue)
+                            }
+                        }
+                    }
+                    .padding(16)
+                    .background(Theme.surfaceWarm, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                    .padding(.horizontal, 24)
+
+                    // External Viewer / Certificate link
+                    if let viewer = badge.viewerUrl, let url = URL(string: viewer) {
+                        Link(destination: url) {
+                            HStack(spacing: 8) {
+                                Image(systemName: "arrow.up.right.square")
+                                Text("View Official Certificate")
+                            }
+                            .font(.system(size: 14, weight: .bold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 48)
+                            .background(Theme.crimson, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                        }
+                        .padding(.horizontal, 24)
+                    }
+
+                    Spacer()
+                }
+            }
+            .navigationTitle("Badge Details")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Done") { dismiss() }
+                        .font(.system(size: 15, weight: .semibold))
+                }
+            }
+        }
+    }
 }

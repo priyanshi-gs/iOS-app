@@ -206,8 +206,40 @@ public final class DataService {
             let id = (item["id"] as? String).flatMap(UUID.init) ?? UUID()
             let name = (item["name"] as? String) ?? "Achievement Badge"
             let category = (item["lab"] as? String) ?? "Milestone"
-            let isEarned = !(item["revoked"] as? Bool ?? false)
-            return CarawinBadgeData(id: id, name: name, category: category, symbol: "rosette", isEarned: isEarned)
+            let isRevoked = (item["revoked"] as? Bool) ?? false
+            let isEarned = !isRevoked
+            let issuedAt = item["issuedAt"] as? String
+            let imageUrl = item["imageUrl"] as? String
+            let viewerUrl = item["viewerUrl"] as? String
+            let school = item["school"] as? String
+
+            // Choose SF Symbol based on subject / lab name
+            let symbol: String
+            let lower = (name + " " + category).lowercased()
+            if lower.contains("chem") || lower.contains("titrat") || lower.contains("acid") || lower.contains("base") || lower.contains("solut") {
+                symbol = "flask.fill"
+            } else if lower.contains("phys") || lower.contains("lens") || lower.contains("optics") || lower.contains("prism") || lower.contains("wave") || lower.contains("refract") || lower.contains("atom") {
+                symbol = "atom"
+            } else if lower.contains("bio") || lower.contains("cell") || lower.contains("osmo") || lower.contains("micro") || lower.contains("photo") {
+                symbol = "allergens"
+            } else if lower.contains("safe") || lower.contains("protocol") {
+                symbol = "shield.fill"
+            } else {
+                symbol = "rosette"
+            }
+
+            return CarawinBadgeData(
+                id: id,
+                name: name,
+                category: category,
+                symbol: symbol,
+                isEarned: isEarned,
+                issuedAt: issuedAt,
+                imageUrl: imageUrl,
+                viewerUrl: viewerUrl,
+                school: school,
+                revoked: isRevoked
+            )
         }
     }
 
