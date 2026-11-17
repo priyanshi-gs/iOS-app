@@ -27,10 +27,14 @@ struct ContentView: View {
     @State private var flowState: AppFlowState = .onboarding
     @State private var currentStep: OnboardingStep = .splash
     @State private var connectedSchoolName: String = "Graphic Era University (GEU)"
+    @State private var isShowingInitialSplash: Bool = true
     
     var body: some View {
         ZStack {
-            if flowState == .mainDashboard || (authService.currentUser != nil && authService.authState.isAuthenticated) {
+            if isShowingInitialSplash {
+                InitialLaunchSplashView()
+                    .transition(.opacity)
+            } else if flowState == .mainDashboard || (authService.currentUser != nil && authService.authState.isAuthenticated) {
                 MainContainerView(
                     onLogout: {
                         authService.signOut()
@@ -47,6 +51,13 @@ struct ContentView: View {
             }
         }
         .preferredColorScheme(.light)
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    isShowingInitialSplash = false
+                }
+            }
+        }
     }
     
     @ViewBuilder
