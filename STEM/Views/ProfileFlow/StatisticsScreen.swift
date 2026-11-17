@@ -306,9 +306,9 @@ public struct StatisticsScreen: View {
                                 .foregroundColor(Theme.textSecondary)
                         }
 
-                        HStack(spacing: 18) {
+                        HStack(alignment: .center, spacing: 18) {
                             // Perfect Gauge Arc (Contained inside the card)
-                            ZStack(alignment: .bottom) {
+                            ZStack(alignment: .top) {
                                 // Background semi-circle track
                                 Circle()
                                     .trim(from: 0.0, to: 0.5)
@@ -330,7 +330,7 @@ public struct StatisticsScreen: View {
                                     .rotationEffect(.degrees(180))
                                     .frame(width: 132, height: 132)
 
-                                // Score label centered under the dome
+                                // Score label centered inside the dome
                                 VStack(spacing: 2) {
                                     Text("\(assessmentPct)%")
                                         .font(.system(size: 24, weight: .heavy, design: .rounded))
@@ -339,10 +339,11 @@ public struct StatisticsScreen: View {
                                         .font(.system(size: 11, weight: .medium))
                                         .foregroundColor(Theme.textSecondary)
                                 }
-                                .padding(.bottom, 2)
+                                .frame(width: 132)
+                                .offset(y: 30)
                             }
-                            .frame(width: 144, height: 74, alignment: .top)
-                            .padding(.top, 4)
+                            .frame(width: 144, height: 82, alignment: .top)
+                            .clipped()
 
                             Spacer(minLength: 0)
 
