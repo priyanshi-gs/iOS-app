@@ -15,6 +15,7 @@ public struct ProfileScreen: View {
     @State private var profileImage: Image? = nil
     @State private var liveUser: AuthUser? = AuthService.shared.currentUser
     @State private var liveBadgesCount: Int = 0
+    @State private var liveEarnedBadges: [CarawinBadgeData] = []
     @State private var liveLabs: [Lab] = []
     @State private var lastSyncTime: String = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
 
@@ -346,21 +347,56 @@ public struct ProfileScreen: View {
 
                     // Badge previews row
                     HStack(spacing: 10) {
-                        // 3 sample badge icons
-                        ForEach(badgePreviews, id: \.name) { badge in
-                            VStack(spacing: 6) {
-                                Image(systemName: badge.icon)
-                                    .font(.system(size: 22, weight: .semibold))
-                                    .foregroundColor(badge.color)
-                                    .frame(width: 56, height: 56)
-                                    .background(badge.color.opacity(0.15), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
-                                Text(badge.name)
-                                    .font(.system(size: 11, weight: .semibold))
-                                    .foregroundColor(Theme.oxfordBlue)
-                                    .multilineTextAlignment(.center)
-                                    .lineLimit(2)
+                        if liveEarnedBadges.isEmpty {
+                            HStack(spacing: 10) {
+                                Image(systemName: "rosette")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(Theme.textMuted)
+                                    .frame(width: 48, height: 48)
+                                    .background(Theme.surfaceWarm, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("No Badges Yet")
+                                        .font(.system(size: 13, weight: .bold))
+                                        .foregroundColor(Theme.oxfordBlue)
+                                    Text("Complete virtual labs to earn accredited badges")
+                                        .font(.system(size: 11))
+                                        .foregroundColor(Theme.textSecondary)
+                                        .lineLimit(2)
+                                }
                             }
-                            .frame(maxWidth: .infinity)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                        } else {
+                            ForEach(Array(liveEarnedBadges.prefix(3))) { badge in
+                                VStack(spacing: 6) {
+                                    Group {
+                                        if let imgUrlStr = badge.imageUrl, let url = URL(string: imgUrlStr) {
+                                            AsyncImage(url: url) { phase in
+                                                switch phase {
+                                                case .success(let image):
+                                                    image.resizable().aspectRatio(contentMode: .fit)
+                                                default:
+                                                    Image(systemName: badge.symbol)
+                                                        .font(.system(size: 22, weight: .semibold))
+                                                        .foregroundColor(Theme.primaryBlue)
+                                                }
+                                            }
+                                        } else {
+                                            Image(systemName: badge.symbol)
+                                                .font(.system(size: 22, weight: .semibold))
+                                                .foregroundColor(Theme.primaryBlue)
+                                        }
+                                    }
+                                    .frame(width: 56, height: 56)
+                                    .background(Theme.primaryBlue.opacity(0.12), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+
+                                    Text(badge.name)
+                                        .font(.system(size: 11, weight: .semibold))
+                                        .foregroundColor(Theme.oxfordBlue)
+                                        .multilineTextAlignment(.center)
+                                        .lineLimit(2)
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
                         }
 
                         // Badge count tile
@@ -497,9 +533,11 @@ public struct ProfileScreen: View {
         if let user = try? await AuthService.shared.fetchMeLive() {
             self.liveUser = user
         }
-        // 2. Live fetch badges count (GET /api/v1/users/me/badges)
+        // 2. Live fetch badges count & items (GET /api/v1/users/me/badges)
         if let badges = try? await DataService.shared.fetchUserBadgesLive() {
-            self.liveBadgesCount = badges.filter { $0.isEarned }.count
+            let earned = badges.filter { $0.isEarned }
+            self.liveEarnedBadges = earned
+            self.liveBadgesCount = earned.count
         }
         // 3. Live fetch labs (GET /api/v1/labs) to compute actual accessible labs vs total
         if let labs = try? await DataService.shared.fetchLabsLive() {
@@ -577,15 +615,6 @@ public struct ProfileScreen: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
     }
-
-    // Sample badge previews shown in the compact row
-    private var badgePreviews: [(name: String, icon: String, color: Color)] {
-        [
-            ("Lab Explorer", "flask.fill", Color(hex: "7C3AED")),
-            ("Quick Learner", "bolt.fill", Theme.crimson),
-            ("Experimenter", "star.fill", Theme.yellow)
-        ]
-    }
 }
 
 #if DEBUG
@@ -593,16 +622,16 @@ struct ProfileScreen_Previews: PreviewProvider {
     static var previews: some View {
         ProfileScreen(
             data: CarawinProfileData(
-                name: "Samantha Taylor",
-                email: "samantha.taylor@carawin.edu",
-                schoolName: "Springfield High School",
+                name: "Student",
+                email: "student@labs.carawin.edu",
+                schoolName: nil,
                 accountType: "Individual Account",
-                planName: "Individual Basic",
-                availableLabs: 2,
-                accountCreated: "September 2024",
-                accountStatus: "Active Individual Learner",
-                lastSynced: "Today at 09:41 AM",
-                badgesEarned: 12
+                planName: "Free Tier",
+                availableLabs: 5,
+                accountCreated: "Active",
+                accountStatus: "Active",
+                lastSynced: "Live",
+                badgesEarned: 0
             ),
             onConnect: {},
             onStatistics: {},

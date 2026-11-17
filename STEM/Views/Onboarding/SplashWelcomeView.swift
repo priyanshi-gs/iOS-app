@@ -304,7 +304,7 @@ public struct SplashWelcomeView: View {
                                 Button(action: {
                                     AuthService.shared.handleAppleSignIn(
                                         userId: UUID().uuidString,
-                                        email: "apple.user@carawin.edu",
+                                        email: nil,
                                         fullName: nil
                                     )
                                     onContinueWithApple?()

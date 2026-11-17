@@ -60,64 +60,14 @@ public struct NotificationsScreen: View {
     public var onSelectLabId: ((String) -> Void)?
 
     @State private var selectedCategory: NotificationCategory = .all
-    @State private var notifications: [NotificationItem] = [
-        NotificationItem(
-            title: "New Assignment: Acid Base & Salts",
-            message: "Class 10 Chemistry experiment assigned by teacher. Complete pre-reading and simulation before Friday.",
-            timeAgo: "15m ago",
-            category: .assignments,
-            icon: "flask.fill",
-            iconColorHex: "DC143C",
-            iconBgHex: "FFEBEF",
-            isUnread: true,
-            labId: "bfd19034-7fbd-463a-816b-0cbd326e059f"
-        ),
-        NotificationItem(
-            title: "Verified LABS Badge Awarded!",
-            message: "Congratulations! You scored 100% on Ohm's Law and earned the Electric Circuit Master certification.",
-            timeAgo: "2h ago",
-            category: .achievements,
-            icon: "trophy.fill",
-            iconColorHex: "D97706",
-            iconBgHex: "FEF3C7",
-            isUnread: true
-        ),
-        NotificationItem(
-            title: "New Experiment Added",
-            message: "Total Internal Reflection & Snell's Law is now live in Physics. Explore ray refraction interactively.",
-            timeAgo: "Yesterday",
-            category: .updates,
-            icon: "sparkles",
-            iconColorHex: "002147",
-            iconBgHex: "EFF6FF",
-            isUnread: false
-        ),
-        NotificationItem(
-            title: "School Connected Successfully",
-            message: "Your account is enrolled in Springfield High School. All 25+ curriculum labs are now unlocked.",
-            timeAgo: "2d ago",
-            category: .updates,
-            icon: "building.columns.fill",
-            iconColorHex: "16A34A",
-            iconBgHex: "DCFCE7",
-            isUnread: false
-        ),
-        NotificationItem(
-            title: "Weekly Practice Reminder",
-            message: "You are 1 lab away from hitting your weekly 3-hour learning milestone. Keep up the momentum!",
-            timeAgo: "3d ago",
-            category: .assignments,
-            icon: "flame.fill",
-            iconColorHex: "EA580C",
-            iconBgHex: "FFEDD5",
-            isUnread: false
-        )
-    ]
+    @State private var notifications: [NotificationItem] = []
 
     public init(
+        notifications: [NotificationItem] = [],
         onBack: (() -> Void)? = nil,
         onSelectLabId: ((String) -> Void)? = nil
     ) {
+        self._notifications = State(initialValue: notifications)
         self.onBack = onBack
         self.onSelectLabId = onSelectLabId
     }

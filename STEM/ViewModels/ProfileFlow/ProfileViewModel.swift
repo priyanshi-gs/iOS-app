@@ -17,16 +17,16 @@ public final class ProfileViewModel: ObservableObject {
         } else {
             let currentAuthUser = AuthService.shared.currentUser
             self.profile = CarawinProfileData(
-                name: currentAuthUser?.name ?? "Samantha Taylor",
-                email: currentAuthUser?.email ?? "samantha.taylor@carawin.edu",
-                schoolName: currentAuthUser?.schoolName ?? "Springfield High School",
-                accountType: "Individual Account",
-                planName: "Basic Learner Plan",
+                name: currentAuthUser?.name ?? "Student",
+                email: currentAuthUser?.email ?? "",
+                schoolName: currentAuthUser?.schoolName,
+                accountType: currentAuthUser?.accountType ?? (currentAuthUser?.schoolName != nil ? "School Enrolled" : "Individual Account"),
+                planName: currentAuthUser?.planName ?? "Free Tier",
                 availableLabs: 5,
-                accountCreated: "Sep 2026",
-                accountStatus: "Active",
-                lastSynced: "Just now",
-                badgesEarned: 3
+                accountCreated: "Active",
+                accountStatus: currentAuthUser?.planStatus ?? "Active",
+                lastSynced: "Live",
+                badgesEarned: 0
             )
         }
         self.statistics = statistics

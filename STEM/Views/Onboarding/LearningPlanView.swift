@@ -3,9 +3,18 @@ import SwiftUI
 public struct LearningPlanView: View {
     @State private var billingCycle: BillingCycle = .monthly
     @State private var isPremiumSelected: Bool = true
+    @State private var livePlans: [CarawinPlan] = []
     
     public var onBack: (() -> Void)? = nil
     public var onContinue: ((BillingCycle, Bool) -> Void)? = nil
+
+    private var monthlyPrice: Int? {
+        livePlans.first { $0.durationDays <= 31 && $0.priceInRupees > 0 }?.priceInRupees
+    }
+
+    private var yearlyPrice: Int? {
+        livePlans.first { $0.durationDays > 31 && $0.priceInRupees > 0 }?.priceInRupees
+    }
     
     public init(
         initialCycle: BillingCycle = .monthly,
@@ -60,7 +69,9 @@ public struct LearningPlanView: View {
                         // Card 2: Premium Plan (Rich Crimson Card)
                         PremiumPlanCard(
                             billingCycle: billingCycle,
-                            isSelected: isPremiumSelected
+                            isSelected: isPremiumSelected,
+                            monthlyPrice: monthlyPrice,
+                            yearlyPrice: yearlyPrice
                         ) {
                             withAnimation(.spring(response: 0.28, dampingFraction: 0.75)) {
                                 isPremiumSelected = true
@@ -95,6 +106,9 @@ public struct LearningPlanView: View {
             }
         }
         .background(Theme.screenBackground.ignoresSafeArea())
+        .task {
+            livePlans = (try? await DataService.shared.fetchPlansLive()) ?? []
+        }
     }
 }
 
@@ -301,7 +315,19 @@ public struct BasicPlanCard: View {
 public struct PremiumPlanCard: View {
     public let billingCycle: BillingCycle
     public let isSelected: Bool
+    public var monthlyPrice: Int? = nil
+    public var yearlyPrice: Int? = nil
     public let onTap: () -> Void
+
+    private var displayPrice: String {
+        if billingCycle == .monthly {
+            if let p = monthlyPrice { return "₹\(p) / month" }
+            return "₹199 / month"
+        } else {
+            if let p = yearlyPrice { return "₹\(p) / year" }
+            return "₹1,999 / year"
+        }
+    }
     
     public var body: some View {
         Button(action: onTap) {
@@ -338,7 +364,7 @@ public struct PremiumPlanCard: View {
                     
                     // Price tag
                     VStack(alignment: .trailing, spacing: 2) {
-                        Text(billingCycle == .monthly ? "₹199 / month" : "₹1,999 / year")
+                        Text(displayPrice)
                             .font(.system(size: 13, weight: .bold))
                             .foregroundColor(Theme.primaryRed)
                             .padding(.horizontal, 10)

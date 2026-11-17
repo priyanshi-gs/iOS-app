@@ -25,18 +25,9 @@ public final class GoogleAuthManager: NSObject, ObservableObject, ASWebAuthentic
 
         let clientId = AppConfig.googleClientID
 
-        // If Google Client ID is not yet configured with a real Google Cloud Console ID
+        // If Google Client ID is not configured
         if clientId.contains("placeholder") || clientId.isEmpty {
-            // Provide seamless testing account so the app transitions smoothly without hitting Google's 400 error
-            let demoUser = AuthUser(
-                id: "google_\(UUID().uuidString.prefix(8))",
-                name: "Google Learner",
-                email: "learner.google@carawin.edu",
-                role: "STUDENT",
-                schoolName: "Carawin Virtual Labs"
-            )
-            AuthService.shared.handleAppleSignIn(userId: demoUser.id, email: demoUser.email, fullName: nil)
-            return .success(demoUser)
+            return .failure(NSError(domain: "GoogleAuth", code: -1, userInfo: [NSLocalizedDescriptionKey: "Google Sign-In is not configured. Please check GoogleCredentials.plist."]))
         }
 
         let redirectUri = "\(AppConfig.googleRedirectScheme)://oauth2callback"
@@ -71,27 +62,6 @@ public final class GoogleAuthManager: NSObject, ObservableObject, ASWebAuthentic
                     if let callbackURL = callbackURL, let idToken = Self.extractIdToken(from: callbackURL) {
                         let result = await AuthService.shared.signInWithGoogle(idToken: idToken)
                         continuation.resume(returning: result)
-                        return
-                    }
-
-                    // Fallback for development/testing when client ID is placeholder or local testing
-                    if clientId.contains("placeholder") || callbackURL == nil {
-                        let testIdToken = "demo_google_id_token_\(UUID().uuidString)"
-                        let result = await AuthService.shared.signInWithGoogle(idToken: testIdToken)
-                        switch result {
-                        case .success(let user):
-                            continuation.resume(returning: .success(user))
-                        case .failure:
-                            let demoUser = AuthUser(
-                                id: "google_\(UUID().uuidString.prefix(8))",
-                                name: "Google Learner",
-                                email: "learner.google@carawin.edu",
-                                role: "STUDENT",
-                                schoolName: "Carawin Virtual Labs"
-                            )
-                            AuthService.shared.handleAppleSignIn(userId: demoUser.id, email: demoUser.email, fullName: nil)
-                            continuation.resume(returning: .success(demoUser))
-                        }
                         return
                     }
 

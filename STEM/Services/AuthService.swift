@@ -88,18 +88,18 @@ public final class AuthService: ObservableObject {
             let given = fullName.givenName ?? ""
             let family = fullName.familyName ?? ""
             let combined = "\(given) \(family)".trimmingCharacters(in: .whitespaces)
-            name = combined.isEmpty ? "Samantha Taylor" : combined
+            name = combined.isEmpty ? "Student" : combined
         } else {
-            name = "Samantha Taylor"
+            name = "Student"
         }
 
-        let userEmail = email ?? "samantha.taylor@carawin.edu"
+        let userEmail = email ?? "student@labs.carawin.edu"
         let user = AuthUser(
             id: userId,
             name: name,
             email: userEmail,
             role: "STUDENT",
-            schoolName: "Springfield High School"
+            schoolName: nil
         )
 
         saveSession(user: user, token: "apple_token_\(UUID().uuidString)")
@@ -130,7 +130,7 @@ public final class AuthService: ObservableObject {
                 let (data, response) = try await URLSession.shared.data(for: request)
 
                 if let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) {
-                    if let user = parseAuthResponse(from: data, fallbackEmail: "google.user@carawin.edu") {
+                    if let user = parseAuthResponse(from: data, fallbackEmail: "student@labs.carawin.edu") {
                         // Refresh live details from /me if available
                         try? await fetchMeLive()
                         return .success(currentUser ?? user)

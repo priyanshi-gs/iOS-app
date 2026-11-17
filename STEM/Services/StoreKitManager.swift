@@ -59,13 +59,9 @@ public final class StoreKitManager: ObservableObject {
             return await purchase(product: product)
         }
 
-        // Fallback / Offline simulation mode for development without loaded StoreKit file
-        isPurchasing = true
-        try? await Task.sleep(nanoseconds: 600_000_000)
-        isPurchasing = false
-        purchasedProductIDs.insert(targetID)
-        hasActivePremium = true
-        return true
+        // If product is not loaded from App Store
+        self.errorMessage = "In-App Purchase product is currently unavailable."
+        return false
     }
 
     // MARK: - StoreKit 2 Purchase

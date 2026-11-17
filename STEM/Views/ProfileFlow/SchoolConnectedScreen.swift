@@ -6,7 +6,7 @@ public struct SchoolConnectedScreen: View {
     public let onDashboard: () -> Void
 
     public init(
-        schoolName: String? = "Springfield High School",
+        schoolName: String? = nil,
         onBack: @escaping () -> Void,
         onDashboard: @escaping () -> Void
     ) {

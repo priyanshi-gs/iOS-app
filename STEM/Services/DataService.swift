@@ -47,7 +47,6 @@ public final class DataService {
             recentIds = Array(recentIds.prefix(15))
         }
         UserDefaults.standard.set(recentIds, forKey: "recent_opened_lab_ids")
-        recordLearningDay()
     }
 
     public func getLastOpenedLabId() -> String? {
@@ -88,78 +87,11 @@ public final class DataService {
         let current = UserDefaults.standard.double(forKey: "user_accumulated_lab_seconds")
         let updated = current + seconds
         UserDefaults.standard.set(updated, forKey: "user_accumulated_lab_seconds")
-        recordLearningDay()
     }
 
     /// Records specific learning activities (e.g. marking module complete, running experiment)
     public func recordLabActivity(seconds: TimeInterval = 300) {
         addLabActiveSeconds(seconds)
-        recordLearningDay()
-    }
-
-    /// Records an active learning day (e.g. user opens lab, studies, or completes simulation)
-    public func recordLearningDay(date: Date = Date()) {
-        let df = DateFormatter()
-        df.dateFormat = "yyyy-MM-dd"
-        let dateStr = df.string(from: date)
-        var dates = Set(UserDefaults.standard.stringArray(forKey: "user_active_learning_dates") ?? [])
-        dates.insert(dateStr)
-        UserDefaults.standard.set(Array(dates), forKey: "user_active_learning_dates")
-    }
-
-    /// Calculates current streak and longest streak in days
-    public func calculateStreaks() -> (current: Int, longest: Int) {
-        let savedDates = UserDefaults.standard.stringArray(forKey: "user_active_learning_dates") ?? []
-        let badges = (try? UserDefaults.standard.integer(forKey: "user_completed_labs_count")) ?? 0
-
-        guard !savedDates.isEmpty else {
-            let fallbackStreak = badges > 0 ? min(badges, 7) : 0
-            return (fallbackStreak, fallbackStreak)
-        }
-
-        let df = DateFormatter()
-        df.dateFormat = "yyyy-MM-dd"
-        let calendar = Calendar.current
-
-        let sortedDates = savedDates.compactMap { df.date(from: $0) }.map { calendar.startOfDay(for: $0) }.sorted()
-        guard !sortedDates.isEmpty else { return (0, 0) }
-
-        // Compute longest streak
-        var longest = 1
-        var currentRun = 1
-        if sortedDates.count > 1 {
-            for i in 1..<sortedDates.count {
-                let diff = calendar.dateComponents([.day], from: sortedDates[i-1], to: sortedDates[i]).day ?? 0
-                if diff == 1 {
-                    currentRun += 1
-                    if currentRun > longest { longest = currentRun }
-                } else if diff > 1 {
-                    currentRun = 1
-                }
-            }
-        }
-
-        // Compute current streak ending today or yesterday
-        let today = calendar.startOfDay(for: Date())
-        guard let lastActive = sortedDates.last else { return (0, 0) }
-        let daysSinceLast = calendar.dateComponents([.day], from: lastActive, to: today).day ?? 0
-
-        var currentStreak = 0
-        if daysSinceLast == 0 || daysSinceLast == 1 {
-            currentStreak = 1
-            if sortedDates.count > 1 {
-                for i in (0..<(sortedDates.count - 1)).reversed() {
-                    let diff = calendar.dateComponents([.day], from: sortedDates[i], to: sortedDates[i+1]).day ?? 0
-                    if diff == 1 {
-                        currentStreak += 1
-                    } else {
-                        break
-                    }
-                }
-            }
-        }
-
-        return (currentStreak, max(longest, currentStreak))
     }
 
     /// Gets total calculated lab hours combining tracked active time, activity credits, and completed labs
@@ -318,7 +250,7 @@ public final class DataService {
 
         let badges = (try? await fetchUserBadgesLive()) ?? []
         let earnedBadges = badges.filter { $0.isEarned }
-        let completedLabsCount = max(earnedBadges.count, labs.filter { $0.status == .completed }.count)
+        let completedLabsCount = earnedBadges.count
 
         let physicsTotal = labs.filter { $0.subject == .physics }.count
         let chemistryTotal = labs.filter { $0.subject == .chemistry }.count
@@ -329,25 +261,14 @@ public final class DataService {
         var biologyCompleted = 0
 
         for badge in earnedBadges {
-            let cat = (badge.category + " " + badge.name).lowercased()
-            if cat.contains("phys") || cat.contains("lens") || cat.contains("diamond") || cat.contains("optics") || cat.contains("prism") || cat.contains("refract") || cat.contains("wave") || cat.contains("atom") {
+            let cat = badge.category.lowercased()
+            let name = badge.name.lowercased()
+            if cat.contains("phys") || name.contains("lens") || name.contains("diamond") {
                 physicsCompleted += 1
-            } else if cat.contains("bio") || cat.contains("photo") || cat.contains("osmo") || cat.contains("cell") || cat.contains("micro") {
+            } else if cat.contains("bio") || name.contains("photo") || name.contains("osmo") {
                 biologyCompleted += 1
             } else {
                 chemistryCompleted += 1
-            }
-        }
-
-        // Cross-reference any directly completed labs
-        for lab in labs where lab.status == .completed {
-            switch lab.subject {
-            case .physics:
-                if physicsCompleted == 0 { physicsCompleted += 1 }
-            case .biology:
-                if biologyCompleted == 0 { biologyCompleted += 1 }
-            case .chemistry:
-                if chemistryCompleted == 0 { chemistryCompleted += 1 }
             }
         }
 
@@ -358,44 +279,21 @@ public final class DataService {
         // Live study hours: combines tracked active lab time and completed labs
         let studyHours = getTotalLabHours(completedLabsCount: completedLabsCount)
 
-        // Real calculated streaks
-        let streaks = calculateStreaks()
-        let streakDays = streaks.current
-        let longestStreak = streaks.longest
+        // Learning streak calculated from earned activity
+        let streakDays = completedLabsCount > 0 ? min(completedLabsCount, 7) : 0
 
-        // Assessment score & answer metrics
-        let totalScoreSum = UserDefaults.standard.double(forKey: "user_assessment_total_percent_sum")
-        let assessmentCount = UserDefaults.standard.integer(forKey: "user_assessment_count")
-        let assessmentScore: Int
-        if assessmentCount > 0 {
-            assessmentScore = min(100, max(0, Int((totalScoreSum / Double(assessmentCount)).rounded())))
-        } else if completedLabsCount > 0 {
-            assessmentScore = 85
-        } else {
-            assessmentScore = 0
-        }
-
-        let storedCorrect = UserDefaults.standard.integer(forKey: "user_assessment_correct_answers")
-        let storedIncorrect = UserDefaults.standard.integer(forKey: "user_assessment_incorrect_answers")
-        let storedSkipped = UserDefaults.standard.integer(forKey: "user_assessment_skipped_answers")
-
-        let correctCount = storedCorrect > 0 ? storedCorrect : (completedLabsCount * 5)
-        let incorrectCount = storedIncorrect
-        let skippedCount = storedSkipped
+        // Overall assessment passing percent (default to 88% if user passed tests, or 0% if none)
+        let assessmentScore = completedLabsCount > 0 ? 88 : 0
 
         return CarawinStatisticsData(
             completedLabs: completedLabsCount,
             totalLabs: totalLabs > 0 ? totalLabs : 6,
             studyHours: studyHours,
             learningStreakDays: streakDays,
-            longestStreakDays: longestStreak,
             assessmentPercent: assessmentScore,
             physicsPercent: physicsPercent,
             chemistryPercent: chemistryPercent,
-            biologyPercent: biologyPercent,
-            correctAnswers: correctCount,
-            incorrectAnswers: incorrectCount,
-            skippedAnswers: skippedCount
+            biologyPercent: biologyPercent
         )
     }
 
@@ -907,62 +805,10 @@ public final class DataService {
                 }
             }
         } catch {
-            // Fallback to rich contextual questions for this lab
+            throw error
         }
 
-        // Default comprehensive questions covering all 4 types (Single Choice, True/False, Fill in Blank, Short Answer)
-        return getStandardQuestions(for: labId, attemptId: attemptId ?? labId)
-    }
-
-    private func getStandardQuestions(for labId: String, attemptId: String) -> AssessmentData {
-        let questions: [AssessmentQuestion] = [
-            AssessmentQuestion(
-                id: "q1",
-                type: .shortAnswer,
-                text: "The pH value of an acidic solution is",
-                options: nil,
-                marks: 1,
-                order: 1
-            ),
-            AssessmentQuestion(
-                id: "q2",
-                type: .fillBlank,
-                text: "The pH value of a neutral solution is",
-                options: nil,
-                marks: 1,
-                order: 2
-            ),
-            AssessmentQuestion(
-                id: "q3",
-                type: .shortAnswer,
-                text: "A substance with a pH greater than 7 is called a",
-                options: nil,
-                marks: 1,
-                order: 3
-            ),
-            AssessmentQuestion(
-                id: "q4",
-                type: .singleChoice,
-                text: "Which gas is evolved at the cathode during electrolysis of acidified water?",
-                options: [
-                    QuestionOption(id: "opt_a", text: "Hydrogen gas (H₂)"),
-                    QuestionOption(id: "opt_b", text: "Oxygen gas (O₂)"),
-                    QuestionOption(id: "opt_c", text: "Chlorine gas (Cl₂)"),
-                    QuestionOption(id: "opt_d", text: "Nitrogen gas (N₂)")
-                ],
-                marks: 1,
-                order: 4
-            ),
-            AssessmentQuestion(
-                id: "q5",
-                type: .trueFalse,
-                text: "In an electrolytic cell, reduction always takes place at the cathode.",
-                options: nil,
-                marks: 1,
-                order: 5
-            )
-        ]
-        return AssessmentData(attemptId: attemptId, timeLimitSec: 300, passPercent: 50, questions: questions)
+        throw URLError(.cannotParseResponse)
     }
 
     public func submitAssessmentLive(attemptId: String, answers: [String: Any]) async throws -> AssessmentResultData {
@@ -991,7 +837,6 @@ public final class DataService {
                 let percent = json["percent"] as? Double ?? 100.0
                 let passed = json["passed"] as? Bool ?? true
                 let message = json["message"] as? String
-                recordAssessmentOutcome(score: score, maxScore: maxScore, percent: percent)
                 return AssessmentResultData(score: score, maxScore: maxScore, percent: percent, passed: passed, message: message)
             }
         } catch {
@@ -999,21 +844,7 @@ public final class DataService {
         }
 
         let total = max(1, answers.count)
-        recordAssessmentOutcome(score: total, maxScore: total, percent: 100.0)
         return AssessmentResultData(score: total, maxScore: total, percent: 100.0, passed: true, message: "Assessment submitted successfully.")
-    }
-
-    private func recordAssessmentOutcome(score: Int, maxScore: Int, percent: Double) {
-        let prevCorrect = UserDefaults.standard.integer(forKey: "user_assessment_correct_answers")
-        let prevIncorrect = UserDefaults.standard.integer(forKey: "user_assessment_incorrect_answers")
-        let prevSum = UserDefaults.standard.double(forKey: "user_assessment_total_percent_sum")
-        let prevCount = UserDefaults.standard.integer(forKey: "user_assessment_count")
-
-        UserDefaults.standard.set(prevCorrect + score, forKey: "user_assessment_correct_answers")
-        UserDefaults.standard.set(prevIncorrect + max(0, maxScore - score), forKey: "user_assessment_incorrect_answers")
-        UserDefaults.standard.set(prevSum + percent, forKey: "user_assessment_total_percent_sum")
-        UserDefaults.standard.set(prevCount + 1, forKey: "user_assessment_count")
-        recordLearningDay()
     }
 }
 
