@@ -20,34 +20,6 @@ public struct WelcomeVideoSplashView: View {
                 CustomVideoPlayerView(player: player)
                     .ignoresSafeArea()
             }
-
-            // Top-Right Skip Button
-            VStack {
-                HStack {
-                    Spacer()
-                    Button(action: {
-                        finishOnce()
-                    }) {
-                        HStack(spacing: 5) {
-                            Text("Skip")
-                                .font(.system(size: 13, weight: .bold))
-                            Image(systemName: "chevron.forward")
-                                .font(.system(size: 11, weight: .bold))
-                        }
-                        .foregroundColor(.white)
-                        .padding(.horizontal, 14)
-                        .padding(.vertical, 7)
-                        .background(Color.black.opacity(0.45))
-                        .clipShape(Capsule())
-                        .overlay(
-                            Capsule().stroke(Color.white.opacity(0.2), lineWidth: 1)
-                        )
-                    }
-                    .padding(.top, 50)
-                    .padding(.trailing, 20)
-                }
-                Spacer()
-            }
         }
         .onAppear {
             setupPlayer()
