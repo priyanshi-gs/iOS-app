@@ -28,6 +28,6 @@ public struct AppConfig {
     }
 
     // MARK: - Google OAuth Configuration
-    public static var googleClientID: String = "placeholder-client-id.apps.googleusercontent.com"
-    public static var googleRedirectScheme: String = "devplaceholder.carawin.labs"
+    public static var googleClientID: String = "485328173144-77obcm8e0vshdqcsm3dc4gp7vsgt6aab.apps.googleusercontent.com"
+    public static var googleRedirectScheme: String = "com.googleusercontent.apps.485328173144-77obcm8e0vshdqcsm3dc4gp7vsgt6aab"
 }
