@@ -41,14 +41,19 @@ public struct PayUWebView: UIViewRepresentable {
 
         public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
             if let url = navigationAction.request.url?.absoluteString.lowercased() {
-                // Success callback pattern (from surl)
-                if url.contains("callback") && (url.contains("success") || url.contains("status=success")) {
-                    decisionHandler(.cancel)
-                    parent.onSuccess()
-                    return
-                } else if url.contains("callback") && (url.contains("failure") || url.contains("fail") || url.contains("status=failed")) {
+                // Failure patterns
+                let isFailure = url.contains("failure") || url.contains("failed") || url.contains("status=failed") || url.contains("status=failure") || url.contains("cancelled")
+
+                // Success callback pattern (from surl or website redirect post-payment)
+                let isSuccess = url.contains("success") || url.contains("status=success") || url.contains("payment-success") || (url.contains("carawintech.com") && !url.contains("payu") && !isFailure)
+
+                if isFailure {
                     decisionHandler(.cancel)
                     parent.onFailure("Payment was cancelled or failed.")
+                    return
+                } else if isSuccess {
+                    decisionHandler(.cancel)
+                    parent.onSuccess()
                     return
                 }
             }
