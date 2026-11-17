@@ -455,17 +455,8 @@ public struct LabAssessmentScreen: View {
                 }
             } catch {
                 await MainActor.run {
-                    // Fallback local pass
-                    self.resultData = AssessmentResultData(
-                        score: assessment.questions.count,
-                        maxScore: assessment.questions.count,
-                        percent: 100.0,
-                        passed: true
-                    )
+                    self.errorMessage = "Failed to submit assessment: \(error.localizedDescription)"
                     self.isSubmitting = false
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                        self.onCompleteTest?()
-                    }
                 }
             }
         }

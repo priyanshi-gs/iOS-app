@@ -120,12 +120,11 @@ public final class HomeViewModel: ObservableObject {
             } catch {
                 print("Failed to fetch live labs: \(error.localizedDescription)")
                 await MainActor.run {
-                    let fallbackHours = self.dataService.getTotalLabHours(completedLabsCount: badgeCount)
                     self.userProfile = UserProfile(
                         name: liveName,
-                        availableLabsCount: isProOrSchool ? 6 : 5,
+                        availableLabsCount: 0,
                         badgesWonCount: badgeCount,
-                        labHoursTotal: max(stats.studyHours ?? 0.0, fallbackHours),
+                        labHoursTotal: stats.studyHours ?? 0.0,
                         activeLabId: nil,
                         accessTierLabel: accessTier
                     )

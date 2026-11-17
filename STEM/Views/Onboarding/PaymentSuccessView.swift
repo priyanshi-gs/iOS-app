@@ -2,15 +2,26 @@ import SwiftUI
 
 public struct PaymentSuccessView: View {
     public var billingCycle: BillingCycle = .yearly
+    public var transactionId: String = "TXN_\(UUID().uuidString.prefix(10).uppercased())"
+    public var paymentDate: Date = Date()
+    public var amountPaid: String? = nil
     public var onBack: (() -> Void)? = nil
     public var onExploreLabs: (() -> Void)? = nil
-    
+
     public init(
         billingCycle: BillingCycle = .yearly,
+        transactionId: String? = nil,
+        paymentDate: Date = Date(),
+        amountPaid: String? = nil,
         onBack: (() -> Void)? = nil,
         onExploreLabs: (() -> Void)? = nil
     ) {
         self.billingCycle = billingCycle
+        if let transactionId = transactionId {
+            self.transactionId = transactionId
+        }
+        self.paymentDate = paymentDate
+        self.amountPaid = amountPaid
         self.onBack = onBack
         self.onExploreLabs = onExploreLabs
     }
@@ -128,9 +139,9 @@ public struct PaymentSuccessView: View {
                         CardContainer(padding: 16) {
                             VStack(spacing: 10) {
                                 ReceiptDetailRow(icon: "calendar", title: "Plan", value: "Premium (\(billingCycle.rawValue))")
-                                ReceiptDetailRow(icon: "indianrupeesign", title: "Amount Paid", value: billingCycle == .monthly ? "₹199" : "₹1,999", isBold: true)
-                                ReceiptDetailRow(icon: "doc.text.fill", title: "Transaction ID", value: "LLN762945038", isMonospace: true)
-                                ReceiptDetailRow(icon: "clock.fill", title: "Date & Time", value: "05 Nov 2026, 09:41 PM")
+                                ReceiptDetailRow(icon: "indianrupeesign", title: "Amount Paid", value: amountPaid ?? (billingCycle == .monthly ? "₹199" : "₹1,999"), isBold: true)
+                                ReceiptDetailRow(icon: "doc.text.fill", title: "Transaction ID", value: transactionId, isMonospace: true)
+                                ReceiptDetailRow(icon: "clock.fill", title: "Date & Time", value: paymentDate.formatted(date: .abbreviated, time: .shortened))
                             }
                         }
                     }

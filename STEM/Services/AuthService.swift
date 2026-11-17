@@ -130,7 +130,7 @@ public final class AuthService: ObservableObject {
                 let (data, response) = try await URLSession.shared.data(for: request)
 
                 if let httpResponse = response as? HTTPURLResponse, (200...299).contains(httpResponse.statusCode) {
-                    if let user = parseAuthResponse(from: data, fallbackEmail: "student@labs.carawin.edu") {
+                    if let user = parseAuthResponse(from: data, fallbackEmail: "") {
                         // Refresh live details from /me if available
                         try? await fetchMeLive()
                         return .success(currentUser ?? user)

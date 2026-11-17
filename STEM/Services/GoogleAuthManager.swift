@@ -75,8 +75,7 @@ public final class GoogleAuthManager: NSObject, ObservableObject, ASWebAuthentic
             let started = authSession?.start() ?? false
             if !started {
                 Task { @MainActor in
-                    let result = await AuthService.shared.signInWithGoogle(idToken: "demo_google_id_token_\(UUID().uuidString)")
-                    continuation.resume(returning: result)
+                    continuation.resume(returning: .failure(NSError(domain: "GoogleAuth", code: -4, userInfo: [NSLocalizedDescriptionKey: "Failed to open Google authentication window."])))
                 }
             }
         }
