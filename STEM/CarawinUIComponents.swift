@@ -23,12 +23,41 @@ public struct CarawinStatisticsData {
     public var totalLabs: Int?
     public var studyHours: Double?
     public var learningStreakDays: Int?
+    public var longestStreakDays: Int?
     public var assessmentPercent: Int?
     public var physicsPercent: Int?
     public var chemistryPercent: Int?
     public var biologyPercent: Int?
-    public init(completedLabs: Int? = nil, totalLabs: Int? = nil, studyHours: Double? = nil, learningStreakDays: Int? = nil, assessmentPercent: Int? = nil, physicsPercent: Int? = nil, chemistryPercent: Int? = nil, biologyPercent: Int? = nil) {
-        self.completedLabs = completedLabs; self.totalLabs = totalLabs; self.studyHours = studyHours; self.learningStreakDays = learningStreakDays; self.assessmentPercent = assessmentPercent; self.physicsPercent = physicsPercent; self.chemistryPercent = chemistryPercent; self.biologyPercent = biologyPercent
+    public var correctAnswers: Int?
+    public var incorrectAnswers: Int?
+    public var skippedAnswers: Int?
+
+    public init(
+        completedLabs: Int? = nil,
+        totalLabs: Int? = nil,
+        studyHours: Double? = nil,
+        learningStreakDays: Int? = nil,
+        longestStreakDays: Int? = nil,
+        assessmentPercent: Int? = nil,
+        physicsPercent: Int? = nil,
+        chemistryPercent: Int? = nil,
+        biologyPercent: Int? = nil,
+        correctAnswers: Int? = nil,
+        incorrectAnswers: Int? = nil,
+        skippedAnswers: Int? = nil
+    ) {
+        self.completedLabs = completedLabs
+        self.totalLabs = totalLabs
+        self.studyHours = studyHours
+        self.learningStreakDays = learningStreakDays
+        self.longestStreakDays = longestStreakDays
+        self.assessmentPercent = assessmentPercent
+        self.physicsPercent = physicsPercent
+        self.chemistryPercent = chemistryPercent
+        self.biologyPercent = biologyPercent
+        self.correctAnswers = correctAnswers
+        self.incorrectAnswers = incorrectAnswers
+        self.skippedAnswers = skippedAnswers
     }
 }
 

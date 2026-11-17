@@ -14,10 +14,14 @@ public struct StatisticsScreen: View {
     private var totalLabs: Int { max(activeData?.totalLabs ?? 6, 1) }
     private var studyHours: Double { activeData?.studyHours ?? 0.0 }
     private var streakDays: Int { activeData?.learningStreakDays ?? 0 }
+    private var longestStreakDays: Int { activeData?.longestStreakDays ?? max(streakDays, 0) }
     private var assessmentPct: Int { activeData?.assessmentPercent ?? 0 }
     private var physicsPct: Int { activeData?.physicsPercent ?? 0 }
     private var chemPct: Int { activeData?.chemistryPercent ?? 0 }
     private var bioPct: Int { activeData?.biologyPercent ?? 0 }
+    private var correctCount: Int { activeData?.correctAnswers ?? (completedLabs * 5) }
+    private var incorrectCount: Int { activeData?.incorrectAnswers ?? 0 }
+    private var skippedCount: Int { activeData?.skippedAnswers ?? 0 }
 
     // Dynamic monthly bar chart based on current calendar date
     private var dynamicMonthlyData: [(month: String, value: Int, isCurrentMonth: Bool)] {
@@ -36,6 +40,11 @@ public struct StatisticsScreen: View {
             }
         }
         return items
+    }
+
+    public init(data: CarawinStatisticsData? = nil, onBack: @escaping () -> Void) {
+        self.data = data
+        self.onBack = onBack
     }
 
     public var body: some View {
@@ -101,7 +110,7 @@ public struct StatisticsScreen: View {
                                  label: "Experiment\nHours", valueColor: Theme.crimson)
                         statDivider()
                         statCell(icon: "flame.fill", iconColor: Color(hex: "F59E0B"),
-                                 value: "\(streakDays) Days", label: "Learning\nStreak")
+                                 value: "\(streakDays) \(streakDays == 1 ? "Day" : "Days")", label: "Learning\nStreak")
                         statDivider()
                         statCell(icon: "rosette", iconColor: Theme.primaryBlue,
                                  value: "\(assessmentPct)%", label: "Assessment\nScore")
@@ -155,7 +164,7 @@ public struct StatisticsScreen: View {
                             // Legend
                             VStack(alignment: .leading, spacing: 4) {
                                 legendItem(color: Theme.oxfordBlue, label: "Completed (\(completedLabs))")
-                                legendItem(color: Color(hex: "BFDBFE"), label: "Remaining (\(totalLabs - completedLabs))")
+                                legendItem(color: Color(hex: "BFDBFE"), label: "Remaining (\(max(0, totalLabs - completedLabs)))")
                             }
                         }
                         .padding(14)
@@ -255,7 +264,7 @@ public struct StatisticsScreen: View {
                             VStack(spacing: 4) {
                                 HStack(spacing: 5) {
                                     Image(systemName: "flame.fill").foregroundColor(Color(hex: "F59E0B"))
-                                    Text("\(streakDays) Days")
+                                    Text("\(streakDays) \(streakDays == 1 ? "Day" : "Days")")
                                         .font(.system(size: 17, weight: .heavy, design: .rounded))
                                         .foregroundColor(Theme.crimson)
                                 }
@@ -270,7 +279,7 @@ public struct StatisticsScreen: View {
                             VStack(spacing: 4) {
                                 HStack(spacing: 5) {
                                     Image(systemName: "trophy.fill").foregroundColor(Color(hex: "F59E0B"))
-                                    Text("14 Days")
+                                    Text("\(longestStreakDays) \(longestStreakDays == 1 ? "Day" : "Days")")
                                         .font(.system(size: 17, weight: .heavy, design: .rounded))
                                         .foregroundColor(Theme.oxfordBlue)
                                 }
@@ -339,11 +348,11 @@ public struct StatisticsScreen: View {
 
                             // Stats column
                             VStack(spacing: 12) {
-                                assessmentStat(icon: "checkmark.circle.fill", iconColor: Theme.accentGreen, value: "\(max(completedLabs * 5, completedLabs))", label: "Correct")
+                                assessmentStat(icon: "checkmark.circle.fill", iconColor: Theme.accentGreen, value: "\(correctCount)", label: "Correct")
                                 Divider()
-                                assessmentStat(icon: "xmark.circle.fill", iconColor: Theme.crimson, value: "\(completedLabs > 0 ? 1 : 0)", label: "Incorrect")
+                                assessmentStat(icon: "xmark.circle.fill", iconColor: Theme.crimson, value: "\(incorrectCount)", label: "Incorrect")
                                 Divider()
-                                assessmentStat(icon: "minus.circle.fill", iconColor: Theme.textMuted, value: "0", label: "Skipped")
+                                assessmentStat(icon: "minus.circle.fill", iconColor: Theme.textMuted, value: "\(skippedCount)", label: "Skipped")
                             }
                             .frame(width: 90)
                         }
@@ -361,14 +370,19 @@ public struct StatisticsScreen: View {
         .background(Theme.screenBackground.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
         .task {
-            if liveData == nil {
-                isLoading = true
-                let stats = await DataService.shared.fetchStatisticsLive()
-                await MainActor.run {
-                    self.liveData = stats
-                    self.isLoading = false
-                }
-            }
+            await refreshLiveData()
+        }
+        .refreshable {
+            await refreshLiveData()
+        }
+    }
+
+    private func refreshLiveData() async {
+        isLoading = true
+        let stats = await DataService.shared.fetchStatisticsLive()
+        await MainActor.run {
+            self.liveData = stats
+            self.isLoading = false
         }
     }
 
@@ -476,10 +490,14 @@ public struct StatisticsScreen: View {
             totalLabs: 32,
             studyHours: 18.5,
             learningStreakDays: 7,
+            longestStreakDays: 14,
             assessmentPercent: 86,
             physicsPercent: 78,
             chemistryPercent: 72,
-            biologyPercent: 68
+            biologyPercent: 68,
+            correctAnswers: 110,
+            incorrectAnswers: 14,
+            skippedAnswers: 0
         ),
         onBack: {}
     )
