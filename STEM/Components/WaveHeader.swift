@@ -208,7 +208,7 @@ public struct OrganicWaveShape: Shape {
 
 #Preview {
     VStack {
-        WaveHeader(title: "Join STEM")
+        WaveHeader(title: "Join LABS")
         Spacer()
     }
     .background(Theme.screenBackground)

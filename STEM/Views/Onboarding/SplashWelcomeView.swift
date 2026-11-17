@@ -60,13 +60,13 @@ public struct SplashWelcomeView: View {
                 // MARK: - Foreground UI Content
                 ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 0) {
-                        // 1. Top Brand Header: Flask Icon + "STEM"
+                        // 1. Top Brand Header: Flask Icon + "LABS"
                         HStack(spacing: 4) {
                             Image(systemName: "flask")
                                 .font(.system(size: 20, weight: .bold))
                                 .foregroundColor(.white)
 
-                            Text("STEM")
+                            Text("LABS")
                                 .font(.system(size: 24, weight: .heavy))
                                 .foregroundColor(.white)
                         }

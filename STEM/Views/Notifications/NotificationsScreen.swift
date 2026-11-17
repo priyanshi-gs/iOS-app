@@ -73,7 +73,7 @@ public struct NotificationsScreen: View {
             labId: "bfd19034-7fbd-463a-816b-0cbd326e059f"
         ),
         NotificationItem(
-            title: "Verified STEM Badge Awarded!",
+            title: "Verified LABS Badge Awarded!",
             message: "Congratulations! You scored 100% on Ohm's Law and earned the Electric Circuit Master certification.",
             timeAgo: "2h ago",
             category: .achievements,

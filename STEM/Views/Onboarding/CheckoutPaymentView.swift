@@ -121,7 +121,7 @@ public struct CheckoutPaymentView: View {
                                                     }
                                                 }
 
-                                                Text(plan.allLabs ? "Complete access to all STEM practicals" : "\(plan.durationDays) days access")
+                                                Text(plan.allLabs ? "Complete access to all LABS practicals" : "\(plan.durationDays) days access")
                                                     .font(.system(size: 11, weight: .regular))
                                                     .foregroundColor(Theme.textMuted)
                                             }

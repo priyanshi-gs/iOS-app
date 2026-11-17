@@ -48,7 +48,7 @@ public struct CreateAccountView: View {
                             .fill(Theme.accentGold)
                             .frame(width: 44, height: 3.5)
 
-                        Text("Enter your details to create your STEM account.")
+                        Text("Enter your details to create your LABS account.")
                             .font(.system(size: 14, weight: .regular))
                             .foregroundColor(Theme.textMuted)
                             .padding(.top, 2)

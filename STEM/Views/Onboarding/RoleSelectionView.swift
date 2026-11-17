@@ -26,7 +26,7 @@ public struct RoleSelectionView: View {
         VStack(spacing: 0) {
             // 1. Top Curved Navy Header with Red Arc & Back Button
             WaveHeader(
-                title: "Join STEM",
+                title: "Join LABS",
                 showBackButton: true,
                 onBack: { onBack?() }
             )
@@ -35,7 +35,7 @@ public struct RoleSelectionView: View {
             VStack(alignment: .leading, spacing: 0) {
                 // Headline Section
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("How will you join\nSTEM?")
+                    Text("How will you join\nLABS?")
                         .font(.system(size: 27, weight: .heavy))
                         .foregroundColor(Theme.textDark)
                         .lineSpacing(4)

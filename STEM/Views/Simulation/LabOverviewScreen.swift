@@ -18,7 +18,7 @@ public struct LabOverviewScreen: View {
         (1, "book.closed.fill", "Study Material", "Core concepts, theory & pre-reading", false),
         (2, "flask.fill", "Virtual Experiment", "Hands-on interactive simulation", false),
         (3, "list.clipboard.fill", "Assessment", "MCQs & quiz to verify learning", false),
-        (4, "rosette", "Badge", "Earn verified STEM achievement badge", false)
+        (4, "rosette", "Badge", "Earn verified LABS achievement badge", false)
     ]
 
     public var body: some View {
@@ -128,7 +128,7 @@ public struct LabOverviewScreen: View {
                                     .background(Theme.oxfordBlue, in: Capsule())
                             }
 
-                            Text("This lab is locked on the Free Tier. Unlock full access to study materials, simulation, and STEM badge with an Individual Pro plan or an enrolled school code.")
+                            Text("This lab is locked on the Free Tier. Unlock full access to study materials, simulation, and LABS badge with an Individual Pro plan or an enrolled school code.")
                                 .font(.system(size: 12, weight: .regular))
                                 .foregroundColor(Theme.textSecondary)
                                 .lineSpacing(2)

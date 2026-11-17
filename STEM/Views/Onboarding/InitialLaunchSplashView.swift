@@ -33,3 +33,7 @@ public struct InitialLaunchSplashView: View {
         }
     }
 }
+
+#Preview {
+    InitialLaunchSplashView()
+}

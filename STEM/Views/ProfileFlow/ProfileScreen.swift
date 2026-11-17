@@ -460,7 +460,7 @@ public struct ProfileScreen: View {
                         Button("Sign Out", role: .destructive) { onLogout?() }
                         Button("Cancel", role: .cancel) {}
                     } message: {
-                        Text("Are you sure you want to sign out of STEM?")
+                        Text("Are you sure you want to sign out of LABS?")
                     }
 
                     // Footer note

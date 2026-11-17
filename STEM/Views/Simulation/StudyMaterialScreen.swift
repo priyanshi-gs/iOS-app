@@ -153,7 +153,7 @@ public struct StudyMaterialScreen: View {
                     .font(.system(size: 19, weight: .heavy, design: .rounded))
                     .foregroundColor(Theme.oxfordBlue)
 
-                Text("This lab's study material, interactive simulation, and STEM certification require an active Pro subscription or connected school.")
+                Text("This lab's study material, interactive simulation, and LABS certification require an active Pro subscription or connected school.")
                     .font(.system(size: 13, weight: .regular))
                     .foregroundColor(Theme.textSecondary)
                     .multilineTextAlignment(.center)
@@ -165,7 +165,7 @@ public struct StudyMaterialScreen: View {
             VStack(alignment: .leading, spacing: 9) {
                 proBenefitRow(title: "Complete pre-reading theory & video lessons")
                 proBenefitRow(title: "Full virtual laboratory simulation access")
-                proBenefitRow(title: "Quizzes, assessments & verified STEM badge")
+                proBenefitRow(title: "Quizzes, assessments & verified LABS badge")
                 proBenefitRow(title: "Unlimited access to all 25+ experiments")
             }
             .padding(14)

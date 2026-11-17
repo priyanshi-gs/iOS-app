@@ -15,11 +15,11 @@
       "localizations" : [
         {
           "description" : "Unlock all 41 interactive virtual labs & simulations",
-          "displayName" : "STEM Premium",
+          "displayName" : "LABS Premium",
           "locale" : "en_US"
         }
       ],
-      "name" : "STEM Premium Group",
+      "name" : "LABS Premium Group",
       "subscriptions" : [
         {
           "adHocOffers" : [ ],
