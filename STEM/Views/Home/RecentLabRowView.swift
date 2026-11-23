@@ -14,19 +14,24 @@ public struct RecentLabRowView: View {
             HStack(spacing: 12) {
                 // Lab Visual Thumbnail
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12, style: .continuous)
-                        .fill(
-                            LinearGradient(
-                                colors: [Color(hex: lab.gradientStartHex), Color(hex: lab.gradientEndHex)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
+                    if let urlStr = lab.thumbnailUrl, let url = URL(string: urlStr) {
+                        AsyncImage(url: url) { phase in
+                            switch phase {
+                            case .success(let image):
+                                image
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 48, height: 48)
+                                    .clipped()
+                            default:
+                                fallbackThumbnail
+                            }
+                        }
                         .frame(width: 48, height: 48)
-
-                    Image(systemName: lab.thumbnailSymbol)
-                        .font(.system(size: 20, weight: .bold))
-                        .foregroundColor(.white)
+                        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+                    } else {
+                        fallbackThumbnail
+                    }
                 }
 
                 // Lab Info
@@ -44,7 +49,17 @@ public struct RecentLabRowView: View {
                 Spacer()
 
                 // Status Indicator
-                if lab.status == .completed {
+                if lab.isLocked {
+                    ZStack {
+                        Circle()
+                            .fill(Theme.oxfordBlue.opacity(0.10))
+                            .frame(width: 24, height: 24)
+
+                        Image(systemName: "lock.fill")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundColor(Theme.textSecondary)
+                    }
+                } else if lab.status == .completed {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.system(size: 20))
                         .foregroundColor(Theme.successGreen)
@@ -64,6 +79,24 @@ public struct RecentLabRowView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
+    }
+
+    private var fallbackThumbnail: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .fill(
+                    LinearGradient(
+                        colors: [Color(hex: lab.gradientStartHex), Color(hex: lab.gradientEndHex)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing
+                    )
+                )
+                .frame(width: 48, height: 48)
+
+            Image(systemName: lab.thumbnailSymbol)
+                .font(.system(size: 20, weight: .bold))
+                .foregroundColor(.white)
+        }
     }
 }
 

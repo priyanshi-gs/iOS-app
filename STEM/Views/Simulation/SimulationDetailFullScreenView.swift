@@ -10,91 +10,68 @@ public struct SimulationDetailFullScreenView: View {
     }
 
     public var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(spacing: 16) {
-                // MARK: - Dark Oxford Blue Header
-                ZStack(alignment: .topTrailing) {
-                    Theme.oxfordBlue
-                        .frame(height: 140)
-                        .clipShape(CurvedHeaderShape())
+        VStack(spacing: 0) {
+            // MARK: - Signature Waveform Header
+            WaveHeader(
+                title: "Simulation",
+                showBackButton: true,
+                onBack: onBack,
+                trailing: {
+                    HStack(spacing: 12) {
+                        Image(systemName: "info.circle")
+                            .font(.system(size: 16))
+                            .foregroundColor(.white)
+                        Image(systemName: "viewfinder")
+                            .font(.system(size: 16))
+                            .foregroundColor(.white)
+                    }
+                }
+            )
 
-                    DecorativeArcView()
-                        .offset(x: -15, y: 5)
-
-                    HStack {
-                        Button(action: {
-                            onBack?()
-                        }) {
-                            Image(systemName: "chevron.left")
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(spacing: 16) {
+                    // Compact PeriodicLab Bar
+                    HStack(spacing: 10) {
+                        ZStack {
+                            RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                .fill(LinearGradient(colors: [Color(hex: "A855F7"), Theme.crimson], startPoint: .topLeading, endPoint: .bottomTrailing))
+                                .frame(width: 36, height: 36)
+                            Image(systemName: "atom")
                                 .font(.system(size: 16, weight: .bold))
                                 .foregroundColor(.white)
-                                .padding(8)
-                                .background(Color.white.opacity(0.12))
-                                .clipShape(Circle())
+                        }
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("PeriodicLab")
+                                .font(Theme.subheading(14))
+                                .foregroundColor(Theme.oxfordBlue)
+                            Text("Interactive IUPAC Periodic Table & Mnemonics")
+                                .font(Theme.caption(10))
+                                .foregroundColor(Theme.textSecondary)
                         }
 
                         Spacer()
-
-                        Text("Simulation")
-                            .font(Theme.heading(18))
-                            .foregroundColor(.white)
-
-                        Spacer()
-
-                        HStack(spacing: 10) {
-                            Image(systemName: "info.circle")
-                                .foregroundColor(.white)
-                            Image(systemName: "viewfinder")
-                                .foregroundColor(.white)
-                        }
                     }
-                    .padding(.top, 46)
-                    .padding(.horizontal, 20)
-                }
-                .frame(height: 140)
+                    .padding(12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                            .fill(Color.white)
+                            .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 2)
+                    )
+                    .padding(.horizontal, 16)
+                    .padding(.top, 14)
 
-                // Compact PeriodicLab Bar
-                HStack(spacing: 10) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .fill(LinearGradient(colors: [Color(hex: "A855F7"), Theme.crimson], startPoint: .topLeading, endPoint: .bottomTrailing))
-                            .frame(width: 36, height: 36)
-                        Image(systemName: "atom")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundColor(.white)
+                    // Detail Sheet Card
+                    ElementDetailSheetView(viewModel: viewModel) {
+                        onBack?()
                     }
+                    .padding(.horizontal, 16)
 
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("PeriodicLab")
-                            .font(Theme.subheading(14))
-                            .foregroundColor(Theme.oxfordBlue)
-                        Text("Interactive IUPAC Periodic Table & Mnemonics")
-                            .font(Theme.caption(10))
-                            .foregroundColor(Theme.textSecondary)
-                    }
-
-                    Spacer()
+                    Spacer().frame(height: 40)
                 }
-                .padding(12)
-                .background(
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(Color.white)
-                        .shadow(color: Color.black.opacity(0.04), radius: 6, x: 0, y: 2)
-                )
-                .padding(.horizontal, 16)
-                .padding(.top, -25)
-
-                // Detail Sheet Card
-                ElementDetailSheetView(viewModel: viewModel) {
-                    onBack?()
-                }
-                .padding(.horizontal, 16)
-
-                Spacer().frame(height: 40)
             }
         }
-        .background(Color(hex: "F8FAFD").ignoresSafeArea())
-        .edgesIgnoringSafeArea(.top)
+        .background(Theme.screenBackground.ignoresSafeArea())
     }
 }
 

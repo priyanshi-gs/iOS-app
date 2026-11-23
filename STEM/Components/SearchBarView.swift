@@ -18,11 +18,11 @@ public struct SearchBarView: View {
     public var body: some View {
         HStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
-                .foregroundColor(Theme.textMuted)
-                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(Theme.oxfordBlue.opacity(0.75))
+                .font(.system(size: 15, weight: .semibold))
 
             TextField(placeholder, text: $text)
-                .font(Theme.body(13))
+                .font(.system(size: 13, weight: .medium))
                 .foregroundColor(Theme.textPrimary)
 
             if !text.isEmpty {
@@ -42,9 +42,16 @@ public struct SearchBarView: View {
             }
         }
         .padding(.horizontal, 14)
-        .padding(.vertical, 10)
-        .background(Color(hex: "F3F5F9"))
-        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(.ultraThinMaterial)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(Color.black.opacity(0.08), lineWidth: 1)
+        )
+        .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 2)
     }
 }
 

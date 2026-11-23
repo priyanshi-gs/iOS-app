@@ -13,60 +13,33 @@ public struct SimulationView: View {
     }
 
     public var body: some View {
-        ZStack(alignment: .bottom) {
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(spacing: 16) {
-                    // MARK: - Dark Oxford Blue Curved Nav Bar Header
-                    ZStack(alignment: .topTrailing) {
-                        Theme.oxfordBlue
-                            .frame(height: 150)
-                            .clipShape(CurvedHeaderShape())
-
-                        // Brand Ring Graphic
-                        DecorativeArcView()
-                            .offset(x: -15, y: 5)
-
-                        // Top Nav Bar
-                        HStack {
-                            Button(action: {
-                                onBack?()
-                            }) {
-                                Image(systemName: "chevron.left")
-                                    .font(.system(size: 16, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .padding(8)
-                                    .background(Color.white.opacity(0.12))
-                                    .clipShape(Circle())
-                            }
-
-                            Spacer()
-
-                            Text("Simulation")
-                                .font(Theme.heading(18))
+        VStack(spacing: 0) {
+            // MARK: - Signature Waveform Header
+            WaveHeader(
+                title: "Simulation",
+                showBackButton: true,
+                onBack: onBack,
+                trailing: {
+                    HStack(spacing: 12) {
+                        Button(action: {}) {
+                            Image(systemName: "info.circle")
+                                .font(.system(size: 16))
                                 .foregroundColor(.white)
-
-                            Spacer()
-
-                            HStack(spacing: 10) {
-                                Button(action: {}) {
-                                    Image(systemName: "info.circle")
-                                        .font(.system(size: 16))
-                                        .foregroundColor(.white)
-                                }
-
-                                Button(action: {}) {
-                                    Image(systemName: "viewfinder")
-                                        .font(.system(size: 16))
-                                        .foregroundColor(.white)
-                                }
-                            }
                         }
-                        .padding(.top, 46)
-                        .padding(.horizontal, 20)
-                    }
-                    .frame(height: 150)
 
-                    // MARK: - PeriodicLab Floating Control Card
+                        Button(action: {}) {
+                            Image(systemName: "viewfinder")
+                                .font(.system(size: 16))
+                                .foregroundColor(.white)
+                        }
+                    }
+                }
+            )
+
+            ZStack(alignment: .bottom) {
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(spacing: 16) {
+                        // MARK: - PeriodicLab Floating Control Card
                     VStack(alignment: .leading, spacing: 12) {
                         HStack(spacing: 12) {
                             // Icon
@@ -236,19 +209,19 @@ public struct SimulationView: View {
                     Spacer().frame(height: 110)
                 }
             }
-            .background(Color(hex: "F8FAFD").ignoresSafeArea())
-            .edgesIgnoringSafeArea(.top)
 
             // MARK: - Bottom Floating Element Summary Bar (Opens Screen 4 Detail)
             bottomSelectedElementBar
         }
-        // Sheet presentation for Screen 4 Detail
-        .sheet(isPresented: $viewModel.isDetailSheetPresented) {
+    }
+    .background(Theme.screenBackground.ignoresSafeArea())
+    // Sheet presentation for Screen 4 Detail
+    .sheet(isPresented: $viewModel.isDetailSheetPresented) {
             ElementDetailSheetView(viewModel: viewModel) {
                 viewModel.isDetailSheetPresented = false
             }
-            .presentationDetents([.medium, .large])
-            .presentationDragIndicator(.visible)
+            .presentationDetents([.fraction(0.85), .large])
+            .presentationDragIndicator(.hidden)
         }
     }
 

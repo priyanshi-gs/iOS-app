@@ -3,7 +3,7 @@ import SwiftUI
 // MARK: - Brand Design System
 public enum Theme {
     // Primary Brand Palette
-    public static let oxfordBlue = Color(hex: "002147") // Dark pages, cards, and headings
+    public static let oxfordBlue = Color(hex: "0E3A6E") // Softened smooth royal navy (lighter and softer than harsh 002147)
     public static let crimson    = Color(hex: "DC143C") // Large ring graphics, highlight cards, key phrases
     public static let yellow     = Color(hex: "FFC20E") // Eyebrow labels, process step labels, thin accents
 
@@ -13,12 +13,52 @@ public enum Theme {
     public static let cardBackground  = Color(hex: "FFFFFF")
     public static let surfaceGray     = Color(hex: "F0F3F8")
     public static let surfaceLight    = Color(hex: "F8FAFC")
-    public static let textPrimary     = Color(hex: "002147")
+    public static let surfaceWarm     = Color(hex: "F8FAFC")
+    public static let textPrimary     = Color(hex: "0E3A6E")
     public static let textSecondary   = Color(hex: "64748B")
     public static let textMuted       = Color(hex: "94A3B8")
     public static let textLight       = Color.white
     public static let successGreen    = Color(hex: "10B981")
     public static let borderSubtle    = Color(hex: "E2E8F0")
+
+    // Onboarding & Checkout Funnel Tokens (Soft Crimson & Navy)
+    public static let navyBackground = Color(hex: "0C325D")   // Soft smooth navy background
+    public static let navySurface = Color(hex: "123E72")      // Soft smooth navy surface
+    public static let navyGradient = LinearGradient(
+        colors: [
+            Color(hex: "11437B"), // Soft luminous royal navy at top
+            Color(hex: "0B2E58")  // Smooth deep royal navy at bottom
+        ],
+        startPoint: .top,
+        endPoint: .bottom
+    )
+    public static let primaryRed = Color(red: 0.73, green: 0.08, blue: 0.22)       // #BA1438 - soft matte ruby
+    public static let primaryRedDark = Color(red: 0.55, green: 0.04, blue: 0.16)   // #8C0A29 - deep wine bordeaux
+    public static let primaryBlue = Color(red: 0.16, green: 0.45, blue: 0.95)     // #2973F2
+    public static let accentGold = Color(red: 0.99, green: 0.75, blue: 0.12)      // #FDBF1E
+    public static let accentGreen = Color(red: 0.11, green: 0.74, blue: 0.38)     // #1CBC61
+    public static let accentPurple = Color(red: 0.75, green: 0.22, blue: 0.65)    // #BF38A6
+    public static let screenBackground = Color(red: 0.96, green: 0.97, blue: 0.99) // #F5F7FC
+    public static let textDark = Color(red: 0.08, green: 0.11, blue: 0.18)         // #141C2E
+    public static let borderLight = Color(red: 0.90, green: 0.92, blue: 0.96)      // #E6EBF5
+
+    public static let redButtonGradient = LinearGradient(
+        colors: [
+            Color(red: 0.74, green: 0.09, blue: 0.23), // #BD173B
+            Color(red: 0.64, green: 0.05, blue: 0.18)  // #A30D2E
+        ],
+        startPoint: .leading,
+        endPoint: .trailing
+    )
+
+    public static let premiumCardGradient = LinearGradient(
+        colors: [
+            Color(red: 0.65, green: 0.07, blue: 0.20), // #A61233
+            Color(red: 0.52, green: 0.03, blue: 0.15)  // #850826
+        ],
+        startPoint: .topLeading,
+        endPoint: .bottomTrailing
+    )
 
     // Element Category Colors (Soft pastels for Periodic Table)
     public static let alkaliMetalColor       = Color(hex: "FED7AA") // Light orange/peach

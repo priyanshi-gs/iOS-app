@@ -1,0 +1,15 @@
+.DS_Store
+*.xcuserstate
+xcuserdata/
+DerivedData/
+.build/
+labs-frontend-ref/
+
+# Private Credentials & Local Secrets (Never commit to Git)
+GoogleCredentials.plist
+GoogleService-Info.plist
+*Credentials*.plist
+*Secrets*.swift
+*.local.swift
+*.env*
+

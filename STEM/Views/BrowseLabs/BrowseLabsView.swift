@@ -1,43 +1,103 @@
 import SwiftUI
 
+@MainActor
 public struct BrowseLabsView: View {
     @StateObject private var viewModel: BrowseLabsViewModel
+    public var selectedSubject: Subject?
     public var onLaunchLab: ((Lab) -> Void)?
+    public var onOpenProfile: (() -> Void)?
 
     public init(
-        viewModel: BrowseLabsViewModel = BrowseLabsViewModel(),
-        onLaunchLab: ((Lab) -> Void)? = nil
+        viewModel: BrowseLabsViewModel? = nil,
+        selectedSubject: Subject? = nil,
+        onLaunchLab: ((Lab) -> Void)? = nil,
+        onOpenProfile: (() -> Void)? = nil
     ) {
-        self._viewModel = StateObject(wrappedValue: viewModel)
+        let vm = viewModel ?? BrowseLabsViewModel()
+        if let selectedSubject = selectedSubject {
+            vm.selectedFilter = selectedSubject
+        }
+        self._viewModel = StateObject(wrappedValue: vm)
+        self.selectedSubject = selectedSubject
         self.onLaunchLab = onLaunchLab
+        self.onOpenProfile = onOpenProfile
     }
 
     public var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 18) {
-                // Top Header Section with Brand Arcs
-                ZStack(alignment: .topTrailing) {
-                    DecorativeArcView()
-                        .offset(x: 20, y: -20)
+        VStack(spacing: 0) {
+            // MARK: - Standard Waveform Header (consistent with all other screens)
+            WaveHeader(
+                title: "Browse Labs",
+                showBackButton: false
+            )
 
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Browse Labs")
-                            .font(Theme.largeTitle(26))
-                            .foregroundColor(Theme.oxfordBlue)
+            ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 18) {
+                    // Search Bar with Native Glass Effect & Filter Menu (Free / Unlock)
+                    HStack(spacing: 10) {
+                        SearchBarView(
+                            text: $viewModel.searchQuery,
+                            placeholder: "Search labs, topics or experiments"
+                        )
 
-                        Text("Explore interactive labs across PCM.")
-                            .font(Theme.body(14))
-                            .foregroundColor(Theme.textSecondary)
+                        // Access Filter Button (Free / Unlock)
+                        Menu {
+                            Button(action: { viewModel.accessFilter = .all }) {
+                                Label("All Labs", systemImage: viewModel.accessFilter == .all ? "checkmark" : "")
+                            }
+                            Button(action: { viewModel.accessFilter = .free }) {
+                                Label("Free", systemImage: viewModel.accessFilter == .free ? "checkmark" : "")
+                            }
+                            Button(action: { viewModel.accessFilter = .unlock }) {
+                                Label("Unlock", systemImage: viewModel.accessFilter == .unlock ? "checkmark" : "")
+                            }
+                        } label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                    .fill(viewModel.accessFilter != .all ? Theme.oxfordBlue : Color.white)
+                                    .frame(width: 48, height: 48)
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 14, style: .continuous)
+                                            .stroke(viewModel.accessFilter != .all ? Color.clear : Color.black.opacity(0.08), lineWidth: 1)
+                                    )
+                                    .shadow(color: Color.black.opacity(0.05), radius: 6, x: 0, y: 2)
+
+                                Image(systemName: viewModel.accessFilter != .all ? "line.3.horizontal.decrease.circle.fill" : "line.3.horizontal.decrease.circle")
+                                    .font(.system(size: 20, weight: .semibold))
+                                    .foregroundColor(viewModel.accessFilter != .all ? .white : Theme.oxfordBlue)
+                            }
+                        }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.top, 40)
-                }
+                    .padding(.top, 14)
 
-                // Search Bar
-                SearchBarView(
-                    text: $viewModel.searchQuery,
-                    placeholder: "Search labs, topics or experiments"
-                )
+                    // Active Access Filter Chip (if not All)
+                    if viewModel.accessFilter != .all {
+                        HStack(spacing: 6) {
+                            Text("Showing:")
+                                .font(.system(size: 12, weight: .regular))
+                                .foregroundColor(Theme.textSecondary)
+
+                            HStack(spacing: 6) {
+                                Text("\(viewModel.accessFilter.rawValue) Labs")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundColor(Theme.oxfordBlue)
+
+                                Button(action: { viewModel.accessFilter = .all }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .font(.system(size: 12))
+                                        .foregroundColor(Theme.textSecondary)
+                                }
+                            }
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 4)
+                            .background(Color(hex: "EFF6FF"), in: Capsule())
+
+                            Spacer()
+                        }
+                        .padding(.top, -6)
+                    }
+
+                    // Subject Filter Chips
 
                 // Subject Filter Chips
                 ScrollView(.horizontal, showsIndicators: false) {
@@ -65,7 +125,17 @@ public struct BrowseLabsView: View {
 
                 // Lab Cards List
                 VStack(spacing: 14) {
-                    if viewModel.filteredLabs.isEmpty {
+                    if viewModel.isLoading {
+                        VStack(spacing: 12) {
+                            ProgressView()
+                                .tint(Theme.oxfordBlue)
+                            Text("Loading labs from server...")
+                                .font(Theme.body(13))
+                                .foregroundColor(Theme.textSecondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 40)
+                    } else if viewModel.filteredLabs.isEmpty {
                         VStack(spacing: 12) {
                             Image(systemName: "magnifyingglass")
                                 .font(.system(size: 36))
@@ -85,13 +155,30 @@ public struct BrowseLabsView: View {
                     }
                 }
 
-                // Bottom padding for tab bar
-                Spacer().frame(height: 20)
+                // Bottom padding for floating tab bar
+                Spacer().frame(height: 84)
             }
             .padding(.horizontal, 20)
         }
-        .background(Color(hex: "F8FAFD").ignoresSafeArea())
     }
+    .background(Theme.screenBackground.ignoresSafeArea())
+    .task {
+        if let subject = selectedSubject {
+            viewModel.selectFilter(subject)
+        }
+        if viewModel.allLabs.isEmpty {
+            viewModel.loadLabs()
+        }
+    }
+    .onAppear {
+        if let subject = selectedSubject {
+            viewModel.selectFilter(subject)
+        }
+    }
+    .onChange(of: selectedSubject) { newSubject in
+        viewModel.selectFilter(newSubject)
+    }
+}
 
     // Helper for filter chip pill
     @ViewBuilder
